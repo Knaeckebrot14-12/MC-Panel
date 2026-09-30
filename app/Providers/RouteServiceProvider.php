@@ -38,6 +38,9 @@ class RouteServiceProvider extends ServiceProvider
 
         $this->routes(function () {
             Route::middleware('web')->group(function () {
+                // Registered first so /auth/discord... isn't swallowed by the /auth fallback route.
+                Route::group([], base_path('routes/community.php'));
+
                 Route::middleware(['auth.session', RequireTwoFactorAuthentication::class])
                     ->group(base_path('routes/base.php'));
 

@@ -46,5 +46,8 @@ return [
         'update.started' => 'Panel-Update auf :subject gestartet',
         'update.auto_on' => 'Automatische Updates eingeschaltet',
         'update.auto_off' => 'Automatische Updates ausgeschaltet',
+        'settings.login' => 'Einstellungen für Login & Registrierung geändert',
+        'maintenance.updated' => 'Wartungsmodus auf :subject gestellt',
+        'user.email_verified' => 'E-Mail-Adresse von :subject bestätigt',
     ],
 ];

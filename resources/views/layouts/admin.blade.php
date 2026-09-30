@@ -98,6 +98,21 @@
                                 <i class="fa fa-history"></i> <span>@lang('admin/layout.nav.audit')</span>
                             </a>
                         </li>
+@if(Auth::user()->isOwner())
+                        <li class="{{ Route::currentRouteName() !== 'admin.settings.login' ?: 'active' }}">
+                            <a href="{{ route('admin.settings.login') }}">
+                                <i class="fa fa-comments"></i> <span>@lang('admin/layout.nav.discord_login')</span>
+                            </a>
+                        </li>
+@endif
+                        <li class="{{ ! starts_with(Route::currentRouteName(), 'admin.maintenance') ?: 'active' }}">
+                            <a href="{{ route('admin.maintenance') }}">
+                                <i class="fa fa-wrench"></i> <span>@lang('admin/layout.nav.maintenance')</span>
+                                @if(in_array(config('mcpanel.maintenance.mode'), ['banner', 'lock'], true))
+                                    <span class="pull-right-container"><small class="label pull-right {{ config('mcpanel.maintenance.mode') === 'lock' ? 'bg-red' : 'bg-yellow' }}">@lang('admin/maintenance.badge')</small></span>
+                                @endif
+                            </a>
+                        </li>
 @endif
 @if(Auth::user()->hasStaffPermission('announcements'))
                         <li class="{{ ! starts_with(Route::currentRouteName(), 'admin.announcements') ?: 'active' }}">

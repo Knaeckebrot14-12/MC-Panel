@@ -6,8 +6,9 @@ A game server panel for Minecraft hosting, built on the open source [Pterodactyl
 - **Self-service servers** for normal users, with per-user resource pools and cooldowns
 - **Support tickets** with notifications and ratings
 - **Roles**: user, supporter, moderator, admin, owner, with an audit log of staff actions
-- **Modrinth plugin installer** per server
-- **Public registration**, forgot-password flow, announcements
+- **Minecraft tools** per server: Modrinth plugin installer, player manager (online players, whitelist, operators, bans), server.properties as a form, CPU/RAM/player history graphs, automatic backups with rotation
+- **Public registration** with e-mail confirmation and an accounts-per-IP limit against alt accounts, log in with Discord, forgot-password flow, announcements
+- **Admin statistics** (users, servers, tickets, coins, node usage), **maintenance mode** (banner or lock-out) and a public **status page** at /status
 - **Translations**: English, German, French, Spanish and more, selectable per user
 - **One-click and automatic updates** from within the panel
 
@@ -30,6 +31,7 @@ What the installer asks:
    - `3` behind your own reverse proxy (Nginx, Caddy, Cloudflare Tunnel): enter the public URL and a local port.
 3. **Owner account**: e-mail, username, name and password (leave empty to generate one).
 4. **Automatic updates**: on or off (can be changed later under Settings → Updates).
+5. **Wings on this server too?** Say yes and panel, node and Wings are set up in one run.
 
 Then it builds and starts everything (5–15 minutes the first time) and prints the URL and login.
 
@@ -37,8 +39,13 @@ Then it builds and starts everything (5–15 minutes the first time) and prints 
 
 - *Panel and Wings on the same machine*: the installer creates the node in the panel, writes the Wings configuration and starts Wings. If the panel uses HTTPS, it also gets a Let's Encrypt certificate for Wings (the panel's domain can be reused, no extra DNS record needed).
 - *Wings on another machine*: enter the panel URL; for an HTTPS panel also the machine's domain, and the certificate is created. The installer then tells you exactly what to enter when creating the node and asks for the token from the node's Configuration tab.
+- Running the Wings option again on the panel server repairs the setup (same node, fresh configuration). Wings gets a Docker network range that does not collide with the panel's own Docker network, and the panel talks to Wings directly on the machine instead of through the public address.
 - Firewall: if ufw is active, the installer opens only the ports the panel and Wings need (80/443 or your panel port, 8080 for Wings, 2022 for SFTP). Game server ports are never created or opened automatically; add them per node under Admin → Nodes → Allocation.
 - All certificates renew automatically (the panel's inside its container, Wings' via the certbot timer, restarting Wings afterwards).
+
+## Log in with Discord
+
+Admin → Discord login (Settings → Login & Registration) shows the redirect URL and a four-step guide: create an application in the [Discord Developer Portal](https://discord.com/developers/applications), add the redirect URL under OAuth2, paste Client ID and Client Secret, tick the box. New Discord users can get an account automatically (can be turned off); existing users link Discord on their account page, or are linked automatically through the same verified e-mail address. Accounts with two-factor authentication keep using password + code.
 
 ## Upgrade from Pterodactyl
 

@@ -68,4 +68,20 @@ return [
             'done_button' => 'Fertig',
         ],
     ],
+    'discord' => [
+        'title' => 'Discord',
+        'linked_as' => 'Verknüpft mit :name',
+        'unlink_hint' => 'Nach dem Trennen meldest du dich mit E-Mail und Passwort an. Lege vorher ein Passwort fest, falls dein Konto über Discord erstellt wurde.',
+        'unlink' => 'Discord trennen',
+        'not_linked' => 'Verknüpfe deinen Discord-Account, um dich mit einem Klick anzumelden.',
+        'link' => 'Discord verknüpfen',
+        'linked_success' => 'Dein Discord-Account ist jetzt verknüpft.',
+        'unlinked_success' => 'Discord wurde getrennt.',
+        'errors' => [
+            'taken' => 'Dieser Discord-Account ist bereits mit einem anderen Panel-Konto verknüpft.',
+            'state' => 'Die Discord-Anmeldung ist abgelaufen. Bitte versuche es erneut.',
+            'cancelled' => 'Das Verknüpfen wurde abgebrochen.',
+            'discord' => 'Discord ist nicht erreichbar. Bitte versuche es erneut.',
+        ],
+    ],
 ];

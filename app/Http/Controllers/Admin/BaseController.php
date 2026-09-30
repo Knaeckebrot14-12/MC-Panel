@@ -4,6 +4,7 @@ namespace Pterodactyl\Http\Controllers\Admin;
 
 use Illuminate\View\View;
 use Pterodactyl\Http\Controllers\Controller;
+use Pterodactyl\Services\Admin\StatisticsService;
 use Pterodactyl\Services\Helpers\SoftwareVersionService;
 
 class BaseController extends Controller
@@ -25,6 +26,6 @@ class BaseController extends Controller
             return redirect()->route($user->hasStaffPermission('users.view') ? 'admin.users' : 'admin.tickets');
         }
 
-        return view('admin.index', ['version' => $this->version]);
+        return view('admin.index', ['version' => $this->version, 'stats' => app(StatisticsService::class)->summary()]);
     }
 }

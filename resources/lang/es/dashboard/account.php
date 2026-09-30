@@ -68,4 +68,20 @@ return [
             'done_button' => 'Hecho',
         ],
     ],
+    'discord' => [
+        'title' => 'Discord',
+        'linked_as' => 'Vinculada con :name',
+        'unlink_hint' => 'Tras desvincular, inicias sesión con tu correo y contraseña. Establece antes una contraseña si tu cuenta se creó mediante Discord.',
+        'unlink' => 'Desvincular Discord',
+        'not_linked' => 'Vincula tu cuenta de Discord para iniciar sesión con un clic.',
+        'link' => 'Vincular Discord',
+        'linked_success' => 'Tu cuenta de Discord ya está vinculada.',
+        'unlinked_success' => 'Discord se desvinculó.',
+        'errors' => [
+            'taken' => 'Esta cuenta de Discord ya está vinculada a otra cuenta del panel.',
+            'state' => 'El inicio de sesión con Discord caducó. Inténtalo de nuevo.',
+            'cancelled' => 'Se canceló la vinculación.',
+            'discord' => 'No se pudo contactar con Discord. Inténtalo de nuevo.',
+        ],
+    ],
 ];

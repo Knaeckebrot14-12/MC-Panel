@@ -102,6 +102,19 @@ class AccountController extends ClientApiController
      * Every language the panel ships with, named in that language itself. Adding a folder
      * under resources/lang is all it takes for a new language to show up here.
      */
+    /**
+     * Removes the link to the user's Discord account.
+     */
+    public function unlinkDiscord(Request $request): JsonResponse
+    {
+        $user = $request->user();
+        $user->forceFill(['discord_id' => null, 'discord_username' => null])->save();
+
+        Activity::event('user:account.discord-unlinked')->log();
+
+        return new JsonResponse([], Response::HTTP_OK);
+    }
+
     public function languages(): JsonResponse
     {
         return new JsonResponse(

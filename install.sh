@@ -248,6 +248,16 @@ install_panel() {
     AUTO_UPDATE=0
     confirm "Update the panel automatically whenever a new version is published?" n && AUTO_UPDATE=1
 
+    # Asked up front so the whole installation runs through in one go afterwards.
+    if [ -z "${WITH_WINGS:-}" ]; then
+        WITH_WINGS=0
+        if [ -n "${MC_WITH_WINGS:-}" ]; then
+            [ "$MC_WITH_WINGS" = "1" ] && WITH_WINGS=1
+        elif [ "${MC_NONINTERACTIVE:-0}" != "1" ]; then
+            confirm "Also install Wings (the node that runs the game servers) on this server?" y && WITH_WINGS=1
+        fi
+    fi
+
     info "Downloading the panel from github.com/$GITHUB_REPO ..."
     git clone --quiet --branch "$GITHUB_BRANCH" "https://github.com/$GITHUB_REPO.git" "$INSTALL_DIR" \
         || die "Could not download the repository. Check the internet connection and that github.com/$GITHUB_REPO exists."
@@ -281,6 +291,7 @@ EOF
     chmod +x "$INSTALL_DIR/installer/recoded-ptero" "$INSTALL_DIR/installer/updater/updater.sh"
 
     info "Building the panel. This takes 5-15 minutes on the first run, please be patient..."
+    dc build updater >/dev/null 2>&1 || die "Could not build the updater service."
     if ! dc build --build-arg "MC_COMMIT=$commit" panel; then
         die "The build failed. Scroll up for the reason (a common one is too little memory: 4 GB or swap is recommended)."
     fi
@@ -515,12 +526,99 @@ start_wings() {
     fi
 }
 
+# Wings creates a Docker network for the game servers, by default 172.18.0.0/16. When the panel
+# runs in Docker on the same machine, Docker usually gave that very range to the panel's network,
+# and Wings then fails to start ("pool overlaps"). Pick a range nobody uses and tell Wings about it.
+configure_wings_network() {
+    local config=/etc/pterodactyl/config.yml used candidate existing
+    [ -f "$config" ] || return 0
+    grep -q '^docker:' "$config" && return 0
+
+    # Wings' own network from an earlier run: keep it, and describe it correctly in the config.
+    existing="$(docker network inspect pterodactyl_nw -f '{{range .IPAM.Config}}{{.Subnet}} {{end}}' 2>/dev/null | awk '{print $1}')"
+    if [ -n "$existing" ]; then
+        [ "$existing" = "172.18.0.0/16" ] && return 0
+        write_wings_network "${existing%.0.0/16}"
+        return 0
+    fi
+
+    used="$(docker network inspect $(docker network ls -q) -f '{{range .IPAM.Config}}{{.Subnet}} {{end}}' 2>/dev/null) $(ip -4 route 2>/dev/null | awk '{print $1}')"
+    grep -q '172\.18\.' <<<"$used" || return 0
+
+    for candidate in 172.29 172.30 172.31 172.28 172.27 10.250 10.251 10.252; do
+        if ! grep -q "${candidate//./\\.}\." <<<"$used"; then
+            write_wings_network "$candidate"
+            ok "Wings uses the network $candidate.0.0/16 (172.18.0.0/16 is taken by the panel's Docker network)"
+            return 0
+        fi
+    done
+    warn "Could not find a free network range for Wings; it may fail to start (journalctl -u wings)."
+}
+
+write_wings_network() {
+    cat >> /etc/pterodactyl/config.yml <<EOF
+docker:
+  network:
+    interface: $1.0.1
+    interfaces:
+      v4:
+        subnet: $1.0.0/16
+        gateway: $1.0.1
+EOF
+}
+
+# Waits until the panel can talk to Wings and explains what to check when it can't.
+check_node_connection() {
+    local url="$1" code="" tries=0
+    info "Checking that the panel can reach Wings..."
+    while [ "$tries" -lt 20 ]; do
+        # 401 = Wings answered and asked for its token, which is exactly what we want to see here.
+        code="$(dc exec -T panel curl -s -o /dev/null -w '%{http_code}' --max-time 5 "$url/api/system" 2>/dev/null || true)"
+        if [ "$code" = "401" ] || [ "$code" = "200" ]; then
+            ok "The panel reaches Wings at $url"
+            return 0
+        fi
+        sleep 3
+        tries=$((tries + 1))
+    done
+
+    warn "The panel cannot reach Wings at $url (last answer: ${code:-none})."
+    if command -v systemctl >/dev/null 2>&1 && ! systemctl is-active --quiet wings; then
+        warn "Wings is not running. Its last log lines:"
+        journalctl -u wings -n 15 --no-pager 2>/dev/null | sed 's/^/     /'
+    else
+        warn "Wings runs, so something is in between. Check:"
+        echo "     - Is the domain behind Cloudflare's proxy (orange cloud)? Set it to 'DNS only'."
+        echo "     - Does a firewall block port 8080? (ufw allow 8080/tcp)"
+    fi
+    echo "     Fix it and run this installer again with the Wings option; it repairs the setup."
+    return 1
+}
+
+set_env_value() {
+    local key="$1" value="$2" file="$INSTALL_DIR/.env"
+    if grep -q "^$key=" "$file"; then
+        sed -i "s|^$key=.*|$key=$value|" "$file"
+    else
+        echo "$key=$value" >> "$file"
+    fi
+}
+
 # The panel runs on this machine: create the node through the panel and connect Wings, no copying needed.
+# Running it again repairs an existing setup (same node, fresh config).
 setup_local_node() {
     local app_url panel_host email scheme node_id mem_mb disk_mb tries=0
     app_url="$(env_value APP_URL)"
     panel_host="${app_url#*://}"; panel_host="${panel_host%%/*}"; panel_host="${panel_host%%:*}"
     email="$(env_value LE_EMAIL)"; [ -n "$email" ] || email="$(env_value APP_SERVICE_AUTHOR)"
+
+    # An older panel may lack what this needs (the direct panel -> Wings route); bring it up to date first.
+    info "Making sure the panel is up to date..."
+    bash "$INSTALL_DIR/installer/updater/updater.sh" run "wings-setup-$(date +%s)" false 0 >/dev/null 2>&1 \
+        || warn "The panel could not be updated right now; continuing with the installed version."
+
+    # Installing panel and Wings together: no extra questions, Wings uses the panel's address.
+    [ "${WITH_WINGS:-0}" = "1" ] && [ -z "${NODE_FQDN:-}" ] && NODE_FQDN="$panel_host"
 
     if [[ "$app_url" == https://* ]]; then
         # Browsers only allow the server console over HTTPS when Wings has a certificate too.
@@ -531,6 +629,14 @@ setup_local_node() {
     else
         scheme="http"
         ask NODE_FQDN "Address players and the panel use to reach this machine" "$panel_host"
+    fi
+
+    # Let the panel container reach this machine's Wings directly under the node's name.
+    if ! is_ip "$NODE_FQDN" && [ "$NODE_FQDN" != "localhost" ]; then
+        set_env_value LOCAL_NODE_FQDN "$NODE_FQDN"
+        dc up -d --no-deps panel >/dev/null 2>&1 || warn "Could not restart the panel container."
+        local waited=0
+        until dc exec -T panel php -v >/dev/null 2>&1 || [ "$waited" -ge 90 ]; do sleep 3; waited=$((waited + 3)); done
     fi
 
     mem_mb=$(( $(awk '/MemTotal/ {print $2}' /proc/meminfo) / 1024 - 1536 ))
@@ -546,14 +652,16 @@ setup_local_node() {
         [ "$tries" -ge 12 ] && die "Could not create the node in the panel. Check: recoded-ptero logs panel"
         sleep 5
     done
-    ok "Node #$node_id created"
+    ok "Node #$node_id is set up in the panel"
 
     dc exec -T panel php artisan p:node:configuration "$node_id" --format=yaml > /etc/pterodactyl/config.yml.new \
         && [ -s /etc/pterodactyl/config.yml.new ] || die "Could not read the node configuration from the panel."
     mv -f /etc/pterodactyl/config.yml.new /etc/pterodactyl/config.yml
     chmod 600 /etc/pterodactyl/config.yml
+    configure_wings_network
     ok "Wings is configured"
     start_wings
+    check_node_connection "$scheme://$NODE_FQDN:8080" || true
 }
 
 # The panel runs somewhere else: prepare the certificate, then connect with the token from the panel.
@@ -993,10 +1101,10 @@ main() {
     local action="${MC_ACTION:-}"
     if [ -z "$action" ]; then
         echo "What do you want to do?"
-        echo "  [1] Install Recoded Ptero (new panel)"
+        echo "  [1] Install Recoded Ptero (asks whether Wings goes on this server too)"
         echo "  [2] Upgrade an existing Pterodactyl panel to Recoded Ptero (keeps all data)"
-        echo "  [3] Install Wings (game server daemon) on this machine"
-        echo "  [4] Install Recoded Ptero and Wings on this machine"
+        echo "  [3] Install or repair Wings (game server daemon) on this machine"
+        echo "  [4] Install Recoded Ptero and Wings on this machine in one go"
         echo "  [5] Update Recoded Ptero to the newest version"
         echo "  [6] Uninstall Recoded Ptero"
         echo "  [7] Uninstall Wings"
@@ -1015,7 +1123,7 @@ main() {
     fi
 
     case "$action" in
-        panel) install_panel ;;
+        panel) install_panel; [ "${WITH_WINGS:-0}" = "1" ] && install_wings ;;
         wings) install_wings ;;
         both) WITH_WINGS=1; install_panel; install_wings ;;
         upgrade) upgrade_panel ;;

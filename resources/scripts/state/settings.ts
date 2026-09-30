@@ -7,6 +7,15 @@ export interface SiteSettings {
         enabled: boolean;
         siteKey: string;
     };
+    maintenance?: {
+        mode: 'off' | 'banner' | 'lock';
+        message: string;
+    };
+    discord?: {
+        enabled: boolean;
+    };
+    statusPage?: boolean;
+    verifyEmail?: boolean;
 }
 
 export interface SettingsStore {

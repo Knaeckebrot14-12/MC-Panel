@@ -10,6 +10,8 @@ export interface UserData {
     staff: boolean;
     useTotp: boolean;
     mustChangePassword: boolean;
+    emailVerified: boolean;
+    discordUsername: string | null;
     createdAt: Date;
     updatedAt: Date;
 }

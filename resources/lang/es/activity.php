@@ -19,6 +19,9 @@ return [
         'sftp' => [
             'fail' => 'Inicio de sesión SFTP fallido',
         ],
+        'discord' => [
+            'login' => 'Inició sesión con Discord',
+        ],
     ],
     'user' => [
         'user' => [
@@ -27,6 +30,8 @@ return [
         'account' => [
             'email-changed' => 'Cambió el correo de :old a :new',
             'password-changed' => 'Cambió la contraseña',
+            'discord-linked' => 'Vinculó una cuenta de Discord',
+            'discord-unlinked' => 'Desvinculó Discord',
         ],
         'api-key' => [
             'create' => 'Creó la nueva clave de API :identifier',
@@ -63,6 +68,7 @@ return [
             'fail' => 'Marcó la copia de seguridad :name como fallida',
             'lock' => 'Bloqueó la copia de seguridad :name',
             'unlock' => 'Desbloqueó la copia de seguridad :name',
+            'auto' => 'Configuró copias automáticas cada :hours horas (0 = desactivadas)',
         ],
         'database' => [
             'create' => 'Creó la nueva base de datos :name',
@@ -128,6 +134,19 @@ return [
             'create' => 'Añadió a :email como subusuario',
             'update' => 'Actualizó los permisos del subusuario :email',
             'delete' => 'Eliminó a :email como subusuario',
+        ],
+        'players' => [
+            'whitelist_add' => 'Añadió a :target a la lista blanca',
+            'whitelist_remove' => 'Quitó a :target de la lista blanca',
+            'op' => 'Hizo operador a :target',
+            'deop' => 'Quitó el operador a :target',
+            'ban' => 'Baneó a :target',
+            'pardon' => 'Desbaneó a :target',
+            'ban_ip' => 'Baneó la IP :target',
+            'pardon_ip' => 'Desbaneó la IP :target',
+            'kick' => 'Expulsó a :target',
+            'whitelist_on' => 'Activó la lista blanca',
+            'whitelist_off' => 'Desactivó la lista blanca',
         ],
     ],
     'meta' => [

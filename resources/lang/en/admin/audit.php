@@ -46,5 +46,8 @@ return [
         'update.started' => 'Started a panel update to :subject',
         'update.auto_on' => 'Turned automatic updates on',
         'update.auto_off' => 'Turned automatic updates off',
+        'settings.login' => 'Changed the login & registration settings',
+        'maintenance.updated' => 'Set maintenance mode to :subject',
+        'user.email_verified' => 'Confirmed the e-mail address of :subject',
     ],
 ];

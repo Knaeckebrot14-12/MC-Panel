@@ -46,5 +46,8 @@ return [
         'update.started' => 'Inició una actualización del panel a :subject',
         'update.auto_on' => 'Activó las actualizaciones automáticas',
         'update.auto_off' => 'Desactivó las actualizaciones automáticas',
+        'settings.login' => 'Cambió los ajustes de inicio de sesión y registro',
+        'maintenance.updated' => 'Puso el modo mantenimiento en :subject',
+        'user.email_verified' => 'Confirmó la dirección de correo de :subject',
     ],
 ];

@@ -10,6 +10,7 @@ import SubNavigation from '@/components/elements/SubNavigation';
 import { useLocation } from 'react-router';
 import Spinner from '@/components/elements/Spinner';
 import routes from '@/routers/routes';
+import EmailVerificationBanner from '@/components/dashboard/EmailVerificationBanner';
 
 export default () => {
     const { t } = useTranslation('navigation');
@@ -57,6 +58,7 @@ export default () => {
                     </div>
                 </SubNavigation>
             )}
+            <EmailVerificationBanner />
             <TransitionRouter>
                 <React.Suspense fallback={<Spinner centered />}>
                     <Switch location={location}>

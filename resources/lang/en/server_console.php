@@ -51,4 +51,13 @@ return [
         'restoring_title' => 'Restoring from Backup',
         'restoring_message' => 'Your server is currently being restored from a backup, please check back in a few minutes.',
     ],
+    'history' => [
+        'title' => 'History',
+        'range_24h' => '24 hours',
+        'range_7d' => '7 days',
+        'empty' => 'No history yet. Values are recorded every five minutes while the panel runs.',
+        'cpu' => 'CPU',
+        'memory' => 'Memory',
+        'players' => 'Players',
+    ],
 ];

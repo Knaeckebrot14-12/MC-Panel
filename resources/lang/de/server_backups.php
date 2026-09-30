@@ -37,4 +37,20 @@ return [
         'start_button' => 'Backup starten',
     ],
     'create_button' => 'Backup erstellen',
+    'auto' => [
+        'title' => 'Automatische Backups',
+        'description' => 'Erstellt Backups nach Zeitplan. Sind alle :limit Backup-Plätze belegt, wird das älteste nicht gesperrte Backup ersetzt. Sperre ein Backup, um es zu behalten.',
+        'last' => 'Zuletzt: :time',
+        'next' => 'Nächstes: :time',
+        'saved_on' => 'Automatische Backups sind an.',
+        'saved_off' => 'Automatische Backups sind aus.',
+        'intervals' => [
+            0 => 'Aus',
+            6 => 'Alle 6 Stunden',
+            12 => 'Alle 12 Stunden',
+            24 => 'Täglich',
+            48 => 'Alle 2 Tage',
+            168 => 'Wöchentlich',
+        ],
+    ],
 ];

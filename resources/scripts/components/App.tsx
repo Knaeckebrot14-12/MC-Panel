@@ -15,6 +15,7 @@ import { ServerContext } from '@/state/server';
 import '@/assets/tailwind.css';
 import Spinner from '@/components/elements/Spinner';
 import ForcedPasswordChangeContainer from '@/components/auth/ForcedPasswordChangeContainer';
+import { MaintenanceBanner, MaintenanceScreen } from '@/components/MaintenanceNotice';
 
 const DashboardRouter = lazy(() => import(/* webpackChunkName: "dashboard" */ '@/routers/DashboardRouter'));
 const ServerRouter = lazy(() => import(/* webpackChunkName: "server" */ '@/routers/ServerRouter'));
@@ -32,6 +33,8 @@ interface ExtendedWindow extends Window {
         role?: string;
         use_totp: boolean;
         must_change_password: boolean;
+        email_verified_at?: string | null;
+        discord_username?: string | null;
         language: string;
         updated_at: string;
         created_at: string;
@@ -53,6 +56,8 @@ const App = () => {
             staff: PterodactylUser.staff ?? PterodactylUser.root_admin,
             useTotp: PterodactylUser.use_totp,
             mustChangePassword: PterodactylUser.must_change_password,
+            emailVerified: !!PterodactylUser.email_verified_at,
+            discordUsername: PterodactylUser.discord_username ?? null,
             createdAt: new Date(PterodactylUser.created_at),
             updatedAt: new Date(PterodactylUser.updated_at),
         });
@@ -68,13 +73,33 @@ const App = () => {
     // they're already logged in at this point.
     const mustChangePassword = !!PterodactylUser?.must_change_password;
 
+    // Maintenance: "banner" is shown to everybody; "lock" shows the banner to the team and keeps
+    // everyone else on the maintenance screen (they can still reach the login page).
+    const maintenance = SiteConfiguration?.maintenance;
+    const isStaff = !!(PterodactylUser?.staff ?? PterodactylUser?.root_admin);
+    const lockedOut =
+        maintenance?.mode === 'lock' && !!PterodactylUser && !isStaff && !window.location.pathname.startsWith('/auth');
+    const showBanner = maintenance && (maintenance.mode === 'banner' || (maintenance.mode === 'lock' && isStaff));
+
     return (
         <>
             <GlobalStylesheet />
             <StoreProvider store={store}>
                 <ProgressBar />
+                {showBanner && !lockedOut && (
+                    <React.Suspense fallback={null}>
+                        <MaintenanceBanner maintenance={maintenance!} staffView={maintenance!.mode === 'lock'} />
+                    </React.Suspense>
+                )}
                 <div css={tw`mx-auto w-auto`}>
-                    {mustChangePassword ? (
+                    {lockedOut ? (
+                        <React.Suspense fallback={null}>
+                            <MaintenanceScreen
+                                maintenance={maintenance!}
+                                statusPage={!!SiteConfiguration?.statusPage}
+                            />
+                        </React.Suspense>
+                    ) : mustChangePassword ? (
                         <ForcedPasswordChangeContainer />
                     ) : (
                         <Router history={history}>

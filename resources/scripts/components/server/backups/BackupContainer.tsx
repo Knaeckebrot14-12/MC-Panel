@@ -6,6 +6,7 @@ import Can from '@/components/elements/Can';
 import CreateBackupButton from '@/components/server/backups/CreateBackupButton';
 import FlashMessageRender from '@/components/FlashMessageRender';
 import BackupRow from '@/components/server/backups/BackupRow';
+import AutoBackupBox from '@/components/server/backups/AutoBackupBox';
 import tw from 'twin.macro';
 import getServerBackups, { Context as ServerBackupContext } from '@/api/swr/getServerBackups';
 import { ServerContext } from '@/state/server';
@@ -37,6 +38,7 @@ const BackupContainer = () => {
     return (
         <ServerContentBlock title={t('title')}>
             <FlashMessageRender byKey={'backups'} css={tw`mb-4`} />
+            <AutoBackupBox />
             <Pagination data={backups} onPageSelect={setPage}>
                 {({ items }) =>
                     !items.length ? (

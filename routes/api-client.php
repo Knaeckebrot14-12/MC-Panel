@@ -22,17 +22,17 @@ Route::get('/', [Client\ClientController::class, 'index'])->name('api:client.ind
 Route::get('/permissions', [Client\ClientController::class, 'permissions']);
 Route::get('/announcements', [Client\AnnouncementController::class, 'index'])->name('api:client.announcements');
 Route::get('/self-service/servers', [Client\SelfServiceServerController::class, 'index'])->name('api:client.self-service.servers.index');
-Route::post('/self-service/servers', [Client\SelfServiceServerController::class, 'store'])->name('api:client.self-service.servers');
+Route::post('/self-service/servers', [Client\SelfServiceServerController::class, 'store'])->middleware('verified.email')->name('api:client.self-service.servers');
 Route::delete('/self-service/servers/{server}', [Client\SelfServiceServerController::class, 'destroy'])->name('api:client.self-service.servers.destroy');
 
 Route::get('/coins', [Client\CoinsController::class, 'index'])->name('api:client.coins');
 Route::get('/coins/transactions', [Client\CoinsController::class, 'transactions'])->name('api:client.coins.transactions');
-Route::post('/coins/linkvertise', [Client\LinkvertiseController::class, 'store'])->name('api:client.coins.linkvertise');
-Route::post('/coins/voucher', [Client\CoinExtrasController::class, 'redeemVoucher'])->name('api:client.coins.voucher');
-Route::post('/coins/daily', [Client\CoinExtrasController::class, 'claimDaily'])->name('api:client.coins.daily');
-Route::post('/coins/afk',[Client\AfkController::class, 'tick'])->name('api:client.coins.afk');
-Route::post('/coins/shop/resource', [Client\ShopController::class, 'purchaseResource'])->name('api:client.coins.shop.resource');
-Route::post('/coins/shop/server', [Client\ShopController::class, 'purchaseServer'])->name('api:client.coins.shop.server');
+Route::post('/coins/linkvertise', [Client\LinkvertiseController::class, 'store'])->middleware('verified.email')->name('api:client.coins.linkvertise');
+Route::post('/coins/voucher', [Client\CoinExtrasController::class, 'redeemVoucher'])->middleware('verified.email')->name('api:client.coins.voucher');
+Route::post('/coins/daily', [Client\CoinExtrasController::class, 'claimDaily'])->middleware('verified.email')->name('api:client.coins.daily');
+Route::post('/coins/afk',[Client\AfkController::class, 'tick'])->middleware('verified.email')->name('api:client.coins.afk');
+Route::post('/coins/shop/resource', [Client\ShopController::class, 'purchaseResource'])->middleware('verified.email')->name('api:client.coins.shop.resource');
+Route::post('/coins/shop/server', [Client\ShopController::class, 'purchaseServer'])->middleware('verified.email')->name('api:client.coins.shop.server');
 
 Route::get('/tickets', [Client\TicketController::class, 'index'])->name('api:client.tickets');
 Route::post('/tickets', [Client\TicketController::class, 'store'])->name('api:client.tickets.store');
@@ -50,6 +50,11 @@ Route::prefix('/account')->middleware(AccountSubject::class)->group(function () 
         Route::post('/two-factor', [Client\TwoFactorController::class, 'store']);
         Route::post('/two-factor/disable', [Client\TwoFactorController::class, 'delete']);
     });
+
+    Route::post('/verify-email', [Client\EmailVerificationController::class, 'resend'])
+        ->name('api:client.account.verify-email');
+    Route::delete('/discord', [Client\AccountController::class, 'unlinkDiscord'])
+        ->name('api:client.account.discord.unlink');
 
     Route::put('/email', [Client\AccountController::class, 'updateEmail'])
         ->middleware('throttle')
@@ -160,7 +165,14 @@ Route::group([
         Route::delete('/{user}', [Client\Servers\SubuserController::class, 'delete']);
     });
 
+    Route::get('/players', [Client\Servers\PlayerController::class, 'index']);
+    Route::post('/players', [Client\Servers\PlayerController::class, 'action'])->middleware('throttle:30,1');
+    Route::get('/stats', [Client\Servers\StatsController::class, 'index']);
+
     Route::group(['prefix' => '/backups'], function () {
+        // Must come before the /{backup} routes, which would otherwise try to bind "auto" as a backup.
+        Route::get('/auto', [Client\Servers\AutoBackupController::class, 'show']);
+        Route::put('/auto', [Client\Servers\AutoBackupController::class, 'update']);
         Route::get('/', [Client\Servers\BackupController::class, 'index']);
         Route::post('/', [Client\Servers\BackupController::class, 'store']);
         Route::get('/{backup}', [Client\Servers\BackupController::class, 'view']);

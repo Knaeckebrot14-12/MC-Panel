@@ -57,6 +57,15 @@ class SettingsServiceProvider extends ServiceProvider
         'coins:referral:referrer_reward',
         'coins:referral:referred_bonus',
         'mcpanel:auto_update',
+        'mcpanel:registration:verify_email',
+        'mcpanel:registration:max_accounts_per_ip',
+        'mcpanel:discord:enabled',
+        'mcpanel:discord:client_id',
+        'mcpanel:discord:client_secret',
+        'mcpanel:discord:allow_registration',
+        'mcpanel:status_page:enabled',
+        'mcpanel:maintenance:mode',
+        'mcpanel:maintenance:message',
     ];
 
     /**
@@ -79,6 +88,7 @@ class SettingsServiceProvider extends ServiceProvider
      */
     protected static array $encrypted = [
         'mail:mailers:smtp:password',
+        'mcpanel:discord:client_secret',
     ];
 
     /**

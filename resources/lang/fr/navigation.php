@@ -28,5 +28,7 @@ return [
         'network' => 'Réseau',
         'startup' => 'Démarrage',
         'settings' => 'Paramètres',
+        'players' => 'Joueurs',
+        'properties' => 'Paramètres du serveur',
     ],
 ];

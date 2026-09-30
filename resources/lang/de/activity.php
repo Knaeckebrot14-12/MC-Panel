@@ -19,6 +19,9 @@ return [
         'sftp' => [
             'fail' => 'SFTP-Anmeldung fehlgeschlagen',
         ],
+        'discord' => [
+            'login' => 'Mit Discord angemeldet',
+        ],
     ],
     'user' => [
         'user' => [
@@ -27,6 +30,8 @@ return [
         'account' => [
             'email-changed' => 'E-Mail von :old zu :new geändert',
             'password-changed' => 'Passwort geändert',
+            'discord-linked' => 'Discord-Account verknüpft',
+            'discord-unlinked' => 'Discord getrennt',
         ],
         'api-key' => [
             'create' => 'Neuen API-Schlüssel :identifier erstellt',
@@ -63,6 +68,7 @@ return [
             'fail' => 'Backup :name als fehlgeschlagen markiert',
             'lock' => 'Backup :name gesperrt',
             'unlock' => 'Backup :name entsperrt',
+            'auto' => 'Automatische Backups auf alle :hours Stunden gestellt (0 = aus)',
         ],
         'database' => [
             'create' => 'Neue Datenbank :name erstellt',
@@ -128,6 +134,19 @@ return [
             'create' => ':email als Unterbenutzer hinzugefügt',
             'update' => 'Unterbenutzer-Berechtigungen für :email aktualisiert',
             'delete' => ':email als Unterbenutzer entfernt',
+        ],
+        'players' => [
+            'whitelist_add' => ':target zur Whitelist hinzugefügt',
+            'whitelist_remove' => ':target von der Whitelist entfernt',
+            'op' => ':target zum Operator gemacht',
+            'deop' => 'Operator :target entfernt',
+            'ban' => ':target gebannt',
+            'pardon' => ':target entbannt',
+            'ban_ip' => 'IP :target gebannt',
+            'pardon_ip' => 'IP :target entbannt',
+            'kick' => ':target gekickt',
+            'whitelist_on' => 'Whitelist eingeschaltet',
+            'whitelist_off' => 'Whitelist ausgeschaltet',
         ],
     ],
     'meta' => [

@@ -6,12 +6,16 @@ use Pterodactyl\Models\User;
 use Illuminate\Http\JsonResponse;
 use Pterodactyl\Services\Coins\CoinService;
 use Pterodactyl\Http\Requests\Auth\RegisterRequest;
+use Pterodactyl\Services\Users\RegistrationGuard;
 use Pterodactyl\Services\Users\UserCreationService;
 
 class RegisterController extends AbstractLoginController
 {
-    public function __construct(private UserCreationService $creationService, private CoinService $coins)
-    {
+    public function __construct(
+        private UserCreationService $creationService,
+        private CoinService $coins,
+        private RegistrationGuard $guard,
+    ) {
         parent::__construct();
     }
 
@@ -23,11 +27,14 @@ class RegisterController extends AbstractLoginController
      */
     public function register(RegisterRequest $request): JsonResponse
     {
+        $this->guard->assertCanRegister($request->ip());
+
         $data = $request->validated();
         $referralCode = trim((string) ($data['referral_code'] ?? ''));
         unset($data['referral_code']);
 
         $user = $this->creationService->handle($data);
+        $this->guard->afterRegistration($user, $request->ip());
 
         $this->applyReferral($user, $referralCode);
 
@@ -46,6 +53,12 @@ class RegisterController extends AbstractLoginController
 
         $referrer = User::query()->where('referral_code', strtoupper($code))->first();
         if (!$referrer || $referrer->id === $user->id) {
+            return;
+        }
+
+        // Inviting yourself with a second account from the same connection earns nothing.
+        $ip = RegistrationGuard::countableIp($user->registration_ip);
+        if ($ip && $referrer->registration_ip === $ip) {
             return;
         }
 

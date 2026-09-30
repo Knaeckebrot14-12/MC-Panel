@@ -51,4 +51,13 @@ return [
         'restoring_title' => 'Wiederherstellung aus Backup',
         'restoring_message' => 'Dein Server wird derzeit aus einem Backup wiederhergestellt, bitte schau in ein paar Minuten noch einmal vorbei.',
     ],
+    'history' => [
+        'title' => 'Verlauf',
+        'range_24h' => '24 Stunden',
+        'range_7d' => '7 Tage',
+        'empty' => 'Noch kein Verlauf. Die Werte werden alle fünf Minuten aufgezeichnet.',
+        'cpu' => 'CPU',
+        'memory' => 'Arbeitsspeicher',
+        'players' => 'Spieler',
+    ],
 ];

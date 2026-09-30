@@ -46,7 +46,7 @@ return [
         ],
         'enable' => [
             'dialog_title' => 'Enable Two-Step Verification',
-            'dialog_description' => "Help protect your account from unauthorized access. You'll be prompted for a verification code each time you sign in.",
+            'dialog_description' => 'Help protect your account from unauthorized access. You\'ll be prompted for a verification code each time you sign in.',
             'loading' => 'Loading...',
             'scan_instruction' => 'Scan the QR code above using the two-step authentication app of your choice. Then, enter the 6-digit code generated into the field below.',
             'account_password_label' => 'Account Password',
@@ -66,6 +66,22 @@ return [
             'description' => 'Store the codes below somewhere safe. If you lose access to your phone you can use these backup codes to sign in.',
             'warning' => 'These codes will not be shown again.',
             'done_button' => 'Done',
+        ],
+    ],
+    'discord' => [
+        'title' => 'Discord',
+        'linked_as' => 'Linked with :name',
+        'unlink_hint' => 'After unlinking you log in with your e-mail and password. Set a password first if your account was created through Discord.',
+        'unlink' => 'Unlink Discord',
+        'not_linked' => 'Link your Discord account to log in with one click.',
+        'link' => 'Link Discord',
+        'linked_success' => 'Your Discord account is now linked.',
+        'unlinked_success' => 'Discord was unlinked.',
+        'errors' => [
+            'taken' => 'This Discord account is already linked to another panel account.',
+            'state' => 'The Discord login expired. Please try again.',
+            'cancelled' => 'Linking was cancelled.',
+            'discord' => 'Discord could not be reached. Please try again.',
         ],
     ],
 ];

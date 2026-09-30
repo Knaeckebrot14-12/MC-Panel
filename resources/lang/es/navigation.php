@@ -28,5 +28,7 @@ return [
         'network' => 'Red',
         'startup' => 'Inicio',
         'settings' => 'Ajustes',
+        'players' => 'Jugadores',
+        'properties' => 'Ajustes del servidor',
     ],
 ];

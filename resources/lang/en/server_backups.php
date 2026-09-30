@@ -37,4 +37,20 @@ return [
         'start_button' => 'Start backup',
     ],
     'create_button' => 'Create backup',
+    'auto' => [
+        'title' => 'Automatic backups',
+        'description' => 'Creates backups on a schedule. When all :limit backup slots are used, the oldest unlocked backup is replaced. Lock a backup to keep it.',
+        'last' => 'Last: :time',
+        'next' => 'Next: :time',
+        'saved_on' => 'Automatic backups are on.',
+        'saved_off' => 'Automatic backups are off.',
+        'intervals' => [
+            0 => 'Off',
+            6 => 'Every 6 hours',
+            12 => 'Every 12 hours',
+            24 => 'Daily',
+            48 => 'Every 2 days',
+            168 => 'Weekly',
+        ],
+    ],
 ];

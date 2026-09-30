@@ -83,6 +83,7 @@ class Kernel extends HttpKernel
             SubstituteClientBindings::class,
             RequireClientApiKey::class,
             LanguageMiddleware::class,
+            \Pterodactyl\Http\Middleware\PanelMaintenance::class,
         ],
         'daemon' => [
             SubstituteBindings::class,
@@ -105,7 +106,8 @@ class Kernel extends HttpKernel
         'recaptcha' => VerifyReCaptcha::class,
         'node.maintenance' => MaintenanceMiddleware::class,
         'admin.only' => \Pterodactyl\Http\Middleware\AdminAuthenticate::class,
-        'owner.only' => \Pterodactyl\Http\Middleware\OwnerOnly::class,
+        'verified.email' => \Pterodactyl\Http\Middleware\EnsureEmailIsVerified::class,
+        'owner.only' =>\Pterodactyl\Http\Middleware\OwnerOnly::class,
         'staff' => \Pterodactyl\Http\Middleware\StaffPermission::class,
     ];
 }

@@ -11,6 +11,7 @@ import tw from 'twin.macro';
 import Button from '@/components/elements/Button';
 import Reaptcha from 'reaptcha';
 import useFlash from '@/plugins/useFlash';
+import DiscordIcon from '@/components/elements/DiscordIcon';
 
 interface Values {
     username: string;
@@ -22,11 +23,23 @@ const LoginContainer = ({ history }: RouteComponentProps) => {
     const ref = useRef<Reaptcha>(null);
     const [token, setToken] = useState('');
 
-    const { clearFlashes, clearAndAddHttpError } = useFlash();
+    const { clearFlashes, clearAndAddHttpError, addFlash } = useFlash();
     const { enabled: recaptchaEnabled, siteKey } = useStoreState((state) => state.settings.data!.recaptcha);
+    const discordEnabled = useStoreState((state) => !!state.settings.data!.discord?.enabled);
 
     useEffect(() => {
         clearFlashes();
+
+        // Coming back from a failed Discord login: /auth/login?discord_error=...
+        const code = new URLSearchParams(window.location.search).get('discord_error');
+        if (code) {
+            addFlash({
+                type: 'error',
+                title: 'Discord',
+                message: t(`discord.errors.${code}`, t('discord.errors.discord')),
+            });
+            window.history.replaceState(null, '', window.location.pathname);
+        }
     }, []);
 
     const onSubmit = (values: Values, { setSubmitting }: FormikHelpers<Values>) => {
@@ -110,6 +123,18 @@ const LoginContainer = ({ history }: RouteComponentProps) => {
                             </Button>
                         </Link>
                     </div>
+                    {discordEnabled && (
+                        <div css={tw`mt-2`}>
+                            <a
+                                href={'/auth/discord'}
+                                css={tw`flex items-center justify-center w-full p-4 rounded text-white font-medium no-underline transition-colors duration-150`}
+                                style={{ backgroundColor: '#5865F2' }}
+                            >
+                                <DiscordIcon className={'mr-2 text-lg'} />
+                                {t('discord.login')}
+                            </a>
+                        </div>
+                    )}
                     {recaptchaEnabled && (
                         <Reaptcha
                             ref={ref}

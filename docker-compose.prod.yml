@@ -26,14 +26,19 @@ services:
     restart: unless-stopped
 
   panel:
+    # No image: key on purpose. Compose names the image <project>-panel and never tries to
+    # download it from a registry; it only exists locally.
     build: .
-    image: recodedptero-panel:latest
     restart: unless-stopped
     depends_on:
       database:
         condition: service_healthy
       cache:
         condition: service_started
+    # When Wings runs on the same server, the panel reaches it directly through the Docker host
+    # instead of going out to the public address (no hairpin NAT, Cloudflare or firewall in between).
+    extra_hosts:
+      - "${LOCAL_NODE_FQDN:-local-node.invalid}:host-gateway"
     ports:
       - "${HTTP_BIND:-0.0.0.0}:${HTTP_PORT:-80}:80"
       - "${HTTP_BIND:-0.0.0.0}:${HTTPS_PORT:-443}:443"
@@ -71,7 +76,6 @@ services:
   # Settings -> Updates page, then pulls the repository, rebuilds and restarts the panel.
   updater:
     build: ./installer/updater
-    image: recodedptero-updater:latest
     restart: unless-stopped
     working_dir: ${INSTALL_DIR:-/opt/recoded-ptero}
     volumes:
@@ -81,6 +85,7 @@ services:
     environment:
       INSTALL_DIR: ${INSTALL_DIR:-/opt/recoded-ptero}
       COMPOSE_PROJECT_NAME: ${COMPOSE_PROJECT_NAME:-recodedptero}
+      MC_PANEL_IMAGE: ${COMPOSE_PROJECT_NAME:-recodedptero}-panel
       MC_PANEL_BRANCH: ${MC_PANEL_BRANCH:-main}
     command: ["bash", "${INSTALL_DIR:-/opt/recoded-ptero}/installer/updater/updater.sh", "daemon"]
 

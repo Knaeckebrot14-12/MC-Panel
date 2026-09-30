@@ -41,6 +41,10 @@ class QuickSetupNodeCommand extends Command
         }
 
         $node = Node::query()->where('fqdn', $fqdn)->first();
+        if ($node && $node->scheme !== $scheme) {
+            // Running the installer again (e.g. after switching the panel to HTTPS) repairs the node.
+            $node->forceFill(['scheme' => $scheme])->save();
+        }
         if (!$node) {
             $location = Location::query()->first() ?? Location::query()->create([
                 'short' => 'main',

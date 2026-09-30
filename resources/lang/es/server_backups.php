@@ -37,4 +37,20 @@ return [
         'start_button' => 'Iniciar copia de seguridad',
     ],
     'create_button' => 'Crear copia de seguridad',
+    'auto' => [
+        'title' => 'Copias de seguridad automáticas',
+        'description' => 'Crea copias según un horario. Cuando las :limit plazas están ocupadas, se reemplaza la copia desbloqueada más antigua. Bloquea una copia para conservarla.',
+        'last' => 'Última: :time',
+        'next' => 'Próxima: :time',
+        'saved_on' => 'Las copias automáticas están activadas.',
+        'saved_off' => 'Las copias automáticas están desactivadas.',
+        'intervals' => [
+            0 => 'Desactivadas',
+            6 => 'Cada 6 horas',
+            12 => 'Cada 12 horas',
+            24 => 'Diarias',
+            48 => 'Cada 2 días',
+            168 => 'Semanales',
+        ],
+    ],
 ];

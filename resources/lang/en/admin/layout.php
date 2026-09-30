@@ -23,6 +23,8 @@ return [
         'plans' => 'Server Plans',
         'coins_settings' => 'Coin Settings',
         'audit' => 'Audit Log',
+        'maintenance' => 'Maintenance',
+        'discord_login' => 'Discord login',
     ],
     'header' => [
         'toggle_navigation' => 'Toggle navigation',

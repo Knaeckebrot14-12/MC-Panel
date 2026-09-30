@@ -27,6 +27,15 @@ class AssetComposer
                 'enabled' => config('recaptcha.enabled', false),
                 'siteKey' => config('recaptcha.website_key') ?? '',
             ],
+            'maintenance' => [
+                'mode' => in_array(config('mcpanel.maintenance.mode'), ['banner', 'lock'], true) ? config('mcpanel.maintenance.mode') : 'off',
+                'message' => (string) config('mcpanel.maintenance.message'),
+            ],
+            'discord' => [
+                'enabled' => (bool) \Pterodactyl\Http\Controllers\Base\DiscordAuthController::enabled(),
+            ],
+            'statusPage' => filter_var(config('mcpanel.status_page.enabled'), FILTER_VALIDATE_BOOLEAN),
+            'verifyEmail' => filter_var(config('mcpanel.registration.verify_email'), FILTER_VALIDATE_BOOLEAN),
         ]);
     }
 }

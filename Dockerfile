@@ -8,6 +8,8 @@ WORKDIR /app
 COPY package.json yarn.lock ./
 RUN yarn install --frozen-lockfile
 COPY . ./
+# The browser list only affects CSS prefixes; its "data is old" notice is just noise in the build log.
+ENV BROWSERSLIST_IGNORE_OLD_DATA=1
 RUN yarn run build:production
 
 # Stage 1:
@@ -34,7 +36,10 @@ COPY .github/docker/supervisord.conf /etc/supervisord.conf
 
 COPY . ./
 COPY --from=0 /app/public/assets ./public/assets
+# A throwaway key lets composer's artisan hooks run cleanly during the build; the .env with it is
+# deleted right after, and the real key is created on first start (see entrypoint.sh).
 RUN cp .env.example .env \
+    && sed -i "s|^APP_KEY=.*|APP_KEY=base64:$(head -c 32 /dev/urandom | base64)|" .env \
     && mkdir -p bootstrap/cache/ storage/logs storage/framework/sessions storage/framework/views storage/framework/cache \
     && chmod 777 -R bootstrap storage \
     && composer install --no-dev --optimize-autoloader \

@@ -30,7 +30,6 @@ return [
             'password_confirmation_required' => 'Bitte bestätige dein Passwort.',
         ],
     ],
-
     'forgot_password' => [
         'label' => 'Passwort vergessen?',
         'label_help' => 'Gib die E-Mail-Adresse deines Kontos ein, um Anweisungen zum Zurücksetzen deines Passworts zu erhalten.',
@@ -55,11 +54,9 @@ return [
             'confirmation_mismatch' => 'Die Passwortbestätigung stimmt nicht überein.',
         ],
     ],
-
     'reset_password' => [
         'button' => 'Zurücksetzen und anmelden',
     ],
-
     'two_factor' => [
         'label' => '2-Faktor-Code',
         'label_help' => 'Für dieses Konto ist eine zweite Sicherheitsebene erforderlich. Bitte gib den von deinem Gerät generierten Code ein, um dich anzumelden.',
@@ -73,8 +70,19 @@ return [
         'lost_device' => 'Ich habe mein Gerät verloren',
         'have_device' => 'Ich habe mein Gerät',
     ],
-
     'throttle' => 'Zu viele Anmeldeversuche. Bitte versuche es in :seconds Sekunden erneut.',
     'password_requirements' => 'Das Passwort muss mindestens 8 Zeichen lang und für diese Seite einzigartig sein.',
     '2fa_must_be_enabled' => 'Der Administrator verlangt, dass für dein Konto die Zwei-Faktor-Authentifizierung aktiviert ist, um das Panel nutzen zu können.',
+    'discord' => [
+        'login' => 'Mit Discord anmelden',
+        'errors' => [
+            'state' => 'Die Discord-Anmeldung ist abgelaufen. Bitte versuche es erneut.',
+            'cancelled' => 'Die Discord-Anmeldung wurde abgebrochen.',
+            'discord' => 'Discord ist nicht erreichbar. Bitte versuche es erneut.',
+            'no_account' => 'Mit diesem Discord-Account ist kein Konto verknüpft. Melde dich normal an und verknüpfe Discord auf deiner Kontoseite.',
+            'unverified' => 'Dein Discord-Account hat keine bestätigte E-Mail-Adresse.',
+            'ip_limit' => 'Aus deinem Netzwerk wurden bereits die maximal erlaubten Konten registriert.',
+            'two_factor' => 'Dieses Konto nutzt Zwei-Faktor-Authentifizierung. Bitte melde dich mit Passwort und Code an.',
+        ],
+    ],
 ];

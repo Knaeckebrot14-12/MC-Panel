@@ -23,6 +23,8 @@ return [
         'plans' => 'Planes de servidor',
         'coins_settings' => 'Ajustes de coins',
         'audit' => 'Registro de auditoría',
+        'maintenance' => 'Mantenimiento',
+        'discord_login' => 'Login con Discord',
     ],
     'header' => [
         'toggle_navigation' => 'Alternar navegación',

@@ -7,6 +7,7 @@ return [
         'coins' => 'Coins',
         'advanced' => 'Advanced',
         'updates' => 'Updates',
+        'login' => 'Login & Registration',
     ],
     'notice' => [
         'env_only' => 'Your Panel is currently configured to read settings from the environment only. You will need to set :env_var in your environment file in order to load settings dynamically.',

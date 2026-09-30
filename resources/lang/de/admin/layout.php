@@ -23,6 +23,8 @@ return [
         'plans' => 'Server-Pakete',
         'coins_settings' => 'Coin-Einstellungen',
         'audit' => 'Audit-Log',
+        'maintenance' => 'Wartungsmodus',
+        'discord_login' => 'Discord-Login',
     ],
     'header' => [
         'toggle_navigation' => 'Navigation umschalten',

@@ -12,12 +12,15 @@ return [
         'success' => 'Connecté',
         'password-reset' => 'Mot de passe réinitialisé',
         'reset-password' => 'Réinitialisation du mot de passe demandée',
-        'checkpoint' => "Authentification à deux facteurs demandée",
+        'checkpoint' => 'Authentification à deux facteurs demandée',
         'recovery-token' => 'Jeton de récupération à deux facteurs utilisé',
-        'token' => "Défi à deux facteurs résolu",
-        'ip-blocked' => "Requête bloquée depuis une adresse IP non autorisée pour :identifier",
+        'token' => 'Défi à deux facteurs résolu',
+        'ip-blocked' => 'Requête bloquée depuis une adresse IP non autorisée pour :identifier',
         'sftp' => [
             'fail' => 'Échec de connexion SFTP',
+        ],
+        'discord' => [
+            'login' => 'Connecté avec Discord',
         ],
     ],
     'user' => [
@@ -25,8 +28,10 @@ return [
             'create' => 'Nouvel utilisateur :email créé',
         ],
         'account' => [
-            'email-changed' => "Adresse e-mail changée de :old à :new",
+            'email-changed' => 'Adresse e-mail changée de :old à :new',
             'password-changed' => 'Mot de passe modifié',
+            'discord-linked' => 'Compte Discord lié',
+            'discord-unlinked' => 'Discord dissocié',
         ],
         'api-key' => [
             'create' => 'Nouvelle clé API :identifier créée',
@@ -37,8 +42,8 @@ return [
             'delete' => 'Clé SSH :fingerprint retirée du compte',
         ],
         'two-factor' => [
-            'create' => "Authentification à deux facteurs activée",
-            'delete' => "Authentification à deux facteurs désactivée",
+            'create' => 'Authentification à deux facteurs activée',
+            'delete' => 'Authentification à deux facteurs désactivée',
         ],
     ],
     'server' => [
@@ -63,6 +68,7 @@ return [
             'fail' => 'Sauvegarde :name marquée comme échouée',
             'lock' => 'Sauvegarde :name verrouillée',
             'unlock' => 'Sauvegarde :name déverrouillée',
+            'auto' => 'Sauvegardes automatiques réglées toutes les :hours heures (0 = désactivées)',
         ],
         'database' => [
             'create' => 'Nouvelle base de données :name créée',
@@ -83,11 +89,11 @@ return [
             'rename_one' => ':directory:files.0.from renommé en :directory:files.0.to',
             'rename_other' => ':count fichiers renommés dans :directory',
             'write' => 'Nouveau contenu écrit dans :file',
-            'upload' => "Début d'un envoi de fichier",
+            'upload' => 'Début d\'un envoi de fichier',
             'uploaded' => ':directory:file envoyé',
         ],
         'sftp' => [
-            'denied' => "Accès SFTP bloqué en raison des permissions",
+            'denied' => 'Accès SFTP bloqué en raison des permissions',
             'create_one' => ':files.0 créé',
             'create_other' => ':count nouveaux fichiers créés',
             'write_one' => 'Contenu de :files.0 modifié',
@@ -122,12 +128,25 @@ return [
         ],
         'startup' => [
             'edit' => 'Variable :variable modifiée de « :old » à « :new »',
-            'image' => "Image Docker du serveur mise à jour de :old à :new",
+            'image' => 'Image Docker du serveur mise à jour de :old à :new',
         ],
         'subuser' => [
             'create' => ':email ajouté comme sous-utilisateur',
             'update' => 'Permissions du sous-utilisateur :email mises à jour',
             'delete' => ':email retiré des sous-utilisateurs',
+        ],
+        'players' => [
+            'whitelist_add' => ':target ajouté à la liste blanche',
+            'whitelist_remove' => ':target retiré de la liste blanche',
+            'op' => ':target rendu opérateur',
+            'deop' => 'Opérateur :target retiré',
+            'ban' => ':target banni',
+            'pardon' => ':target débanni',
+            'ban_ip' => 'IP :target bannie',
+            'pardon_ip' => 'IP :target débannie',
+            'kick' => ':target expulsé',
+            'whitelist_on' => 'Liste blanche activée',
+            'whitelist_off' => 'Liste blanche désactivée',
         ],
     ],
     'meta' => [
@@ -136,8 +155,8 @@ return [
         'using_api_key' => 'Via une clé API',
         'using_sftp' => 'Via SFTP',
         'clear_filters' => 'Effacer les filtres',
-        'server_title' => "Journal d'activité",
-        'server_empty' => "Aucun journal d'activité disponible pour ce serveur.",
-        'account_title' => "Journal d'activité du compte",
+        'server_title' => 'Journal d\'activité',
+        'server_empty' => 'Aucun journal d\'activité disponible pour ce serveur.',
+        'account_title' => 'Journal d\'activité du compte',
     ],
 ];

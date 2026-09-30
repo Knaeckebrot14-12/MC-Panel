@@ -51,4 +51,13 @@ return [
         'restoring_title' => 'Restaurando desde una copia de seguridad',
         'restoring_message' => 'Tu servidor se está restaurando desde una copia de seguridad, vuelve a comprobarlo en unos minutos.',
     ],
+    'history' => [
+        'title' => 'Historial',
+        'range_24h' => '24 horas',
+        'range_7d' => '7 días',
+        'empty' => 'Todavía no hay historial. Los valores se registran cada cinco minutos.',
+        'cpu' => 'CPU',
+        'memory' => 'Memoria',
+        'players' => 'Jugadores',
+    ],
 ];

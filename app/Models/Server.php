@@ -202,6 +202,8 @@ class Server extends Model implements Identifiable
         'coin_suspended_at' => 'datetime',
         'coin_monthly_price' => 'integer',
         'coin_reminder_for' => 'datetime',
+        'auto_backup_hours' => 'integer',
+        'auto_backup_last_at' => 'datetime',
     ];
 
     /**

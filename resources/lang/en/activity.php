@@ -19,6 +19,9 @@ return [
         'sftp' => [
             'fail' => 'Failed SFTP log in',
         ],
+        'discord' => [
+            'login' => 'Logged in with Discord',
+        ],
     ],
     'user' => [
         'user' => [
@@ -27,6 +30,8 @@ return [
         'account' => [
             'email-changed' => 'Changed email from :old to :new',
             'password-changed' => 'Changed password',
+            'discord-linked' => 'Linked a Discord account',
+            'discord-unlinked' => 'Unlinked Discord',
         ],
         'api-key' => [
             'create' => 'Created new API key :identifier',
@@ -63,6 +68,7 @@ return [
             'fail' => 'Marked the :name backup as failed',
             'lock' => 'Locked the :name backup',
             'unlock' => 'Unlocked the :name backup',
+            'auto' => 'Set automatic backups to every :hours hours (0 = off)',
         ],
         'database' => [
             'create' => 'Created new database :name',
@@ -128,6 +134,19 @@ return [
             'create' => 'Added :email as a subuser',
             'update' => 'Updated the subuser permissions for :email',
             'delete' => 'Removed :email as a subuser',
+        ],
+        'players' => [
+            'whitelist_add' => 'Added :target to the whitelist',
+            'whitelist_remove' => 'Removed :target from the whitelist',
+            'op' => 'Made :target an operator',
+            'deop' => 'Removed operator :target',
+            'ban' => 'Banned :target',
+            'pardon' => 'Unbanned :target',
+            'ban_ip' => 'Banned IP :target',
+            'pardon_ip' => 'Unbanned IP :target',
+            'kick' => 'Kicked :target',
+            'whitelist_on' => 'Turned the whitelist on',
+            'whitelist_off' => 'Turned the whitelist off',
         ],
     ],
     'meta' => [

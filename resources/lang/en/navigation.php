@@ -28,5 +28,7 @@ return [
         'network' => 'Network',
         'startup' => 'Startup',
         'settings' => 'Settings',
+        'players' => 'Players',
+        'properties' => 'Server settings',
     ],
 ];

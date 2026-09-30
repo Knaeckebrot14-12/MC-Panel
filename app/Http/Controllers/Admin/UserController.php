@@ -130,9 +130,15 @@ class UserController extends Controller
      */
     public function view(User $user): View
     {
+        $ip = \Pterodactyl\Services\Users\RegistrationGuard::countableIp($user->registration_ip);
+
         return view('admin.users.view', [
             'user' => $user,
             'languages' => $this->getAvailableLanguages(true),
+            // Other accounts registered from the same public address (possible alt accounts).
+            'sameIpUsers' => $ip
+                ? User::query()->where('registration_ip', $ip)->where('id', '!=', $user->id)->orderBy('id')->limit(20)->get(['id', 'username', 'created_at'])
+                : collect(),
         ]);
     }
 
@@ -162,6 +168,21 @@ class UserController extends Controller
      *
      * @throws \Throwable
      */
+    /**
+     * Confirms a user's e-mail address by hand (e.g. when their mail never arrived).
+     */
+    public function verifyEmail(Request $request, User $user): RedirectResponse
+    {
+        if (!$user->email_verified_at) {
+            $user->forceFill(['email_verified_at' => now()])->save();
+            StaffAudit::record('user.email_verified', $user->username, [], $user);
+        }
+
+        $this->alert->success(trans('admin/users.notices.email_verified'))->flash();
+
+        return redirect()->route('admin.users.view', $user->id);
+    }
+
     public function suspend(Request $request, User $user): RedirectResponse
     {
         if ($request->user()->is($user)) {

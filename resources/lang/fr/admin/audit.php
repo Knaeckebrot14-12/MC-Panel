@@ -1,13 +1,13 @@
 <?php
 
 return [
-    'title' => "Journal d'audit",
-    'heading' => "Journal d'audit",
-    'subheading' => "Ce que les membres de l'équipe ont fait dans la zone d'administration.",
+    'title' => 'Journal d\'audit',
+    'heading' => 'Journal d\'audit',
+    'subheading' => 'Ce que les membres de l\'équipe ont fait dans la zone d\'administration.',
     'list_heading' => 'Actions récentes',
     'filter_all' => 'Toutes les actions',
-    'search' => "Membre de l'équipe ou objet",
-    'empty' => "Rien n'a encore été consigné.",
+    'search' => 'Membre de l\'équipe ou objet',
+    'empty' => 'Rien n\'a encore été consigné.',
     'groups' => [
         'user' => 'Utilisateurs',
         'server' => 'Serveurs',
@@ -26,7 +26,7 @@ return [
     ],
     'actions' => [
         'user.suspended' => 'Utilisateur :subject suspendu',
-        'user.unsuspended' => "Suspension de l'utilisateur :subject levée",
+        'user.unsuspended' => 'Suspension de l\'utilisateur :subject levée',
         'user.coins' => 'Coins de :subject modifiés de :amount',
         'user.role' => 'Rôle de :subject défini sur :role',
         'user.updated' => 'Utilisateur :subject modifié',
@@ -46,5 +46,8 @@ return [
         'update.started' => 'Mise à jour du panel lancée vers :subject',
         'update.auto_on' => 'Mises à jour automatiques activées',
         'update.auto_off' => 'Mises à jour automatiques désactivées',
+        'settings.login' => 'Paramètres de connexion et d\'inscription modifiés',
+        'maintenance.updated' => 'Mode maintenance réglé sur :subject',
+        'user.email_verified' => 'Adresse e-mail de :subject confirmée',
     ],
 ];

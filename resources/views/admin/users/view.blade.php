@@ -176,6 +176,46 @@
             </div>
 @endif
         </div>
+        <div class="box {{ $user->email_verified_at ? 'box-default' : 'box-warning' }}">
+            <div class="box-header with-border">
+                <h3 class="box-title">@lang('admin/users.view.account_heading')</h3>
+            </div>
+            <div class="box-body">
+                <dl class="dl-horizontal" style="margin-bottom:0;">
+                    <dt>@lang('admin/users.view.email_status')</dt>
+                    <dd>
+                        @if($user->email_verified_at)
+                            <span class="label label-success">@lang('admin/users.view.email_verified')</span>
+                            <small class="text-muted">{{ $user->email_verified_at->diffForHumans() }}</small>
+                        @else
+                            <span class="label label-warning">@lang('admin/users.view.email_unverified')</span>
+                        @endif
+                    </dd>
+                    <dt>@lang('admin/users.view.discord')</dt>
+                    <dd>{{ $user->discord_username ? '@' . $user->discord_username : '—' }}</dd>
+                    @if(Auth::user()->root_admin)
+                        <dt>@lang('admin/users.view.registration_ip')</dt>
+                        <dd><code>{{ $user->registration_ip ?: '—' }}</code></dd>
+                    @endif
+                    @if(count($sameIpUsers))
+                        <dt>@lang('admin/users.view.same_ip')</dt>
+                        <dd>
+                            @foreach($sameIpUsers as $other)
+                                <a href="{{ route('admin.users.view', $other->id) }}">{{ $other->username }}</a>@if(!$loop->last), @endif
+                            @endforeach
+                        </dd>
+                    @endif
+                </dl>
+            </div>
+            @if(!$user->email_verified_at)
+                <div class="box-footer">
+                    <form action="{{ route('admin.users.verify-email', $user->id) }}" method="POST">
+                        {!! csrf_field() !!}
+                        <button type="submit" class="btn btn-sm btn-success pull-right">@lang('admin/users.view.verify_button')</button>
+                    </form>
+                </div>
+            @endif
+        </div>
         <div class="box {{ $user->isSuspended() ? 'box-success' : 'box-warning' }}">
             <div class="box-header with-border">
                 <h3 class="box-title">{{ $user->isSuspended() ? trans('admin/users.view.unsuspend_heading') : trans('admin/users.view.suspend_heading') }}</h3>

@@ -8,6 +8,7 @@ import Spinner from '@/components/elements/Spinner';
 import Features from '@feature/Features';
 import Console from '@/components/server/console/Console';
 import StatGraphs from '@/components/server/console/StatGraphs';
+import StatsHistory from '@/components/server/console/StatsHistory';
 import PowerButtons from '@/components/server/console/PowerButtons';
 import ServerDetailsBlock from '@/components/server/console/ServerDetailsBlock';
 import CoinServerBanner from '@/components/server/console/CoinServerBanner';
@@ -63,6 +64,7 @@ const ServerConsoleContainer = () => {
                     <StatGraphs />
                 </Spinner.Suspense>
             </div>
+            <StatsHistory />
             <Features enabled={eggFeatures} />
         </ServerContentBlock>
     );

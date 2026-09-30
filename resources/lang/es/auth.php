@@ -30,7 +30,6 @@ return [
             'password_confirmation_required' => 'Confirma tu contraseña.',
         ],
     ],
-
     'forgot_password' => [
         'label' => '¿Olvidaste tu contraseña?',
         'label_help' => 'Introduce el correo electrónico de tu cuenta para recibir las instrucciones para restablecer tu contraseña.',
@@ -55,11 +54,9 @@ return [
             'confirmation_mismatch' => 'La confirmación de la contraseña no coincide.',
         ],
     ],
-
     'reset_password' => [
         'button' => 'Restablecer e iniciar sesión',
     ],
-
     'two_factor' => [
         'label' => 'Token de dos factores',
         'label_help' => 'Esta cuenta requiere una segunda capa de autenticación para continuar. Introduce el código generado por tu dispositivo para completar el inicio de sesión.',
@@ -73,8 +70,19 @@ return [
         'lost_device' => 'He perdido mi dispositivo',
         'have_device' => 'Tengo mi dispositivo',
     ],
-
     'throttle' => 'Demasiados intentos de inicio de sesión. Inténtalo de nuevo en :seconds segundos.',
     'password_requirements' => 'La contraseña debe tener al menos 8 caracteres y ser única para este sitio.',
     '2fa_must_be_enabled' => 'El administrador exige que la autenticación de dos factores esté activada en tu cuenta para usar el panel.',
+    'discord' => [
+        'login' => 'Iniciar sesión con Discord',
+        'errors' => [
+            'state' => 'El inicio de sesión con Discord caducó. Inténtalo de nuevo.',
+            'cancelled' => 'Se canceló el inicio de sesión con Discord.',
+            'discord' => 'No se pudo contactar con Discord. Inténtalo de nuevo.',
+            'no_account' => 'No hay ninguna cuenta vinculada a esta cuenta de Discord. Inicia sesión normalmente y vincula Discord en la página de tu cuenta.',
+            'unverified' => 'Tu cuenta de Discord no tiene una dirección de correo verificada.',
+            'ip_limit' => 'Desde tu red ya se ha registrado el número máximo de cuentas.',
+            'two_factor' => 'Esta cuenta usa autenticación en dos pasos. Inicia sesión con tu contraseña y tu código.',
+        ],
+    ],
 ];

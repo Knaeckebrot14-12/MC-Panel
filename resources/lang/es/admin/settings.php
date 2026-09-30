@@ -7,6 +7,7 @@ return [
         'coins' => 'Coins',
         'advanced' => 'Avanzado',
         'updates' => 'Actualizaciones',
+        'login' => 'Inicio de sesión y registro',
     ],
     'notice' => [
         'env_only' => 'Tu panel está configurado actualmente para leer los ajustes únicamente del entorno. Tendrás que definir :env_var en tu archivo de entorno para cargar los ajustes dinámicamente.',

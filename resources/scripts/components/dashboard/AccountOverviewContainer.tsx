@@ -11,6 +11,8 @@ import { breakpoint } from '@/theme';
 import styled from 'styled-components/macro';
 import MessageBox from '@/components/MessageBox';
 import { useLocation } from 'react-router-dom';
+import { useStoreState } from 'easy-peasy';
+import DiscordLinkForm from '@/components/dashboard/forms/DiscordLinkForm';
 
 const Container = styled.div`
     ${tw`flex flex-wrap`};
@@ -31,6 +33,7 @@ const Container = styled.div`
 export default () => {
     const { t } = useTranslation('dashboard/account');
     const { state } = useLocation<undefined | { twoFactorRedirect?: boolean }>();
+    const discordEnabled = useStoreState((s) => !!s.settings.data?.discord?.enabled);
 
     return (
         <PageContentBlock title={t('overview_title')}>
@@ -53,6 +56,11 @@ export default () => {
                 <ContentBox css={tw`mt-8 sm:ml-8 lg:ml-0`} title={t('language_title')} showFlashes={'account:language'}>
                     <UpdateLanguageForm />
                 </ContentBox>
+                {discordEnabled && (
+                    <ContentBox css={tw`mt-8 lg:ml-8`} title={t('discord.title')} showFlashes={'account:discord'}>
+                        <DiscordLinkForm />
+                    </ContentBox>
+                )}
             </Container>
         </PageContentBlock>
     );

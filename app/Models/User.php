@@ -144,6 +144,10 @@ class User extends Model implements
         'must_change_password',
         'coins',
         'last_afk_tick_at',
+        'email_verified_at',
+        'registration_ip',
+        'discord_id',
+        'discord_username',
     ];
 
     /**
@@ -167,12 +171,13 @@ class User extends Model implements
         'last_daily_claim_at' => 'datetime',
         'daily_streak' => 'integer',
         'referral_rewarded_at' => 'datetime',
+        'email_verified_at' => 'datetime',
     ];
 
     /**
      * The attributes excluded from the model's JSON form.
      */
-    protected $hidden = ['password', 'remember_token', 'totp_secret', 'totp_authenticated_at'];
+    protected $hidden = ['password', 'remember_token', 'totp_secret', 'totp_authenticated_at', 'registration_ip'];
 
     /**
      * Default values for specific fields in the database.
@@ -234,6 +239,12 @@ class User extends Model implements
                 } while (static::query()->where('referral_code', $code)->exists());
 
                 $user->referral_code = $code;
+            }
+
+            // Accounts made by the team, the CLI or the installer are trusted; only self-registration
+            // clears this afterwards when e-mail confirmation is required.
+            if (!$user->email_verified_at) {
+                $user->email_verified_at = now();
             }
         });
 
@@ -357,6 +368,16 @@ class User extends Model implements
     /**
      * True if an admin has suspended this user's account and all of their servers.
      */
+    /**
+     * Whether this account still has to confirm its e-mail address before using coins and servers.
+     */
+    public function needsEmailVerification(): bool
+    {
+        return is_null($this->email_verified_at)
+            && filter_var(config('mcpanel.registration.verify_email'), FILTER_VALIDATE_BOOLEAN)
+            && !$this->isStaff();
+    }
+
     public function isSuspended(): bool
     {
         return !is_null($this->suspended_at);

@@ -31,6 +31,11 @@ Route::group(['prefix' => 'api', 'middleware' => ['owner.only']], function () {
 | Endpoint: /admin/announcements
 |
 */
+Route::group(['prefix' => 'maintenance', 'middleware' => ['admin.only']], function () {
+    Route::get('/', [Admin\MaintenanceController::class, 'index'])->name('admin.maintenance');
+    Route::patch('/', [Admin\MaintenanceController::class, 'update']);
+});
+
 Route::group(['prefix' => 'announcements', 'middleware' => ['staff:announcements']], function () {
     Route::get('/', [Admin\AnnouncementController::class, 'index'])->name('admin.announcements');
 
@@ -85,6 +90,9 @@ Route::group(['prefix' => 'settings', 'middleware' => ['owner.only']], function 
     Route::get('/mail', [Admin\Settings\MailController::class, 'index'])->name('admin.settings.mail');
     Route::get('/advanced', [Admin\Settings\AdvancedController::class, 'index'])->name('admin.settings.advanced');
 
+    Route::get('/login', [Admin\Settings\LoginSettingsController::class, 'index'])->name('admin.settings.login');
+    Route::patch('/login', [Admin\Settings\LoginSettingsController::class, 'update']);
+
     Route::get('/updates', [Admin\Settings\UpdateController::class, 'index'])->name('admin.settings.updates');
     Route::get('/updates/status', [Admin\Settings\UpdateController::class, 'status'])->name('admin.settings.updates.status');
     Route::post('/updates/check', [Admin\Settings\UpdateController::class, 'check'])->name('admin.settings.updates.check');
@@ -118,7 +126,8 @@ Route::group(['prefix' => 'users'], function () {
     Route::delete('/view/{user:id}', [Admin\UserController::class, 'delete'])->name('admin.users.delete')->middleware('admin.only');
     Route::post('/view/{user:id}/role', [Admin\UserController::class, 'updateRole'])->name('admin.users.role')->middleware('admin.only');
 
-    Route::post('/view/{user:id}/suspend', [Admin\UserController::class, 'suspend'])->name('admin.users.suspend')->middleware('staff:users.moderate');
+    Route::post('/view/{user:id}/verify-email', [Admin\UserController::class, 'verifyEmail'])->name('admin.users.verify-email')->middleware('staff:users.moderate');
+    Route::post('/view/{user:id}/suspend',[Admin\UserController::class, 'suspend'])->name('admin.users.suspend')->middleware('staff:users.moderate');
     Route::post('/view/{user:id}/unsuspend', [Admin\UserController::class, 'unsuspend'])->name('admin.users.unsuspend')->middleware('staff:users.moderate');
     Route::post('/view/{user:id}/coins', [Admin\UserController::class, 'adjustCoins'])->name('admin.users.coins')->middleware('admin.only');
 });
