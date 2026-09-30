@@ -151,9 +151,14 @@ system_timezone() {
     timedatectl show -p Timezone --value 2>/dev/null || cat /etc/timezone 2>/dev/null || echo UTC
 }
 
-# The installer never changes firewall rules; it only tells you which ports to open yourself.
-firewall_notice() {
-    warn "Firewall: this installer does not open any ports. If you use a firewall, allow: $*"
+# Opens the ports the panel and Wings need (web, daemon, SFTP) when ufw is active.
+# Game server ports are never opened automatically.
+open_firewall_ports() {
+    if command -v ufw >/dev/null 2>&1 && ufw status 2>/dev/null | grep -q "Status: active"; then
+        local port
+        for port in "$@"; do ufw allow "$port" >/dev/null 2>&1; done
+        ok "Opened ports in ufw: $*"
+    fi
 }
 
 dc() {
@@ -301,8 +306,8 @@ EOF
     [ "$AUTO_UPDATE" = "1" ] && dc exec -T panel php artisan p:update:auto on >/dev/null 2>&1 && ok "Automatic updates enabled"
 
     case "$MODE" in
-        1) firewall_notice "TCP $HTTP_PORT (panel)" ;;
-        2) firewall_notice "TCP 80 and 443 (panel)" ;;
+        1) open_firewall_ports "$HTTP_PORT/tcp" ;;
+        2) open_firewall_ports 80/tcp 443/tcp ;;
     esac
 
     echo
@@ -435,7 +440,7 @@ EOF
     else
         check_dns "$domain"
         port80_hooks
-        firewall_notice "TCP 80 (Let's Encrypt checks and renewals)"
+        open_firewall_ports 80/tcp
         info "Requesting a Let's Encrypt certificate for $domain..."
         local args=(certonly --standalone --non-interactive --agree-tos -m "$email" -d "$domain")
         [ -n "$CERT_PRE" ] && args+=(--pre-hook "$CERT_PRE" --post-hook "$CERT_POST")
@@ -524,9 +529,9 @@ setup_local_node() {
     disk_mb=$(( $(df -Pm / | awk 'NR==2 {print $4}') - 10240 ))
     [ "$disk_mb" -lt 5120 ] && disk_mb=5120
 
-    info "Creating the node in the panel (ports 25565-25575 for game servers)..."
+    info "Creating the node in the panel..."
     until node_id="$(dc exec -T panel php artisan p:node:quick-setup --fqdn="$NODE_FQDN" --scheme="$scheme" \
-            --memory="$mem_mb" --disk="$disk_mb" --ip="$(public_ip)" --ports=25565-25575 2>/dev/null | tr -d '\r' | tail -n1)" \
+            --memory="$mem_mb" --disk="$disk_mb" 2>/dev/null | tr -d '\r' | tail -n1)" \
             && [[ "$node_id" =~ ^[0-9]+$ ]]; do
         tries=$((tries + 1))
         [ "$tries" -ge 12 ] && die "Could not create the node in the panel. Check: mc-panel logs panel"
@@ -600,6 +605,7 @@ install_wings() {
     install_packages
     install_docker
     install_wings_binary
+    open_firewall_ports 8080/tcp 2022/tcp
 
     if [ "$panel_here" = "1" ]; then
         setup_local_node
@@ -609,7 +615,8 @@ install_wings() {
 
     echo
     ok "Wings installation finished."
-    firewall_notice "TCP 8080 (Wings), TCP 2022 (SFTP), TCP+UDP 25565-25575 (game servers)"
+    echo " Game server ports are not created or opened automatically. Add them under"
+    echo " Admin > Nodes > (your node) > Allocation, and allow them in your firewall yourself."
 }
 
 uninstall_wings() {
