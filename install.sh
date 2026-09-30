@@ -151,12 +151,9 @@ system_timezone() {
     timedatectl show -p Timezone --value 2>/dev/null || cat /etc/timezone 2>/dev/null || echo UTC
 }
 
-open_firewall_ports() {
-    if command -v ufw >/dev/null 2>&1 && ufw status 2>/dev/null | grep -q "Status: active"; then
-        local port
-        for port in "$@"; do ufw allow "$port" >/dev/null 2>&1; done
-        ok "Opened ports in ufw: $*"
-    fi
+# The installer never changes firewall rules; it only tells you which ports to open yourself.
+firewall_notice() {
+    warn "Firewall: this installer does not open any ports. If you use a firewall, allow: $*"
 }
 
 dc() {
@@ -304,8 +301,8 @@ EOF
     [ "$AUTO_UPDATE" = "1" ] && dc exec -T panel php artisan p:update:auto on >/dev/null 2>&1 && ok "Automatic updates enabled"
 
     case "$MODE" in
-        1) open_firewall_ports "$HTTP_PORT" ;;
-        2) open_firewall_ports 80 443 ;;
+        1) firewall_notice "TCP $HTTP_PORT (panel)" ;;
+        2) firewall_notice "TCP 80 and 443 (panel)" ;;
     esac
 
     echo
@@ -438,7 +435,7 @@ EOF
     else
         check_dns "$domain"
         port80_hooks
-        open_firewall_ports 80
+        firewall_notice "TCP 80 (Let's Encrypt checks and renewals)"
         info "Requesting a Let's Encrypt certificate for $domain..."
         local args=(certonly --standalone --non-interactive --agree-tos -m "$email" -d "$domain")
         [ -n "$CERT_PRE" ] && args+=(--pre-hook "$CERT_PRE" --post-hook "$CERT_POST")
@@ -603,7 +600,6 @@ install_wings() {
     install_packages
     install_docker
     install_wings_binary
-    open_firewall_ports 8080 2022 25565:25575/tcp 25565:25575/udp
 
     if [ "$panel_here" = "1" ]; then
         setup_local_node
@@ -613,7 +609,7 @@ install_wings() {
 
     echo
     ok "Wings installation finished."
-    echo " Game server ports 25565-25575 are open in ufw (if ufw is used); open them in your hoster's firewall too."
+    firewall_notice "TCP 8080 (Wings), TCP 2022 (SFTP), TCP+UDP 25565-25575 (game servers)"
 }
 
 uninstall_wings() {
