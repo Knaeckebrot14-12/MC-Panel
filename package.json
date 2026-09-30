@@ -147,7 +147,8 @@
     ],
     "babelMacros": {
         "twin": {
-            "preset": "styled-components"
+            "preset": "styled-components",
+            "config": "tailwind.twin.config.js"
         },
         "styledComponents": {
             "pure": true,

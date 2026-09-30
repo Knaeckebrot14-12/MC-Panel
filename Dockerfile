@@ -10,6 +10,8 @@ RUN yarn install --frozen-lockfile
 COPY . ./
 # The browser list only affects CSS prefixes; its "data is old" notice is just noise in the build log.
 ENV BROWSERSLIST_IGNORE_OLD_DATA=1
+# Old build tools use APIs Node now calls deprecated; the warnings change nothing about the result.
+ENV NODE_OPTIONS=--no-deprecation
 RUN yarn run build:production
 
 # Stage 1:
