@@ -23,7 +23,7 @@ The installer sets up Docker, downloads this repository to `/opt/recoded-ptero`,
 
 What the installer asks:
 
-1. **What to do**: install the panel, Wings, both, update, or uninstall.
+1. **What to do**: install Recoded Ptero, upgrade an existing Pterodactyl panel, install Wings, both, update, or uninstall. Nothing is installed before you pick an option.
 2. **How the panel is reached**:
    - `1` HTTP by IP or domain (quick test setups),
    - `2` HTTPS with Let's Encrypt: enter the domain (its DNS A record must already point at the server) and an e-mail for certificate notices,
@@ -39,6 +39,18 @@ Then it builds and starts everything (5–15 minutes the first time) and prints 
 - *Wings on another machine*: enter the panel URL; for an HTTPS panel also the machine's domain, and the certificate is created. The installer then tells you exactly what to enter when creating the node and asks for the token from the node's Configuration tab.
 - Firewall: if ufw is active, the installer opens only the ports the panel and Wings need (80/443 or your panel port, 8080 for Wings, 2022 for SFTP). Game server ports are never created or opened automatically; add them per node under Admin → Nodes → Allocation.
 - All certificates renew automatically (the panel's inside its container, Wings' via the certbot timer, restarting Wings afterwards).
+
+## Upgrade from Pterodactyl
+
+Run the same command on the server of your existing Pterodactyl panel (1.x, served by nginx, as in the official docs) and choose **Upgrade**. All users, servers, nodes, eggs, API keys and settings move over; logins, the panel URL and your Wings nodes keep working.
+
+How data loss is prevented:
+
+- Recoded Ptero is built first while your panel keeps running; the downtime is only the move itself (a few minutes, game servers keep running).
+- Before anything changes: a dump of the database, copies of `.env`, the nginx site and the crontab, and an archive of the panel files are saved to `/opt/recoded-ptero/backups/pterodactyl-<date>/`.
+- The old database is only read, never changed; the old panel directory is kept as it is.
+- After the copy, every table's row count is compared with the original. The `APP_KEY` is carried over, so encrypted data (node tokens, 2FA, database host passwords) stays readable.
+- If any step fails, the old panel is switched back on automatically. Later you can still go back with `rollback.sh` in the backup folder.
 
 Requirements: 2 CPU cores and 4 GB RAM are recommended (the first build needs the memory; the installer offers to add swap on smaller servers). Ports 80 and 443 for the panel.
 
