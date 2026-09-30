@@ -21,6 +21,18 @@ bash <(curl -sSL https://raw.githubusercontent.com/Knaeckebrot14-12/MC-Panel/mai
 
 The installer sets up Docker, downloads this repository to `/opt/mc-panel`, asks a few questions (how the panel is reached, owner account) and starts everything. It can also install [Wings](https://github.com/pterodactyl/wings), the daemon that runs the game servers, on the same or another machine.
 
+What the installer asks:
+
+1. **What to do**: install the panel, Wings, both, update, or uninstall.
+2. **How the panel is reached**:
+   - `1` HTTP by IP or domain (quick test setups),
+   - `2` HTTPS with Let's Encrypt: enter the domain (its DNS A record must already point at the server) and an e-mail for certificate notices,
+   - `3` behind your own reverse proxy (Nginx, Caddy, Cloudflare Tunnel): enter the public URL and a local port.
+3. **Owner account**: e-mail, username, name and password (leave empty to generate one).
+4. **Automatic updates**: on or off (can be changed later under Settings → Updates).
+
+Then it builds and starts everything (5–15 minutes the first time) and prints the URL and login.
+
 Requirements: 2 CPU cores and 4 GB RAM are recommended (the first build needs the memory; the installer offers to add swap on smaller servers). Ports 80 and 443 for the panel.
 
 Unattended installs work with environment variables, for example:
