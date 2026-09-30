@@ -4,6 +4,7 @@ namespace Pterodactyl\Http\Controllers\Api\Client;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Pterodactyl\Models\User;
 use Pterodactyl\Services\Coins\CoinService;
 
 class AfkController extends ClientApiController
@@ -41,7 +42,21 @@ class AfkController extends ClientApiController
             ]);
         }
 
-        $user->update(['last_afk_tick_at' => now()]);
+        // Claim this minute in one query, so requests sent in parallel can't all pass the check above.
+        $claimed = User::query()
+            ->whereKey($user->id)
+            ->where(fn ($query) => $query->whereNull('last_afk_tick_at')
+                ->orWhere('last_afk_tick_at', '<=', now()->subSeconds(self::MIN_SECONDS_BETWEEN_TICKS)))
+            ->update(['last_afk_tick_at' => now()]);
+
+        if (!$claimed) {
+            return new JsonResponse([
+                'credited' => false,
+                'reason' => 'too_soon',
+                'balance' => $user->refresh()->coins,
+                'secondsUntilNextTick' => self::MIN_SECONDS_BETWEEN_TICKS,
+            ]);
+        }
 
         if ($request->boolean('adblockDetected')) {
             return new JsonResponse([

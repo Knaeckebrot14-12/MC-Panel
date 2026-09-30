@@ -30,7 +30,11 @@ class LinkvertiseClaimController extends Controller
             return redirect('/coins/earn?claim=invalid');
         }
 
-        $claim->update(['claimed_at' => now()]);
+        // Mark it claimed in one query, so opening the link several times at once pays out only once.
+        $claimed = LinkvertiseClaim::query()->whereKey($claim->id)->whereNull('claimed_at')->update(['claimed_at' => now()]);
+        if (!$claimed) {
+            return redirect('/coins/earn?claim=invalid');
+        }
 
         $this->coins->credit($user, $claim->coins, 'linkvertise', 'Completed a Linkvertise link');
 

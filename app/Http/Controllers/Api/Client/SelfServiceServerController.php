@@ -6,6 +6,7 @@ use Illuminate\Support\Arr;
 use Pterodactyl\Models\Egg;
 use Pterodactyl\Models\Nest;
 use Pterodactyl\Models\Node;
+use Pterodactyl\Models\User;
 use Pterodactyl\Models\Server;
 use Illuminate\Http\JsonResponse;
 use Pterodactyl\Exceptions\DisplayException;
@@ -127,6 +128,34 @@ class SelfServiceServerController extends ClientApiController
             );
         }
 
+        // Start the cooldown right away and in one query: requests sent in parallel would otherwise all
+        // pass the slot and resource checks below before the first server exists.
+        $previousCreatedAt = $user->last_server_created_at;
+        $started = User::query()
+            ->whereKey($user->id)
+            ->where(fn ($query) => $query->whereNull('last_server_created_at')
+                ->orWhere('last_server_created_at', '<=', now()->subMinutes(self::COOLDOWN_MINUTES)))
+            ->update(['last_server_created_at' => now()]);
+        if (!$started) {
+            throw new DisplayException(trans('coins.errors.cooldown', ['minutes' => self::COOLDOWN_MINUTES]));
+        }
+
+        try {
+            return $this->createServer($request, $user);
+        } catch (\Throwable $exception) {
+            // Nothing was created, so this attempt doesn't count towards the cooldown.
+            User::query()->whereKey($user->id)->update(['last_server_created_at' => $previousCreatedAt]);
+
+            throw $exception;
+        }
+    }
+
+    /**
+     * @throws \Throwable
+     */
+    private function createServer(SelfServiceServerRequest $request, User $user): JsonResponse
+    {
+
         $poolCounted = $this->poolCountedServers($user->id);
         $usedSlots = (clone $poolCounted)->count();
         if ($usedSlots >= $user->server_slots) {
@@ -197,8 +226,6 @@ class SelfServiceServerController extends ClientApiController
             'allocation_id' => $allocation->id,
         ]);
 
-        $user->update(['last_server_created_at' => now()]);
-
         return new JsonResponse([
             'data' => [
                 'identifier' => $server->uuidShort,
@@ -225,6 +252,27 @@ class SelfServiceServerController extends ClientApiController
         }
 
         $refund = $this->calculateCancellationRefund($server);
+        $paidUntil = $server->paid_with_coins_until;
+        if ($refund > 0) {
+            // Take the paid time off the server in one query before refunding it, so deleting the
+            // same server several times at once can't pay the refund more than once.
+            $taken = Server::query()->whereKey($server->id)->where('paid_with_coins_until', $paidUntil)
+                ->update(['paid_with_coins_until' => null]);
+            if (!$taken) {
+                $refund = 0;
+            }
+        }
+
+        try {
+            $this->deletionService->handle($server);
+        } catch (\Throwable $exception) {
+            if ($refund > 0) {
+                Server::query()->whereKey($server->id)->update(['paid_with_coins_until' => $paidUntil]);
+            }
+
+            throw $exception;
+        }
+
         if ($refund > 0) {
             $this->coins->credit(
                 $user,
@@ -233,8 +281,6 @@ class SelfServiceServerController extends ClientApiController
                 "Cancelled server #{$server->id} — refund for unused time"
             );
         }
-
-        $this->deletionService->handle($server);
 
         return new JsonResponse(['refund' => $refund]);
     }
