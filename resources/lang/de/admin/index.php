@@ -36,4 +36,8 @@ return [
             'spent' => 'Ausgegeben',
         ],
     ],
+    'ssl' => [
+        'valid_until' => 'SSL-Zertifikat für :domain gültig bis :date (:days Tage), wird 30 Tage vor Ablauf automatisch erneuert.',
+        'renew_failed' => 'Die letzte automatische Erneuerung ist fehlgeschlagen. Prüfe, ob die Domain noch auf diesen Server zeigt und Port 80 erreichbar ist.',
+    ],
 ];

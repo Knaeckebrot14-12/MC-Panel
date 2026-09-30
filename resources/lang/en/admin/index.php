@@ -36,4 +36,8 @@ return [
             'spent' => 'Spent',
         ],
     ],
+    'ssl' => [
+        'valid_until' => 'SSL certificate for :domain valid until :date (:days days), renewed automatically 30 days before it expires.',
+        'renew_failed' => 'The last automatic renewal failed. Check that the domain still points at this server and port 80 is reachable.',
+    ],
 ];

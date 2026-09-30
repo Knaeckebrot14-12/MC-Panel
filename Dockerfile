@@ -26,9 +26,8 @@ RUN apk add --no-cache --update ca-certificates dcron curl git supervisor tar un
 
 RUN rm /usr/local/etc/php-fpm.conf \
     && echo "* * * * * /usr/local/bin/php /app/artisan schedule:run >> /dev/null 2>&1" >> /var/spool/cron/crontabs/root \
-    && echo "0 23 * * * certbot renew --nginx --quiet" >> /var/spool/cron/crontabs/root \
     && sed -i s/ssl_session_cache/#ssl_session_cache/g /etc/nginx/nginx.conf \
-    && mkdir -p /var/run/php /var/run/nginx
+    && mkdir -p /var/run/php /var/run/nginx /var/www/acme
 
 COPY .github/docker/default.conf /etc/nginx/http.d/default.conf
 COPY .github/docker/www.conf /usr/local/etc/php-fpm.conf

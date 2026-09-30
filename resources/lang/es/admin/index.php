@@ -36,4 +36,8 @@ return [
             'spent' => 'Gastados',
         ],
     ],
+    'ssl' => [
+        'valid_until' => 'Certificado SSL de :domain válido hasta el :date (:days días), se renueva automáticamente 30 días antes de caducar.',
+        'renew_failed' => 'La última renovación automática falló. Comprueba que el dominio sigue apuntando a este servidor y que el puerto 80 es accesible.',
+    ],
 ];

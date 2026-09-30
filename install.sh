@@ -351,6 +351,13 @@ EOF
     run_step "Creating the owner account" "Owner account created" create_owner \
         || die "Could not create the owner account. Try: recoded-ptero artisan p:user:make --role=owner"
 
+    if [ "$MODE" = "2" ]; then
+        run_step "Testing the automatic renewal of the panel certificate" "Panel certificate renews automatically (checked twice a day, renewed 30 days before it expires)" \
+            dc exec -T panel php artisan p:ssl:renew --dry-run \
+            || warn "The renewal test failed. HTTPS works for now, but check port 80 and the DNS record before the certificate expires."
+        dc exec -T panel php artisan p:ssl:renew >/dev/null 2>&1 || true
+    fi
+
     [ "$AUTO_UPDATE" = "1" ] && dc exec -T panel php artisan p:update:auto on >/dev/null 2>&1 && ok "Automatic updates enabled"
 
     case "$MODE" in
@@ -497,7 +504,10 @@ EOF
             || die "Could not get a certificate for $domain. Check that the domain points at this server and port 80 is reachable from the internet."
     fi
     enable_cert_renewal
-    ok "Certificates renew automatically"
+    # A dry run against Let's Encrypt's staging server proves the automatic renewal will work later.
+    run_step "Testing the automatic renewal of the certificate" "Certificate renews automatically (checked twice a day, renewed 30 days before it expires)" \
+        certbot renew --dry-run --cert-name "$domain" \
+        || warn "The renewal test failed. The certificate works for now, but check port 80 and the DNS record before it expires."
 }
 
 # ---------------------------------------------------------------- wings

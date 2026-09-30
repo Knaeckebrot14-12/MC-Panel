@@ -43,9 +43,16 @@ fi
 echo "Checking if https is required."
 if [ -f /etc/nginx/http.d/panel.conf ]; then
   echo "Using nginx config already in place."
+  ## older configs redirect everything on port 80, including Let's Encrypt's renewal check
+  if grep -q 'return 301 https' /etc/nginx/http.d/panel.conf && ! grep -q 'acme-challenge' /etc/nginx/http.d/panel.conf; then
+    echo "Adding the Let's Encrypt renewal path to the nginx config."
+    php -r '$f = "/etc/nginx/http.d/panel.conf"; $c = file_get_contents($f); $c = preg_replace("/^(\s*)return 301 (https:\/\/[^;]+);/m", "\$1location ^~ /.well-known/acme-challenge/ { root /var/www/acme; }\n\$1location / { return 301 \$2; }", $c, 1); file_put_contents($f, $c);'
+  fi
   if [ $LE_EMAIL ]; then
     echo "Checking for cert update"
-    certbot certonly -d $(echo $APP_URL | sed 's~http[s]*://~~g')  --standalone -m $LE_EMAIL --agree-tos -n
+    ## a failed check (e.g. Let's Encrypt briefly unreachable) must not keep the panel from starting
+    certbot certonly -d $(echo $APP_URL | sed 's~http[s]*://~~g')  --standalone -m $LE_EMAIL --agree-tos -n \
+      || echo "Certificate check failed, keeping the current certificate."
   else
     echo "No letsencrypt email is set"
   fi

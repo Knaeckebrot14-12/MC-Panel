@@ -12,6 +12,7 @@ use Pterodactyl\Services\Telemetry\TelemetryCollectionService;
 use Pterodactyl\Console\Commands\Schedule\ProcessRunnableCommand;
 use Pterodactyl\Console\Commands\Update\CheckForUpdatesCommand;
 use Pterodactyl\Console\Commands\Server\AutoBackupCommand;
+use Pterodactyl\Console\Commands\Maintenance\RenewCertificateCommand;
 use Pterodactyl\Console\Commands\Server\CollectServerStatsCommand;
 use Pterodactyl\Console\Commands\Coins\ChargeCoinFundedServersCommand;
 use Pterodactyl\Console\Commands\Coins\RemindCoinFundedServersCommand;
@@ -44,6 +45,7 @@ class Kernel extends ConsoleKernel
         $schedule->command(CheckForUpdatesCommand::class)->everyFiveMinutes()->withoutOverlapping();
         $schedule->command(CollectServerStatsCommand::class)->everyFiveMinutes()->withoutOverlapping();
         $schedule->command(AutoBackupCommand::class)->everyFiveMinutes()->withoutOverlapping();
+        $schedule->command(RenewCertificateCommand::class)->twiceDaily(3, 15)->withoutOverlapping();
 
         if (config('backups.prune_age')) {
             // Every 30 minutes, run the backup pruning command so that any abandoned backups can be deleted.

@@ -22,6 +22,7 @@ recoded-ptero - manage your Recoded Ptero installation
   recoded-ptero restart            restart all services
   recoded-ptero stop | start       stop or start all services
   recoded-ptero backup             back up the database and panel settings now
+  recoded-ptero certs              show the SSL certificates and when they expire
   recoded-ptero artisan <args>     run a panel artisan command, e.g. recoded-ptero artisan p:user:make
   recoded-ptero install-dir        print the install directory
 EOT
@@ -58,6 +59,18 @@ case "${1:-}" in
     artisan)
         shift
         exec docker compose -f "$COMPOSE_FILE" --project-directory "$INSTALL_DIR" exec panel php artisan "$@"
+        ;;
+    certs)
+        # The panel's certificate lives in its container, Wings' certificate on this server.
+        echo "Panel certificate:"
+        dc exec -T panel php artisan p:ssl:renew 2>/dev/null | sed 's/^/  /'
+        if command -v certbot >/dev/null 2>&1; then
+            echo
+            echo "Certificates on this server (Wings):"
+            certbot certificates 2>/dev/null | grep -E "Certificate Name|Expiry Date" | sed 's/^ */  /'
+        fi
+        echo
+        echo "All certificates are checked twice a day and renewed 30 days before they expire."
         ;;
     install-dir) echo "$INSTALL_DIR" ;;
     ""|-h|--help|help) usage ;;

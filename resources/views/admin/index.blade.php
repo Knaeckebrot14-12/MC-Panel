@@ -34,6 +34,19 @@
                 @else
                     {!! trans('admin/update.index.up_to_date', ['version' => '<code>' . e($installedLabel) . '</code>']) !!}
                 @endif
+                @php
+                    $ssl = \Illuminate\Support\Facades\Cache::get(\Pterodactyl\Console\Commands\Maintenance\RenewCertificateCommand::CACHE_KEY);
+                    $sslExpires = !empty($ssl['expires_at']) ? \Carbon\Carbon::parse($ssl['expires_at']) : null;
+                @endphp
+                @if(!empty($ssl['managed']) && $sslExpires)
+                    <p style="margin:8px 0 0;">
+                        <i class="fa fa-lock {{ !empty($ssl['error']) || $sslExpires->lt(now()->addDays(14)) ? 'text-yellow' : 'text-green' }}"></i>
+                        @lang('admin/index.ssl.valid_until', ['domain' => $ssl['domain'], 'date' => $sslExpires->format('d.m.Y'), 'days' => max(0, (int) now()->diffInDays($sslExpires))])
+                        @if(!empty($ssl['error']))
+                            <br><span class="text-yellow">@lang('admin/index.ssl.renew_failed')</span>
+                        @endif
+                    </p>
+                @endif
             </div>
         </div>
     </div>
