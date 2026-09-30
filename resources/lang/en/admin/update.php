@@ -62,5 +62,11 @@ return [
             'cleanup' => 'Cleaning up',
             'rollback' => 'Restoring the previous version',
         ],
+        'ago_minutes' => ':count minutes ago',
+        'ago_hours' => ':count hours ago',
+        'ago_days' => ':count days ago',
+        'to_version' => 'now on :version',
+        'never' => 'No update has been installed yet.',
     ],
+    'last_updated_heading' => 'Last updated',
 ];

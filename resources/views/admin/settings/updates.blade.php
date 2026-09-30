@@ -91,11 +91,11 @@
                 </div>
                 <div class="box">
                     <div class="box-header with-border">
-                        <h3 class="box-title">@lang('admin/update.source_heading')</h3>
+                        <h3 class="box-title">@lang('admin/update.last_updated_heading')</h3>
                     </div>
                     <div class="box-body">
-                        <code id="source-repo"></code>
-                        <p class="text-muted small" style="margin:6px 0 0;">@lang('admin/update.source_description')</p>
+                        <h4 style="margin:0;" id="last-updated">&nbsp;</h4>
+                        <p class="text-muted small" style="margin:6px 0 0;" id="last-updated-meta"></p>
                     </div>
                 </div>
             </div>
@@ -169,7 +169,17 @@
                 $('#btn-update').prop('disabled', !canUpdate);
                 $('#btn-check').prop('disabled', busy(s.state));
                 $('#auto-update').prop('checked', !!data.auto_update);
-                $('#source-repo').text(data.repository + '@' + data.branch);
+                // When the panel was last updated: the finished update run, or else when this version was built.
+                var lastUpdate = (s.state === 'success' && s.finished_at && !s.message && s.to === data.installed.short) ? s.finished_at : data.installed.built_at;
+                if (lastUpdate) {
+                    var minutes = Math.max(0, Math.round((Date.now() - new Date(lastUpdate).getTime()) / 60000));
+                    var ago = minutes < 60 ? T.ago_minutes.replace(':count', minutes) : (minutes < 1440 ? T.ago_hours.replace(':count', Math.round(minutes / 60)) : T.ago_days.replace(':count', Math.round(minutes / 1440)));
+                    $('#last-updated').text(fmtDate(lastUpdate));
+                    $('#last-updated-meta').text(ago + ' · ' + T.to_version.replace(':version', label(data.installed)));
+                } else {
+                    $('#last-updated').text('—');
+                    $('#last-updated-meta').text(T.never);
+                }
 
                 // Progress box: shown while running and after a finished run until the page is reloaded.
                 var recent = s.finished_at && (Date.now() - new Date(s.finished_at).getTime()) < 30 * 60 * 1000;

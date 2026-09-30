@@ -62,5 +62,11 @@ return [
             'cleanup' => 'Aufräumen',
             'rollback' => 'Vorherige Version wird wiederhergestellt',
         ],
+        'ago_minutes' => 'vor :count Minuten',
+        'ago_hours' => 'vor :count Stunden',
+        'ago_days' => 'vor :count Tagen',
+        'to_version' => 'jetzt auf :version',
+        'never' => 'Es wurde noch kein Update installiert.',
     ],
+    'last_updated_heading' => 'Zuletzt aktualisiert',
 ];

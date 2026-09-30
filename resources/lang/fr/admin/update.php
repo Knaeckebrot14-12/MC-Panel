@@ -62,5 +62,11 @@ return [
             'cleanup' => 'Nettoyage',
             'rollback' => 'Restauration de la version précédente',
         ],
+        'ago_minutes' => 'il y a :count minutes',
+        'ago_hours' => 'il y a :count heures',
+        'ago_days' => 'il y a :count jours',
+        'to_version' => 'maintenant en :version',
+        'never' => 'Aucune mise à jour installée pour le moment.',
     ],
+    'last_updated_heading' => 'Dernière mise à jour',
 ];

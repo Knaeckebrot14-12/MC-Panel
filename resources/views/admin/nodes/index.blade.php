@@ -93,7 +93,7 @@
                 timeout: 5000
             }).done(function (data) {
                 $(element).find('i').tooltip({
-                    title: 'v' + data.version,
+                    title: 'v' + String(data.version).replace(/^v/i, ''),
                 });
                 $(element).removeClass('text-muted').find('i').removeClass().addClass('fa fa-fw fa-heartbeat faa-pulse animated').css('color', '#50af51');
             }).fail(function (error) {
