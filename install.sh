@@ -324,8 +324,9 @@ EOF
     echo " Next steps:"
     echo "  1. Log in and set up mail under Admin > Settings > Mail."
     echo "  2. Updates: Admin > Settings > Updates (button + automatic updates)."
-    echo "  3. Add a node in the admin area, then install Wings on the game server machine"
-    echo "     (run this installer there and choose the Wings option)."
+    echo "  3. Game servers need Wings: run this installer again and choose the Wings option."
+    echo "     On this machine it creates the node and certificate by itself; on another"
+    echo "     machine it guides you through connecting it."
     echo
     echo " Handy commands:  mc-panel status | update | logs | backup | restart"
     echo " Files:           $INSTALL_DIR  (secrets in $INSTALL_DIR/.env)"
@@ -357,12 +358,96 @@ uninstall_panel() {
     fi
 }
 
+# ---------------------------------------------------------------- certificates
+
+is_ip() { [[ "$1" =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; }
+
+# Warns when DOMAIN doesn't point at this server, since Let's Encrypt would then fail.
+check_dns() {
+    local domain="$1" server_ip domain_ip
+    server_ip="$(public_ip)"
+    domain_ip="$(getent hosts "$domain" | awk '{print $1; exit}')"
+    if [ -z "$domain_ip" ] || { [ -n "$server_ip" ] && [ "$domain_ip" != "$server_ip" ]; }; then
+        warn "$domain resolves to '${domain_ip:-nothing}', but this server's address is '$server_ip'."
+        warn "Create a DNS A record: $domain -> $server_ip (and wait a few minutes)."
+        confirm "Try to get the certificate anyway?" n || die "Aborted. Fix the DNS record and run the installer again."
+    fi
+}
+
+install_certbot() {
+    command -v certbot >/dev/null 2>&1 && return 0
+    info "Installing certbot..."
+    case "$PKG" in
+        apt) apt-get install -y certbot >/dev/null ;;
+        dnf) dnf install -y epel-release >/dev/null 2>&1; dnf install -y certbot >/dev/null ;;
+        yum) yum install -y epel-release >/dev/null 2>&1; yum install -y certbot >/dev/null ;;
+    esac
+    command -v certbot >/dev/null 2>&1 || die "Could not install certbot."
+}
+
+# Let's Encrypt briefly needs port 80. Sets CERT_PRE/CERT_POST to pause whatever uses it;
+# certbot stores these hooks, so automatic renewals do the same.
+port80_hooks() {
+    CERT_PRE=""; CERT_POST=""
+    port_in_use 80 || return 0
+    if docker ps --format '{{.Names}}' 2>/dev/null | grep -qx 'mcpanel-panel-1'; then
+        CERT_PRE="docker stop mcpanel-panel-1"; CERT_POST="docker start mcpanel-panel-1"
+        return 0
+    fi
+    local svc
+    for svc in nginx apache2 httpd caddy haproxy lighttpd; do
+        if systemctl is-active --quiet "$svc" 2>/dev/null; then
+            CERT_PRE="systemctl stop $svc"; CERT_POST="systemctl start $svc"
+            return 0
+        fi
+    done
+    die "Port 80 is used by another program. Let's Encrypt needs it for a moment; stop that program and run the installer again."
+}
+
+enable_cert_renewal() {
+    if systemctl list-unit-files 2>/dev/null | grep -q '^certbot.timer'; then
+        systemctl enable --now certbot.timer >/dev/null 2>&1
+    elif systemctl list-unit-files 2>/dev/null | grep -q '^certbot-renew.timer'; then
+        systemctl enable --now certbot-renew.timer >/dev/null 2>&1
+    else
+        echo "17 3,15 * * * root certbot renew -q" > /etc/cron.d/mc-panel-certbot
+    fi
+}
+
+# obtain_certificate DOMAIN EMAIL — certificate in /etc/letsencrypt/live/DOMAIN (where Wings
+# looks for it), renewed automatically; Wings restarts after each renewal to load it.
+obtain_certificate() {
+    local domain="$1" email="$2"
+    install_certbot
+
+    mkdir -p /etc/letsencrypt/renewal-hooks/deploy
+    cat > /etc/letsencrypt/renewal-hooks/deploy/mc-panel-wings.sh <<'EOF'
+#!/bin/sh
+# Installed by the MC Panel installer: Wings only reads its certificate on start.
+systemctl is-active --quiet wings && systemctl restart wings
+exit 0
+EOF
+    chmod +x /etc/letsencrypt/renewal-hooks/deploy/mc-panel-wings.sh
+
+    if [ -f "/etc/letsencrypt/live/$domain/fullchain.pem" ]; then
+        ok "A certificate for $domain already exists"
+    else
+        check_dns "$domain"
+        port80_hooks
+        open_firewall_ports 80
+        info "Requesting a Let's Encrypt certificate for $domain..."
+        local args=(certonly --standalone --non-interactive --agree-tos -m "$email" -d "$domain")
+        [ -n "$CERT_PRE" ] && args+=(--pre-hook "$CERT_PRE" --post-hook "$CERT_POST")
+        certbot "${args[@]}" || die "Could not get a certificate for $domain. Check that the domain points at this server and port 80 is reachable from the internet."
+        ok "Certificate for $domain installed"
+    fi
+    enable_cert_renewal
+    ok "Certificates renew automatically"
+}
+
 # ---------------------------------------------------------------- wings
 
-install_wings() {
-    install_packages
-    install_docker
-
+install_wings_binary() {
     info "Downloading Wings..."
     mkdir -p /etc/pterodactyl
     curl -fsSL -o /usr/local/bin/wings "https://github.com/pterodactyl/wings/releases/latest/download/wings_linux_$ARCH" \
@@ -395,41 +480,139 @@ EOF
         systemctl daemon-reload
         systemctl enable wings >/dev/null 2>&1
     fi
-    open_firewall_ports 8080 2022
+}
+
+env_value() {
+    grep -m1 "^$1=" "$INSTALL_DIR/.env" 2>/dev/null | cut -d= -f2-
+}
+
+start_wings() {
+    systemctl restart wings >/dev/null 2>&1
+    sleep 5
+    if systemctl is-active --quiet wings; then
+        ok "Wings is running"
+    else
+        warn "Wings did not start. See: journalctl -u wings -n 50"
+    fi
+}
+
+# The panel runs on this machine: create the node through the panel and connect Wings, no copying needed.
+setup_local_node() {
+    local app_url panel_host email scheme node_id mem_mb disk_mb tries=0
+    app_url="$(env_value APP_URL)"
+    panel_host="${app_url#*://}"; panel_host="${panel_host%%/*}"; panel_host="${panel_host%%:*}"
+    email="$(env_value LE_EMAIL)"; [ -n "$email" ] || email="$(env_value APP_SERVICE_AUTHOR)"
+
+    if [[ "$app_url" == https://* ]]; then
+        # Browsers only allow the server console over HTTPS when Wings has a certificate too.
+        scheme="https"
+        ask NODE_FQDN "Domain for Wings (the panel's domain works fine)" "$panel_host"
+        is_ip "$NODE_FQDN" && die "With HTTPS, Wings needs a domain name instead of an IP address."
+        obtain_certificate "$NODE_FQDN" "$email"
+    else
+        scheme="http"
+        ask NODE_FQDN "Address players and the panel use to reach this machine" "$panel_host"
+    fi
+
+    mem_mb=$(( $(awk '/MemTotal/ {print $2}' /proc/meminfo) / 1024 - 1536 ))
+    [ "$mem_mb" -lt 1024 ] && mem_mb=1024
+    disk_mb=$(( $(df -Pm / | awk 'NR==2 {print $4}') - 10240 ))
+    [ "$disk_mb" -lt 5120 ] && disk_mb=5120
+
+    info "Creating the node in the panel (ports 25565-25575 for game servers)..."
+    until node_id="$(dc exec -T panel php artisan p:node:quick-setup --fqdn="$NODE_FQDN" --scheme="$scheme" \
+            --memory="$mem_mb" --disk="$disk_mb" --ip="$(public_ip)" --ports=25565-25575 2>/dev/null | tr -d '\r' | tail -n1)" \
+            && [[ "$node_id" =~ ^[0-9]+$ ]]; do
+        tries=$((tries + 1))
+        [ "$tries" -ge 12 ] && die "Could not create the node in the panel. Check: mc-panel logs panel"
+        sleep 5
+    done
+    ok "Node #$node_id created"
+
+    dc exec -T panel php artisan p:node:configuration "$node_id" --format=yaml > /etc/pterodactyl/config.yml.new \
+        && [ -s /etc/pterodactyl/config.yml.new ] || die "Could not read the node configuration from the panel."
+    mv -f /etc/pterodactyl/config.yml.new /etc/pterodactyl/config.yml
+    chmod 600 /etc/pterodactyl/config.yml
+    ok "Wings is configured"
+    start_wings
+}
+
+# The panel runs somewhere else: prepare the certificate, then connect with the token from the panel.
+setup_remote_node() {
+    local scheme="http" insecure=""
+    echo
+    ask PANEL_URL "URL of your panel (for example https://panel.example.com)" ""
+    [[ "$PANEL_URL" =~ ^https?:// ]] || die "Please enter the full panel URL starting with http:// or https://"
+    PANEL_URL="${PANEL_URL%/}"
+
+    if [[ "$PANEL_URL" == https://* ]]; then
+        scheme="https"
+        echo "Your panel uses HTTPS, so Wings needs its own domain and certificate."
+        ask NODE_FQDN "Domain of THIS machine (for example node1.example.com)" ""
+        { [ -n "$NODE_FQDN" ] && ! is_ip "$NODE_FQDN"; } || die "A domain name (not an IP address) is required."
+        ask LE_EMAIL "E-mail address for Let's Encrypt (expiry notices)" ""
+        [[ "$LE_EMAIL" == *@*.* ]] || die "Please enter a valid e-mail address."
+        obtain_certificate "$NODE_FQDN" "$LE_EMAIL"
+    else
+        insecure="--allow-insecure"
+        ask NODE_FQDN "Address of THIS machine (IP or domain)" "$(public_ip)"
+    fi
 
     echo
-    printf '%s%s%s\n' "$C_BOLD" "Connect this machine to your panel" "$C_RESET"
-    echo "In the panel: Admin > Nodes > create a node, then open its Configuration tab."
-    if confirm "Do you have the node's panel URL, token and ID ready to configure Wings now?" n; then
-        ask WINGS_PANEL_URL "Panel URL (for example https://panel.example.com)" ""
-        ask WINGS_TOKEN "Node token (from the Configuration tab, 'Generate Token')" ""
-        ask WINGS_NODE "Node ID (a number)" ""
-        if [ -n "$WINGS_PANEL_URL" ] && [ -n "$WINGS_TOKEN" ] && [ -n "$WINGS_NODE" ]; then
-            local insecure=""
-            [[ "$WINGS_PANEL_URL" == http://* ]] && insecure="--allow-insecure"
-            if (cd /etc/pterodactyl && /usr/local/bin/wings configure --panel-url "$WINGS_PANEL_URL" --token "$WINGS_TOKEN" --node "$WINGS_NODE" $insecure); then
-                systemctl enable --now wings >/dev/null 2>&1 && ok "Wings configured and started"
-            else
-                warn "Configuring Wings failed. Copy the configuration from the node's Configuration tab to /etc/pterodactyl/config.yml, then run: systemctl enable --now wings"
-            fi
-        else
-            warn "Some values were empty, skipping the automatic configuration."
-        fi
+    printf '%s%s%s\n' "$C_BOLD" "Now create the node in the panel" "$C_RESET"
+    echo "  Admin > Nodes > Create New, and enter:"
+    echo "    FQDN:                    $NODE_FQDN"
+    if [ "$scheme" = "https" ]; then
+        echo "    Communicate Over SSL:    Use SSL Connection"
     else
-        echo
-        echo " When ready, either run the command from the node's Configuration tab, or put"
-        echo " the shown config into /etc/pterodactyl/config.yml, then start Wings with:"
-        echo "     systemctl enable --now wings"
+        echo "    Communicate Over SSL:    Use HTTP Connection"
     fi
+    echo "    Daemon Port / SFTP Port: 8080 / 2022"
+    echo "  Then open the node's Configuration tab and click 'Generate Token'."
     echo
-    ok "Wings installation finished. Game server ports (allocations) must be open in your firewall too."
+
+    ask WINGS_TOKEN "Token (shown after 'Generate Token', leave empty to do it later)" ""
+    if [ -z "$WINGS_TOKEN" ]; then
+        echo " Later: run the command from the Configuration tab on this machine, then: systemctl restart wings"
+        return 0
+    fi
+    ask WINGS_NODE "Node ID (the number in the node's URL)" ""
+    if (cd /etc/pterodactyl && /usr/local/bin/wings configure --panel-url "$PANEL_URL" --token "$WINGS_TOKEN" --node "$WINGS_NODE" $insecure); then
+        if [ "$scheme" = "https" ] && ! grep -A2 'ssl:' /etc/pterodactyl/config.yml | grep -q 'enabled: true'; then
+            warn "The node is set to HTTP in the panel. Edit it: Communicate Over SSL -> Use SSL Connection, then run this again."
+        fi
+        ok "Wings is configured"
+        start_wings
+    else
+        warn "Configuring Wings failed. Check the URL, token and node ID, or copy the config from the Configuration tab to /etc/pterodactyl/config.yml."
+    fi
+}
+
+install_wings() {
+    local panel_here=0
+    [ -f "$INSTALL_DIR/.env" ] && panel_here=1
+
+    install_packages
+    install_docker
+    install_wings_binary
+    open_firewall_ports 8080 2022 25565:25575/tcp 25565:25575/udp
+
+    if [ "$panel_here" = "1" ]; then
+        setup_local_node
+    else
+        setup_remote_node
+    fi
+
+    echo
+    ok "Wings installation finished."
+    echo " Game server ports 25565-25575 are open in ufw (if ufw is used); open them in your hoster's firewall too."
 }
 
 uninstall_wings() {
     [ -f /usr/local/bin/wings ] || die "Wings is not installed."
     confirm "Remove Wings? Servers stay in /var/lib/pterodactyl until you delete them." n || die "Aborted."
     systemctl disable --now wings >/dev/null 2>&1 || true
-    rm -f /etc/systemd/system/wings.service /usr/local/bin/wings
+    rm -f /etc/systemd/system/wings.service /usr/local/bin/wings /etc/letsencrypt/renewal-hooks/deploy/mc-panel-wings.sh
     systemctl daemon-reload 2>/dev/null || true
     if confirm "Also delete /etc/pterodactyl (node configuration)?" n; then rm -rf /etc/pterodactyl; fi
     ok "Wings removed."

@@ -33,6 +33,12 @@ What the installer asks:
 
 Then it builds and starts everything (5–15 minutes the first time) and prints the URL and login.
 
+**Wings and certificates** are handled automatically too:
+
+- *Panel and Wings on the same machine*: the installer creates the node in the panel (with game ports 25565–25575), writes the Wings configuration and starts Wings. If the panel uses HTTPS, it also gets a Let's Encrypt certificate for Wings (the panel's domain can be reused, no extra DNS record needed).
+- *Wings on another machine*: enter the panel URL; for an HTTPS panel also the machine's domain, and the certificate is created. The installer then tells you exactly what to enter when creating the node and asks for the token from the node's Configuration tab.
+- All certificates renew automatically (the panel's inside its container, Wings' via the certbot timer, restarting Wings afterwards).
+
 Requirements: 2 CPU cores and 4 GB RAM are recommended (the first build needs the memory; the installer offers to add swap on smaller servers). Ports 80 and 443 for the panel.
 
 Unattended installs work with environment variables, for example:
