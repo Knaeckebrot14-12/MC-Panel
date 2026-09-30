@@ -38,6 +38,8 @@ Then it builds and starts everything (5–15 minutes the first time) and prints 
 
 The system's own packages are brought up to date too: `apt update && apt upgrade -y` (dnf/yum on RHEL-like systems) runs before the installation changes anything and once more at the end. Your changed config files are kept. If an update needs a restart (a new kernel), the installer says so; everything starts again on its own after `reboot`. Set `MC_SKIP_SYSTEM_UPGRADE=1` to skip this.
 
+Every hour the server's RAM cache (page cache) is emptied by a systemd timer (`sync`, then `echo 1 > /proc/sys/vm/drop_caches`). Pending writes are saved first and running programs keep their memory; only cached file contents are read from disk again. Turn it off with `systemctl disable --now recoded-ptero-dropcache.timer`, or install without it using `MC_DROP_CACHES=0`.
+
 **Wings and certificates** are handled automatically too:
 
 - *Panel and Wings on the same machine*: the installer creates the node in the panel, writes the Wings configuration and starts Wings. If the panel uses HTTPS, it also gets a Let's Encrypt certificate for Wings (the panel's domain can be reused, no extra DNS record needed).

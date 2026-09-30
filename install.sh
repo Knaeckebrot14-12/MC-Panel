@@ -150,6 +150,47 @@ reboot_notice() {
     fi
 }
 
+# Hourly timer that empties the RAM cache (page cache). "sync" writes pending data to disk first, so
+# nothing is lost; programs keep their memory, only cached file contents are read from disk again.
+# MC_DROP_CACHES=0 skips it; turn it off later with: systemctl disable --now recoded-ptero-dropcache.timer
+setup_cache_drop() {
+    [ "${MC_DROP_CACHES:-1}" = "1" ] || return 0
+    [ -w /proc/sys/vm/drop_caches ] || return 0
+    if command -v systemctl >/dev/null 2>&1 && [ -d /etc/systemd/system ]; then
+        cat > /etc/systemd/system/recoded-ptero-dropcache.service <<'EOF'
+[Unit]
+Description=Recoded Ptero: empty the RAM cache
+
+[Service]
+Type=oneshot
+ExecStart=/bin/sh -c 'sync && echo 1 > /proc/sys/vm/drop_caches'
+EOF
+        cat > /etc/systemd/system/recoded-ptero-dropcache.timer <<'EOF'
+[Unit]
+Description=Recoded Ptero: empty the RAM cache every hour
+
+[Timer]
+OnCalendar=hourly
+RandomizedDelaySec=120
+
+[Install]
+WantedBy=timers.target
+EOF
+        systemctl daemon-reload >/dev/null 2>&1
+        systemctl enable --now recoded-ptero-dropcache.timer >/dev/null 2>&1 || return 0
+    else
+        echo "0 * * * * root sync && echo 1 > /proc/sys/vm/drop_caches" > /etc/cron.d/recoded-ptero-dropcache
+    fi
+    ok "RAM cache is emptied every hour"
+}
+
+remove_cache_drop() {
+    systemctl disable --now recoded-ptero-dropcache.timer >/dev/null 2>&1 || true
+    rm -f /etc/systemd/system/recoded-ptero-dropcache.service /etc/systemd/system/recoded-ptero-dropcache.timer \
+        /etc/cron.d/recoded-ptero-dropcache
+    systemctl daemon-reload >/dev/null 2>&1 || true
+}
+
 install_packages() {
     [ "${SYSTEM_UPGRADED:-0}" = "1" ] || upgrade_system "Updating the system (apt update && apt upgrade)" "System updated"
     case "$PKG" in
@@ -470,6 +511,7 @@ uninstall_panel() {
         docker image rm recodedptero-panel:latest recodedptero-panel:rollback recodedptero-updater:latest >/dev/null 2>&1 || true
         rm -f /usr/local/bin/recoded-ptero
         rm -rf "$INSTALL_DIR"
+        [ -f /usr/local/bin/wings ] || remove_cache_drop
         ok "Panel and all its data were removed."
     else
         dc down --remove-orphans
@@ -978,6 +1020,7 @@ uninstall_wings() {
         rm -f "$GAMEDB_ENV"
         ok "Database server for game servers removed."
     fi
+    [ -f "$INSTALL_DIR/.env" ] || remove_cache_drop
     ok "Wings removed."
 }
 
@@ -1378,6 +1421,7 @@ main() {
     # Everything that was installed or upgraded ends up on its newest version as well.
     case "$action" in
         panel|wings|both|upgrade)
+            setup_cache_drop
             if [ "${SYSTEM_UPGRADED:-0}" = "1" ]; then
                 upgrade_system "Installing the last system updates" "System is up to date"
                 reboot_notice
