@@ -1,0 +1,32 @@
+<?php
+
+return [
+    'coins_tooltip' => 'Monety — Zdobywaj, AFK i sklep',
+    'tickets_tooltip' => 'Zgłoszenia do wsparcia',
+    'dashboard' => 'Panel',
+    'admin' => 'Admin',
+    'account_settings' => 'Ustawienia konta',
+    'sign_out' => 'Wyloguj się',
+    'tabs' => [
+        'account' => 'Konto',
+        'api_credentials' => 'Dane dostępowe API',
+        'ssh_keys' => 'Klucze SSH',
+        'activity' => 'Aktywność',
+        'coins_earn' => 'Zdobywaj',
+        'coins_afk' => 'AFK',
+        'coins_shop' => 'Sklep',
+        'coins_history' => 'Historia',
+        'tickets' => 'Moje zgłoszenia',
+        'tickets_new' => 'Nowe zgłoszenie',
+        'console' => 'Konsola',
+        'files' => 'Pliki',
+        'plugins' => 'Plugins',
+        'databases' => 'Bazy danych',
+        'schedules' => 'Harmonogramy',
+        'users' => 'Użytkownicy',
+        'backups' => 'Kopie zapasowe',
+        'network' => 'Sieć',
+        'startup' => 'Uruchamianie',
+        'settings' => 'Ustawienia',
+    ],
+];

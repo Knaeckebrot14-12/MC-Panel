@@ -1,0 +1,40 @@
+<?php
+
+return [
+    'title' => 'Kopie zapasowe',
+    'empty_last_page' => 'Wygląda na to, że skończyły się kopie zapasowe do wyświetlenia — spróbuj wrócić o stronę.',
+    'empty' => 'Wygląda na to, że dla tego serwera nie ma obecnie żadnych kopii zapasowych.',
+    'disabled' => 'Nie można tworzyć kopii zapasowych dla tego serwera, ponieważ limit kopii zapasowych jest ustawiony na 0.',
+    'allocated' => 'Dla tego serwera utworzono :used z :limit kopii zapasowych.',
+    'row' => [
+        'failed_badge' => 'Nieudana',
+        'created_label' => 'Utworzona',
+    ],
+    'context_menu' => [
+        'download' => 'Pobierz',
+        'restore' => 'Przywróć',
+        'lock' => 'Zablokuj',
+        'unlock' => 'Odblokuj',
+        'delete' => 'Usuń',
+        'unlock_title' => 'Odblokuj „:name”',
+        'unlock_body' => 'Ta kopia zapasowa nie będzie już chroniona przed automatycznym ani przypadkowym usunięciem.',
+        'restore_title' => 'Przywróć „:name”',
+        'restore_confirm' => 'Przywróć',
+        'restore_body' => 'Serwer zostanie zatrzymany. Do czasu zakończenia nie będziesz mógł zarządzać stanem zasilania, korzystać z menedżera plików ani tworzyć dodatkowych kopii zapasowych.',
+        'restore_truncate_label' => 'Usuń wszystkie pliki przed przywróceniem kopii zapasowej.',
+        'delete_title' => 'Usuń „:name”',
+        'delete_confirm' => 'Kontynuuj',
+        'delete_body' => 'To operacja trwała. Kopii zapasowej nie będzie można odzyskać po usunięciu.',
+    ],
+    'create_modal' => [
+        'heading' => 'Utwórz kopię zapasową serwera',
+        'name_label' => 'Nazwa kopii zapasowej',
+        'name_description' => 'Jeśli podana, nazwa używana do odwoływania się do tej kopii zapasowej.',
+        'ignored_label' => 'Ignorowane pliki i katalogi',
+        'ignored_description' => 'Wpisz pliki lub foldery, które mają być pominięte podczas tworzenia tej kopii zapasowej. Zostaw puste, aby użyć zawartości pliku .pteroignore w katalogu głównym serwera, jeśli istnieje. Obsługiwane są symbole wieloznaczne dla plików i folderów oraz negowanie reguły przez poprzedzenie ścieżki wykrzyknikiem.',
+        'locked_label' => 'Zablokowana',
+        'locked_description' => 'Zapobiega usunięciu tej kopii zapasowej, dopóki nie zostanie jawnie odblokowana.',
+        'start_button' => 'Rozpocznij kopię zapasową',
+    ],
+    'create_button' => 'Utwórz kopię zapasową',
+];

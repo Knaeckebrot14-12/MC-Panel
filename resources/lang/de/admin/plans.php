@@ -1,0 +1,35 @@
+<?php
+
+return [
+    'title' => 'Server-Pakete',
+    'heading' => 'Server-Pakete',
+    'subheading' => 'Feste Server-Pakete, die im Coin-Shop verkauft werden.',
+    'edit_title' => 'Paket: :name',
+    'edit_subheading' => 'Server-Paket bearbeiten',
+    'create_heading' => 'Paket erstellen',
+    'create_button' => 'Paket erstellen',
+    'save_button' => 'Paket speichern',
+    'list_heading' => 'Alle Pakete',
+    'empty' => 'Noch keine Pakete. Ohne aktives Paket verkauft der Shop die einzelne Stufe aus den Coin-Einstellungen.',
+    'price_note' => 'Server behalten den Preis, zu dem sie gekauft wurden; Änderungen an einem Paket betreffen nur neue Käufe.',
+    'status' => 'Status',
+    'active' => 'Aktiv',
+    'inactive' => 'Versteckt',
+    'notices' => [
+        'created' => 'Das Paket wurde erstellt.',
+        'updated' => 'Das Paket wurde aktualisiert.',
+        'deleted' => 'Das Paket wurde gelöscht. Bereits gekaufte Server laufen weiter.',
+    ],
+    'form' => [
+        'name' => 'Name',
+        'description' => 'Beschreibung',
+        'memory' => 'Arbeitsspeicher',
+        'disk' => 'Speicherplatz',
+        'cpu' => 'CPU',
+        'backups' => 'Backups',
+        'price' => 'Monatspreis',
+        'price_unit' => 'Coins',
+        'sort_order' => 'Reihenfolge',
+        'active' => 'Im Shop anbieten',
+    ],
+];

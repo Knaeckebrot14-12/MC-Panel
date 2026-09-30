@@ -1,0 +1,143 @@
+<?php
+
+/**
+ * Contains all of the translation strings for different activity log
+ * events. These should be keyed by the value in front of the colon (:)
+ * in the event name. If there is no colon present, they should live at
+ * the top level.
+ */
+return [
+    'auth' => [
+        'fail' => 'Échec de connexion',
+        'success' => 'Connecté',
+        'password-reset' => 'Mot de passe réinitialisé',
+        'reset-password' => 'Réinitialisation du mot de passe demandée',
+        'checkpoint' => "Authentification à deux facteurs demandée",
+        'recovery-token' => 'Jeton de récupération à deux facteurs utilisé',
+        'token' => "Défi à deux facteurs résolu",
+        'ip-blocked' => "Requête bloquée depuis une adresse IP non autorisée pour :identifier",
+        'sftp' => [
+            'fail' => 'Échec de connexion SFTP',
+        ],
+    ],
+    'user' => [
+        'user' => [
+            'create' => 'Nouvel utilisateur :email créé',
+        ],
+        'account' => [
+            'email-changed' => "Adresse e-mail changée de :old à :new",
+            'password-changed' => 'Mot de passe modifié',
+        ],
+        'api-key' => [
+            'create' => 'Nouvelle clé API :identifier créée',
+            'delete' => 'Clé API :identifier supprimée',
+        ],
+        'ssh-key' => [
+            'create' => 'Clé SSH :fingerprint ajoutée au compte',
+            'delete' => 'Clé SSH :fingerprint retirée du compte',
+        ],
+        'two-factor' => [
+            'create' => "Authentification à deux facteurs activée",
+            'delete' => "Authentification à deux facteurs désactivée",
+        ],
+    ],
+    'server' => [
+        'reinstall' => 'Serveur réinstallé',
+        'console' => [
+            'command' => '« :command » exécuté sur le serveur',
+        ],
+        'power' => [
+            'start' => 'Serveur démarré',
+            'stop' => 'Serveur arrêté',
+            'restart' => 'Serveur redémarré',
+            'kill' => 'Processus du serveur tué',
+        ],
+        'backup' => [
+            'download' => 'Sauvegarde :name téléchargée',
+            'delete' => 'Sauvegarde :name supprimée',
+            'restore' => 'Sauvegarde :name restaurée (fichiers supprimés : :truncate)',
+            'restore-complete' => 'Restauration de la sauvegarde :name terminée',
+            'restore-failed' => 'Échec de la restauration de la sauvegarde :name',
+            'start' => 'Nouvelle sauvegarde :name démarrée',
+            'complete' => 'Sauvegarde :name marquée comme terminée',
+            'fail' => 'Sauvegarde :name marquée comme échouée',
+            'lock' => 'Sauvegarde :name verrouillée',
+            'unlock' => 'Sauvegarde :name déverrouillée',
+        ],
+        'database' => [
+            'create' => 'Nouvelle base de données :name créée',
+            'rotate-password' => 'Mot de passe renouvelé pour la base de données :name',
+            'delete' => 'Base de données :name supprimée',
+        ],
+        'file' => [
+            'compress_one' => ':directory:files.0 compressé',
+            'compress_other' => ':count fichiers compressés dans :directory',
+            'read' => 'Contenu de :file consulté',
+            'copy' => 'Copie de :file créée',
+            'create-directory' => 'Répertoire :directory:name créé',
+            'decompress' => ':files décompressés dans :directory',
+            'delete_one' => ':directory:files.0 supprimé',
+            'delete_other' => ':count fichiers supprimés dans :directory',
+            'download' => ':file téléchargé',
+            'pull' => 'Fichier distant téléchargé depuis :url vers :directory',
+            'rename_one' => ':directory:files.0.from renommé en :directory:files.0.to',
+            'rename_other' => ':count fichiers renommés dans :directory',
+            'write' => 'Nouveau contenu écrit dans :file',
+            'upload' => "Début d'un envoi de fichier",
+            'uploaded' => ':directory:file envoyé',
+        ],
+        'sftp' => [
+            'denied' => "Accès SFTP bloqué en raison des permissions",
+            'create_one' => ':files.0 créé',
+            'create_other' => ':count nouveaux fichiers créés',
+            'write_one' => 'Contenu de :files.0 modifié',
+            'write_other' => 'Contenu de :count fichiers modifié',
+            'delete_one' => ':files.0 supprimé',
+            'delete_other' => ':count fichiers supprimés',
+            'create-directory_one' => 'Répertoire :files.0 créé',
+            'create-directory_other' => ':count répertoires créés',
+            'rename_one' => ':files.0.from renommé en :files.0.to',
+            'rename_other' => ':count fichiers renommés ou déplacés',
+        ],
+        'allocation' => [
+            'create' => ':allocation ajoutée au serveur',
+            'notes' => 'Notes de :allocation modifiées de « :old » à « :new »',
+            'primary' => ':allocation définie comme allocation principale du serveur',
+            'delete' => 'Allocation :allocation supprimée',
+        ],
+        'schedule' => [
+            'create' => 'Planification :name créée',
+            'update' => 'Planification :name mise à jour',
+            'execute' => 'Planification :name exécutée manuellement',
+            'delete' => 'Planification :name supprimée',
+        ],
+        'task' => [
+            'create' => 'Nouvelle tâche « :action » créée pour la planification :name',
+            'update' => 'Tâche « :action » mise à jour pour la planification :name',
+            'delete' => 'Tâche supprimée pour la planification :name',
+        ],
+        'settings' => [
+            'rename' => 'Serveur renommé de :old en :new',
+            'description' => 'Description du serveur modifiée de :old à :new',
+        ],
+        'startup' => [
+            'edit' => 'Variable :variable modifiée de « :old » à « :new »',
+            'image' => "Image Docker du serveur mise à jour de :old à :new",
+        ],
+        'subuser' => [
+            'create' => ':email ajouté comme sous-utilisateur',
+            'update' => 'Permissions du sous-utilisateur :email mises à jour',
+            'delete' => ':email retiré des sous-utilisateurs',
+        ],
+    ],
+    'meta' => [
+        'system_user' => 'Utilisateur système',
+        'system' => 'Système',
+        'using_api_key' => 'Via une clé API',
+        'using_sftp' => 'Via SFTP',
+        'clear_filters' => 'Effacer les filtres',
+        'server_title' => "Journal d'activité",
+        'server_empty' => "Aucun journal d'activité disponible pour ce serveur.",
+        'account_title' => "Journal d'activité du compte",
+    ],
+];

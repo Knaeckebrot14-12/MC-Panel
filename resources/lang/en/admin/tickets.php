@@ -1,0 +1,61 @@
+<?php
+
+return [
+    'notices' => [
+        'replied' => 'Your reply was sent.',
+        'updated' => 'The ticket was updated.',
+    ],
+    'status' => [
+        'open' => 'Open',
+        'customer_reply' => 'Awaiting support',
+        'answered' => 'Answered',
+        'closed' => 'Closed',
+    ],
+    'index' => [
+        'rating_summary' => ':percent% positive ratings (:total rated)',
+        'title' => 'Tickets',
+        'heading' => 'Tickets',
+        'subheading' => 'Support requests from your users.',
+        'list_heading' => 'Ticket List',
+        'empty' => 'No tickets match your filters.',
+    ],
+    'filters' => [
+        'active' => 'Active tickets',
+        'all' => 'All tickets',
+        'any_assignee' => 'Any assignee',
+        'mine' => 'Assigned to me',
+        'unassigned' => 'Unassigned',
+        'search' => 'Subject, user or #',
+    ],
+    'table' => [
+        'rating' => 'Rating',
+        'subject' => 'Subject',
+        'user' => 'User',
+        'category' => 'Category',
+        'priority' => 'Priority',
+        'status' => 'Status',
+        'assignee' => 'Assigned to',
+        'last_reply' => 'Last activity',
+    ],
+    'view' => [
+        'rating' => 'Rating',
+        'title' => 'Ticket #:id',
+        'internal_note' => 'Internal note',
+        'staff' => 'Team',
+        'reply_heading' => 'Reply',
+        'internal_checkbox' => 'Internal note (only visible to the team, the user is not notified)',
+        'after_label' => 'After sending',
+        'after_answered' => 'Mark as answered',
+        'after_closed' => 'Close ticket',
+        'after_keep' => 'Keep current status',
+        'send' => 'Send',
+        'details_heading' => 'Details',
+        'server' => 'Server',
+        'created' => 'Created',
+        'save' => 'Save',
+    ],
+    'rating' => [
+        'up' => 'Helpful',
+        'down' => 'Not helpful',
+    ],
+];

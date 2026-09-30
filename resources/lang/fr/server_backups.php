@@ -1,0 +1,40 @@
+<?php
+
+return [
+    'title' => 'Sauvegardes',
+    'empty_last_page' => "Il semble que nous n'ayons plus de sauvegardes à vous montrer, essayez de revenir à la page précédente.",
+    'empty' => "Il semble qu'aucune sauvegarde ne soit actuellement stockée pour ce serveur.",
+    'disabled' => 'Les sauvegardes ne peuvent pas être créées pour ce serveur car la limite de sauvegardes est fixée à 0.',
+    'allocated' => ':used sauvegardes sur :limit ont été créées pour ce serveur.',
+    'row' => [
+        'failed_badge' => 'Échec',
+        'created_label' => 'Créée',
+    ],
+    'context_menu' => [
+        'download' => 'Télécharger',
+        'restore' => 'Restaurer',
+        'lock' => 'Verrouiller',
+        'unlock' => 'Déverrouiller',
+        'delete' => 'Supprimer',
+        'unlock_title' => 'Déverrouiller « :name »',
+        'unlock_body' => 'Cette sauvegarde ne sera plus protégée contre les suppressions automatiques ou accidentelles.',
+        'restore_title' => 'Restaurer « :name »',
+        'restore_confirm' => 'Restaurer',
+        'restore_body' => "Votre serveur sera arrêté. Vous ne pourrez pas contrôler l'état d'alimentation, accéder au gestionnaire de fichiers ni créer de nouvelles sauvegardes tant que la restauration n'est pas terminée.",
+        'restore_truncate_label' => 'Supprimer tous les fichiers avant de restaurer la sauvegarde.',
+        'delete_title' => 'Supprimer « :name »',
+        'delete_confirm' => 'Continuer',
+        'delete_body' => "Il s'agit d'une opération définitive. La sauvegarde ne pourra pas être récupérée une fois supprimée.",
+    ],
+    'create_modal' => [
+        'heading' => 'Créer une sauvegarde du serveur',
+        'name_label' => 'Nom de la sauvegarde',
+        'name_description' => 'Si renseigné, le nom à utiliser pour référencer cette sauvegarde.',
+        'ignored_label' => 'Fichiers et dossiers ignorés',
+        'ignored_description' => "Saisissez les fichiers ou dossiers à ignorer lors de la création de cette sauvegarde. Laissez vide pour utiliser le contenu du fichier .pteroignore à la racine du répertoire du serveur, s'il existe. Les caractères génériques sont pris en charge pour les fichiers et dossiers, ainsi que la négation d'une règle en préfixant le chemin d'un point d'exclamation.",
+        'locked_label' => 'Verrouillée',
+        'locked_description' => "Empêche la suppression de cette sauvegarde tant qu'elle n'est pas explicitement déverrouillée.",
+        'start_button' => 'Démarrer la sauvegarde',
+    ],
+    'create_button' => 'Créer une sauvegarde',
+];

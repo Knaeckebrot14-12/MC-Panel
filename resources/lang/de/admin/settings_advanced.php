@@ -1,0 +1,28 @@
+<?php
+
+return [
+    'title' => 'Erweiterte Einstellungen',
+    'heading' => 'Erweiterte Einstellungen',
+    'subheading' => 'Konfiguriere erweiterte Einstellungen für Pterodactyl.',
+    'recaptcha_heading' => 'reCAPTCHA',
+    'status_label' => 'Status',
+    'enabled' => 'Aktiviert',
+    'disabled' => 'Deaktiviert',
+    'recaptcha_status_description' => 'Wenn aktiviert, führen Anmelde- und Passwort-Zurücksetzen-Formulare eine stille Captcha-Prüfung durch und zeigen bei Bedarf ein sichtbares Captcha an.',
+    'site_key_label' => 'Website-Schlüssel',
+    'secret_key_label' => 'Geheimer Schlüssel',
+    'secret_key_description' => 'Wird für die Kommunikation zwischen deiner Website und Google verwendet. Halte ihn unbedingt geheim.',
+    'recaptcha_warning' => 'Du verwendest derzeit reCAPTCHA-Schlüssel, die mit diesem Panel ausgeliefert wurden. Für mehr Sicherheit wird empfohlen, :link zu generieren, die speziell an deine Website gebunden sind.',
+    'recaptcha_warning_link_text' => 'neue unsichtbare reCAPTCHA-Schlüssel',
+    'http_connections_heading' => 'HTTP-Verbindungen',
+    'connect_timeout_label' => 'Verbindungs-Timeout',
+    'connect_timeout_description' => 'Die Zeit in Sekunden, die auf das Öffnen einer Verbindung gewartet wird, bevor ein Fehler ausgelöst wird.',
+    'request_timeout_label' => 'Anfrage-Timeout',
+    'request_timeout_description' => 'Die Zeit in Sekunden, die auf den Abschluss einer Anfrage gewartet wird, bevor ein Fehler ausgelöst wird.',
+    'auto_allocation_heading' => 'Automatische Zuweisungserstellung',
+    'auto_allocation_status_description' => 'Wenn aktiviert, können Benutzer über das Frontend automatisch neue Zuweisungen für ihren Server erstellen.',
+    'starting_port_label' => 'Startport',
+    'starting_port_description' => 'Der Startport des Bereichs, der automatisch zugewiesen werden kann.',
+    'ending_port_label' => 'Endport',
+    'ending_port_description' => 'Der Endport des Bereichs, der automatisch zugewiesen werden kann.',
+];

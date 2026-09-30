@@ -1,0 +1,41 @@
+<?php
+
+return [
+    'nav' => [
+        'basic_administration' => 'BASIC ADMINISTRATION',
+        'overview' => 'Overview',
+        'settings' => 'Settings',
+        'application_api' => 'Application API',
+        'announcements' => 'Announcements',
+        'management' => 'MANAGEMENT',
+        'databases' => 'Databases',
+        'locations' => 'Locations',
+        'nodes' => 'Nodes',
+        'servers' => 'Servers',
+        'users' => 'Users',
+        'service_management' => 'SERVICE MANAGEMENT',
+        'mounts' => 'Mounts',
+        'nests' => 'Nests',
+        'tickets' => 'Tickets',
+        'support_section' => 'SUPPORT',
+        'coins_section' => 'COINS & SHOP',
+        'vouchers' => 'Vouchers',
+        'plans' => 'Server Plans',
+        'coins_settings' => 'Coin Settings',
+        'audit' => 'Audit Log',
+    ],
+    'header' => [
+        'toggle_navigation' => 'Toggle navigation',
+        'exit_admin_control' => 'Exit Admin Control',
+        'logout' => 'Logout',
+    ],
+    'validation_error' => 'There was an error validating the data provided.',
+    'breadcrumb_admin' => 'Admin',
+    'footer' => [
+        'copyright' => 'Copyright',
+    ],
+    'swal' => [
+        'logout_title' => 'Do you want to log out?',
+        'logout_confirm' => 'Log out',
+    ],
+];

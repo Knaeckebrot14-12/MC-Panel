@@ -1,0 +1,88 @@
+<?php
+
+return [
+    'notices' => [
+        'created' => 'A new nest, :name, was successfully created.',
+        'deleted' => 'The requested nest has successfully been deleted from the Panel.',
+        'updated' => 'Nest configuration options have successfully been updated.',
+    ],
+    'eggs' => [
+        'notices' => [
+            'imported' => 'A new egg and its associated variables have been successfully imported.',
+            'updated_via_import' => 'This egg has been updated using the file provided.',
+            'deleted' => 'The requested egg has successfully been deleted from the Panel.',
+            'updated' => 'Egg configuration has successfully been updated.',
+            'script_updated' => 'Egg install script has been updated and will be executed for each server installation going forward.',
+            'egg_created' => 'A new egg was successfully created. You should restart any running daemons to apply this new egg.',
+        ],
+    ],
+    'variables' => [
+        'notices' => [
+            'variable_deleted' => 'The variable ":variable" has been deleted and is no longer available to servers after their next rebuild.',
+            'variable_updated' => 'Variable ":variable" has been updated. You will need to restart any servers using this variable for the changes to take effect.',
+            'variable_created' => 'A new variable has successfully been created and assigned to this egg.',
+        ],
+    ],
+    'title' => 'Nests',
+    'breadcrumb_nests' => 'Nests',
+    'index' => [
+        'heading' => 'Nests',
+        'subheading' => 'All nests currently available on this system.',
+        'egg_warning' => 'Eggs are a powerful feature of Pterodactyl Panel that allow for extreme flexibility and configuration. Please note that while powerful, modifying an egg wrongly can very easily brick your servers and cause more problems. Please avoid editing our default eggs — those provided by :support — unless you are absolutely sure of what you are doing.',
+        'configured_heading' => 'Configured Nests',
+        'import_egg_button' => 'Import Egg',
+        'create_new_button' => 'Create New',
+        'table' => [
+            'id' => 'ID',
+            'name' => 'Name',
+            'description' => 'Description',
+            'eggs' => 'Eggs',
+            'servers' => 'Servers',
+        ],
+        'modal' => [
+            'close_aria' => 'Close',
+            'title' => 'Import an Egg',
+            'file_label' => 'Egg File',
+            'file_description' => 'Select the :ext file for the new egg that you wish to import.',
+            'nest_label' => 'Associated Nest',
+            'nest_description' => 'Select the nest that this egg will be associated with from the dropdown. If you wish to associate it with a new nest you will need to create that nest before continuing.',
+            'cancel_button' => 'Cancel',
+            'import_button' => 'Import',
+        ],
+    ],
+    'new' => [
+        'title' => 'New Nest',
+        'heading' => 'New Nest',
+        'subheading' => 'Configure a new nest to deploy to all nodes.',
+        'breadcrumb_new' => 'New',
+        'box_heading' => 'New Nest',
+        'name_label' => 'Name',
+        'name_description' => 'This should be a descriptive category name that encompasses all of the eggs within the nest.',
+        'description_label' => 'Description',
+        'save_button' => 'Save',
+    ],
+    'view' => [
+        'title' => 'Nests → :name',
+        'name_label' => 'Name',
+        'name_description' => 'This should be a descriptive category name that encompasses all of the options within the service.',
+        'description_label' => 'Description',
+        'save_button' => 'Save',
+        'nest_id_label' => 'Nest ID',
+        'nest_id_description' => 'A unique ID used for identification of this nest internally and through the API.',
+        'author_label' => 'Author',
+        'author_description' => 'The author of this service option. Please direct questions and issues to them unless this is an official option authored by :support.',
+        'uuid_label' => 'UUID',
+        'uuid_description' => 'A UUID that all servers using this option are assigned for identification purposes.',
+        'eggs_heading' => 'Nest Eggs',
+        'table' => [
+            'id' => 'ID',
+            'name' => 'Name',
+            'description' => 'Description',
+            'servers' => 'Servers',
+        ],
+        'new_egg_button' => 'New Egg',
+        'js' => [
+            'delete_hover' => ' Delete Nest',
+        ],
+    ],
+];

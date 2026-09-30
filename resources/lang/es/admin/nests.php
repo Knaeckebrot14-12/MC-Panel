@@ -1,0 +1,88 @@
+<?php
+
+return [
+    'notices' => [
+        'created' => 'Se creó correctamente un nuevo nest, :name.',
+        'deleted' => 'El nest solicitado se ha eliminado correctamente del panel.',
+        'updated' => 'Las opciones de configuración del nest se han actualizado correctamente.',
+    ],
+    'eggs' => [
+        'notices' => [
+            'imported' => 'Se importaron correctamente un nuevo egg y sus variables asociadas.',
+            'updated_via_import' => 'Este egg se ha actualizado con el archivo proporcionado.',
+            'deleted' => 'El egg solicitado se ha eliminado correctamente del panel.',
+            'updated' => 'La configuración del egg se ha actualizado correctamente.',
+            'script_updated' => 'El script de instalación del egg se ha actualizado y se ejecutará en cada instalación de servidor a partir de ahora.',
+            'egg_created' => 'Se creó correctamente un nuevo egg. Deberías reiniciar los daemons en ejecución para aplicar este nuevo egg.',
+        ],
+    ],
+    'variables' => [
+        'notices' => [
+            'variable_deleted' => 'La variable «:variable» se ha eliminado y ya no estará disponible para los servidores tras su próxima reconstrucción.',
+            'variable_updated' => 'La variable «:variable» se ha actualizado. Tendrás que reiniciar los servidores que usen esta variable para que los cambios surtan efecto.',
+            'variable_created' => 'Se creó correctamente una nueva variable y se asignó a este egg.',
+        ],
+    ],
+    'title' => 'Nests',
+    'breadcrumb_nests' => 'Nests',
+    'index' => [
+        'heading' => 'Nests',
+        'subheading' => 'Todos los nests disponibles actualmente en este sistema.',
+        'egg_warning' => 'Los eggs son una función potente de Pterodactyl Panel que permite una flexibilidad y una configuración extremas. Ten en cuenta que, aunque son potentes, modificar un egg de forma incorrecta puede dejar inservibles tus servidores con mucha facilidad y causar más problemas. Evita editar nuestros eggs predeterminados (los proporcionados por :support) a menos que estés absolutamente seguro de lo que haces.',
+        'configured_heading' => 'Nests configurados',
+        'import_egg_button' => 'Importar egg',
+        'create_new_button' => 'Crear nuevo',
+        'table' => [
+            'id' => 'ID',
+            'name' => 'Nombre',
+            'description' => 'Descripción',
+            'eggs' => 'Eggs',
+            'servers' => 'Servidores',
+        ],
+        'modal' => [
+            'close_aria' => 'Cerrar',
+            'title' => 'Importar un egg',
+            'file_label' => 'Archivo del egg',
+            'file_description' => 'Selecciona el archivo :ext del nuevo egg que quieres importar.',
+            'nest_label' => 'Nest asociado',
+            'nest_description' => 'Selecciona en la lista el nest con el que se asociará este egg. Si quieres asociarlo a un nuevo nest, tendrás que crearlo antes de continuar.',
+            'cancel_button' => 'Cancelar',
+            'import_button' => 'Importar',
+        ],
+    ],
+    'new' => [
+        'title' => 'Nuevo nest',
+        'heading' => 'Nuevo nest',
+        'subheading' => 'Configura un nuevo nest para desplegarlo en todos los nodos.',
+        'breadcrumb_new' => 'Nuevo',
+        'box_heading' => 'Nuevo nest',
+        'name_label' => 'Nombre',
+        'name_description' => 'Debe ser un nombre de categoría descriptivo que abarque todos los eggs del nest.',
+        'description_label' => 'Descripción',
+        'save_button' => 'Guardar',
+    ],
+    'view' => [
+        'title' => 'Nests → :name',
+        'name_label' => 'Nombre',
+        'name_description' => 'Debe ser un nombre de categoría descriptivo que abarque todas las opciones del servicio.',
+        'description_label' => 'Descripción',
+        'save_button' => 'Guardar',
+        'nest_id_label' => 'ID del nest',
+        'nest_id_description' => 'Un ID único que sirve para identificar este nest internamente y a través de la API.',
+        'author_label' => 'Autor',
+        'author_description' => 'El autor de esta opción de servicio. Dirige tus preguntas y problemas a esa persona, salvo que sea una opción oficial creada por :support.',
+        'uuid_label' => 'UUID',
+        'uuid_description' => 'Un UUID que se asigna a todos los servidores que usan esta opción con fines de identificación.',
+        'eggs_heading' => 'Eggs del nest',
+        'table' => [
+            'id' => 'ID',
+            'name' => 'Nombre',
+            'description' => 'Descripción',
+            'servers' => 'Servidores',
+        ],
+        'new_egg_button' => 'Nuevo egg',
+        'js' => [
+            'delete_hover' => ' Eliminar nest',
+        ],
+    ],
+];

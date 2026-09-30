@@ -1,0 +1,47 @@
+<?php
+
+return [
+    'title' => 'Databases',
+    'empty' => 'Het lijkt erop dat je geen databases hebt.',
+    'disabled' => 'Voor deze server kunnen geen databases worden aangemaakt.',
+    'allocated' => ':used van :limit databases zijn aan deze server toegewezen.',
+    'new_database_button' => 'Nieuwe database',
+    'rotate_password_button' => 'Wachtwoord roteren',
+    'labels' => [
+        'endpoint' => 'Endpoint',
+        'connections_from' => 'Verbindingen vanaf',
+        'username' => 'Gebruikersnaam',
+    ],
+    'create' => [
+        'heading' => 'Nieuwe database aanmaken',
+        'name_label' => 'Databasenaam',
+        'name_description' => 'Een beschrijvende naam voor je database-instantie.',
+        'connections_from_label' => 'Verbindingen vanaf',
+        'connections_from_description' => 'Vanaf waar verbindingen zijn toegestaan. Laat leeg om verbindingen van overal toe te staan.',
+        'cancel' => 'Annuleren',
+        'create_button' => 'Database aanmaken',
+        'validation' => [
+            'name_required' => 'Een databasenaam is verplicht.',
+            'name_min' => 'De databasenaam moet minstens 3 tekens bevatten.',
+            'name_max' => 'De databasenaam mag niet langer zijn dan 48 tekens.',
+            'name_format' => 'De databasenaam mag alleen alfanumerieke tekens, underscores, streepjes en/of punten bevatten.',
+            'connections_from_format' => 'Een geldig hostadres is verplicht.',
+        ],
+    ],
+    'delete' => [
+        'heading' => 'Verwijdering van database bevestigen',
+        'body_prefix' => 'Een database verwijderen is een permanente actie en kan niet ongedaan worden gemaakt. Hiermee wordt de database',
+        'body_suffix' => ' definitief verwijderd, inclusief alle bijbehorende gegevens.',
+        'confirm_label' => 'Databasenaam bevestigen',
+        'confirm_description' => 'Voer de databasenaam in om de verwijdering te bevestigen.',
+        'confirm_required' => 'De databasenaam is verplicht.',
+        'cancel' => 'Annuleren',
+        'delete_button' => 'Database verwijderen',
+    ],
+    'connection' => [
+        'heading' => 'Verbindingsgegevens van de database',
+        'jdbc_label' => 'JDBC-verbindingsstring',
+        'password_label' => 'Wachtwoord',
+        'close_button' => 'Sluiten',
+    ],
+];

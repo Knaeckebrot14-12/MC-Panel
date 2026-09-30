@@ -1,0 +1,33 @@
+<?php
+
+return [
+    'title' => 'Wtyczki',
+    'search_placeholder' => 'Szukaj wtyczek w Modrinth…',
+    'search_button' => 'Szukaj',
+    'filter' => [
+        'button' => 'Filtruj',
+        'category_label' => 'Kategoria',
+        'search' => 'Szukaj',
+        'citybuild' => 'Citybuild',
+        'pvp' => 'PvP',
+        'installed_count' => 'Zainstalowane (:count)',
+        'status_label' => 'Status',
+        'all' => 'Wszystkie',
+        'installed' => 'Zainstalowane',
+        'not_installed' => 'Niezainstalowane',
+    ],
+    'compatible_with' => 'Wyniki zgodne z Paper/Spigot/Bukkit dla Minecraft :version.',
+    'installed_empty' => 'W :directory nic jeszcze nie zainstalowano.',
+    'no_results' => 'Nie znaleziono pasujących wtyczek.',
+    'downloads_label' => 'Pobrania',
+    'view_on_modrinth' => 'Zobacz :title w Modrinth',
+    'installed_button' => 'Zainstalowana',
+    'install_button' => 'Zainstaluj',
+    'install_success' => ':title zainstalowano w :directory. Zrestartuj serwer, aby ją załadować.',
+    'install_incompatible' => 'Nie znaleziono wersji :title zgodnej z serwerem Paper/Spigot/Bukkit.',
+    'delete_title' => 'Usuń :label',
+    'delete_confirm' => 'Usuń',
+    'delete_body' => 'Spowoduje to trwałe usunięcie z :directory następujących elementów wraz z ich folderem danych:',
+    'delete_success' => 'Usunięto :names.',
+    'delete_not_found' => 'Nie znaleziono żadnych zainstalowanych plików należących do :title.',
+];

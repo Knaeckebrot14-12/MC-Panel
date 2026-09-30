@@ -1,0 +1,137 @@
+<?php
+
+return [
+    'auth' => [
+        'fail' => 'Неудачная попытка входа',
+        'success' => 'Вход выполнен',
+        'password-reset' => 'Пароль сброшен',
+        'reset-password' => 'Запрошен сброс пароля',
+        'checkpoint' => 'Запрошена двухфакторная аутентификация',
+        'recovery-token' => 'Использован код восстановления двухфакторной аутентификации',
+        'token' => 'Пройдена двухфакторная проверка',
+        'ip-blocked' => 'Запрос заблокирован с IP-адреса, не входящего в список, для :identifier',
+        'sftp' => [
+            'fail' => 'Неудачная попытка входа по SFTP',
+        ],
+    ],
+    'user' => [
+        'user' => [
+            'create' => 'Создан новый пользователь :email',
+        ],
+        'account' => [
+            'email-changed' => 'Изменён адрес почты с :old на :new',
+            'password-changed' => 'Изменён пароль',
+        ],
+        'api-key' => [
+            'create' => 'Создан новый API-ключ :identifier',
+            'delete' => 'Удалён API-ключ :identifier',
+        ],
+        'ssh-key' => [
+            'create' => 'Добавлен SSH-ключ :fingerprint в аккаунт',
+            'delete' => 'Удалён SSH-ключ :fingerprint из аккаунта',
+        ],
+        'two-factor' => [
+            'create' => 'Включена двухфакторная аутентификация',
+            'delete' => 'Отключена двухфакторная аутентификация',
+        ],
+    ],
+    'server' => [
+        'reinstall' => 'Сервер переустановлен',
+        'console' => [
+            'command' => 'Выполнена команда ":command" на сервере',
+        ],
+        'power' => [
+            'start' => 'Сервер запущен',
+            'stop' => 'Сервер остановлен',
+            'restart' => 'Сервер перезапущен',
+            'kill' => 'Процесс сервера принудительно завершён',
+        ],
+        'backup' => [
+            'download' => 'Скачана резервная копия :name',
+            'delete' => 'Удалена резервная копия :name',
+            'restore' => 'Восстановлена резервная копия :name (удалено файлов: :truncate)',
+            'restore-complete' => 'Завершено восстановление резервной копии :name',
+            'restore-failed' => 'Не удалось завершить восстановление резервной копии :name',
+            'start' => 'Начата новая резервная копия :name',
+            'complete' => 'Резервная копия :name помечена как завершённая',
+            'fail' => 'Резервная копия :name помечена как неудачная',
+            'lock' => 'Заблокирована резервная копия :name',
+            'unlock' => 'Разблокирована резервная копия :name',
+        ],
+        'database' => [
+            'create' => 'Создана новая база данных :name',
+            'rotate-password' => 'Пароль базы данных :name сменён',
+            'delete' => 'Удалена база данных :name',
+        ],
+        'file' => [
+            'compress_one' => 'Сжато :directory:files.0',
+            'compress_other' => 'Сжато файлов: :count в :directory',
+            'read' => 'Просмотрено содержимое :file',
+            'copy' => 'Создана копия :file',
+            'create-directory' => 'Создана папка :directory:name',
+            'decompress' => 'Распаковано :files в :directory',
+            'delete_one' => 'Удалено :directory:files.0',
+            'delete_other' => 'Удалено файлов: :count в :directory',
+            'download' => 'Скачан :file',
+            'pull' => 'Скачан удалённый файл с :url в :directory',
+            'rename_one' => 'Переименовано :directory:files.0.from в :directory:files.0.to',
+            'rename_other' => 'Переименовано файлов: :count в :directory',
+            'write' => 'Записано новое содержимое в :file',
+            'upload' => 'Начата загрузка файла',
+            'uploaded' => 'Загружено :directory:file',
+        ],
+        'sftp' => [
+            'denied' => 'Доступ по SFTP заблокирован из-за прав доступа',
+            'create_one' => 'Создан :files.0',
+            'create_other' => 'Создано новых файлов: :count',
+            'write_one' => 'Изменено содержимое :files.0',
+            'write_other' => 'Изменено содержимое файлов: :count',
+            'delete_one' => 'Удалён :files.0',
+            'delete_other' => 'Удалено файлов: :count',
+            'create-directory_one' => 'Создана папка :files.0',
+            'create-directory_other' => 'Создано папок: :count',
+            'rename_one' => 'Переименовано :files.0.from в :files.0.to',
+            'rename_other' => 'Переименовано или перемещено файлов: :count',
+        ],
+        'allocation' => [
+            'create' => 'Добавлено :allocation на сервер',
+            'notes' => 'Обновлены заметки для :allocation с ":old" на ":new"',
+            'primary' => ':allocation назначено основным адресом сервера',
+            'delete' => 'Удалено размещение :allocation',
+        ],
+        'schedule' => [
+            'create' => 'Создано расписание :name',
+            'update' => 'Обновлено расписание :name',
+            'execute' => 'Расписание :name запущено вручную',
+            'delete' => 'Удалено расписание :name',
+        ],
+        'task' => [
+            'create' => 'Создана новая задача ":action" для расписания :name',
+            'update' => 'Обновлена задача ":action" расписания :name',
+            'delete' => 'Удалена задача расписания :name',
+        ],
+        'settings' => [
+            'rename' => 'Сервер переименован с :old на :new',
+            'description' => 'Описание сервера изменено с :old на :new',
+        ],
+        'startup' => [
+            'edit' => 'Переменная :variable изменена с ":old" на ":new"',
+            'image' => 'Docker-образ сервера обновлён с :old на :new',
+        ],
+        'subuser' => [
+            'create' => 'Добавлен :email как субпользователь',
+            'update' => 'Обновлены права субпользователя :email',
+            'delete' => 'Удалён :email из субпользователей',
+        ],
+    ],
+    'meta' => [
+        'system_user' => 'Системный пользователь',
+        'system' => 'Система',
+        'using_api_key' => 'Через API-ключ',
+        'using_sftp' => 'Через SFTP',
+        'clear_filters' => 'Сбросить фильтры',
+        'server_title' => 'Журнал активности',
+        'server_empty' => 'Для этого сервера нет журналов активности.',
+        'account_title' => 'Журнал активности аккаунта',
+    ],
+];

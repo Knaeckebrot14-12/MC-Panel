@@ -1,0 +1,47 @@
+<?php
+
+return [
+    'title' => 'Databases',
+    'empty' => 'It looks like you have no databases.',
+    'disabled' => 'Databases cannot be created for this server.',
+    'allocated' => ':used of :limit databases have been allocated to this server.',
+    'new_database_button' => 'New Database',
+    'rotate_password_button' => 'Rotate Password',
+    'labels' => [
+        'endpoint' => 'Endpoint',
+        'connections_from' => 'Connections from',
+        'username' => 'Username',
+    ],
+    'create' => [
+        'heading' => 'Create new database',
+        'name_label' => 'Database Name',
+        'name_description' => 'A descriptive name for your database instance.',
+        'connections_from_label' => 'Connections From',
+        'connections_from_description' => 'Where connections should be allowed from. Leave blank to allow connections from anywhere.',
+        'cancel' => 'Cancel',
+        'create_button' => 'Create Database',
+        'validation' => [
+            'name_required' => 'A database name must be provided.',
+            'name_min' => 'Database name must be at least 3 characters.',
+            'name_max' => 'Database name must not exceed 48 characters.',
+            'name_format' => 'Database name should only contain alphanumeric characters, underscores, dashes, and/or periods.',
+            'connections_from_format' => 'A valid host address must be provided.',
+        ],
+    ],
+    'delete' => [
+        'heading' => 'Confirm database deletion',
+        'body_prefix' => 'Deleting a database is a permanent action, it cannot be undone. This will permanently delete the ',
+        'body_suffix' => ' database and remove all associated data.',
+        'confirm_label' => 'Confirm Database Name',
+        'confirm_description' => 'Enter the database name to confirm deletion.',
+        'confirm_required' => 'The database name must be provided.',
+        'cancel' => 'Cancel',
+        'delete_button' => 'Delete Database',
+    ],
+    'connection' => [
+        'heading' => 'Database connection details',
+        'jdbc_label' => 'JDBC Connection String',
+        'password_label' => 'Password',
+        'close_button' => 'Close',
+    ],
+];

@@ -1,0 +1,88 @@
+<?php
+
+return [
+    'title' => 'Nests',
+    'breadcrumb_nests' => 'Nests',
+    'index' => [
+        'heading' => 'Nests',
+        'subheading' => 'Alle derzeit auf diesem System verfügbaren Nests.',
+        'egg_warning' => 'Eggs sind eine mächtige Funktion des Pterodactyl Panels, die extreme Flexibilität und Konfigurierbarkeit ermöglicht. Bitte beachte, dass eine falsche Änderung eines Eggs deine Server sehr leicht unbrauchbar machen und weitere Probleme verursachen kann. Bitte vermeide es, unsere Standard-Eggs — die von :support bereitgestellt werden — zu bearbeiten, es sei denn, du weißt genau, was du tust.',
+        'configured_heading' => 'Konfigurierte Nests',
+        'import_egg_button' => 'Egg importieren',
+        'create_new_button' => 'Neu erstellen',
+        'table' => [
+            'id' => 'ID',
+            'name' => 'Name',
+            'description' => 'Beschreibung',
+            'eggs' => 'Eggs',
+            'servers' => 'Server',
+        ],
+        'modal' => [
+            'close_aria' => 'Schließen',
+            'title' => 'Ein Egg importieren',
+            'file_label' => 'Egg-Datei',
+            'file_description' => 'Wähle die :ext-Datei für das neue Egg aus, das du importieren möchtest.',
+            'nest_label' => 'Zugehöriges Nest',
+            'nest_description' => 'Wähle aus der Liste das Nest aus, dem dieses Egg zugeordnet werden soll. Wenn du es einem neuen Nest zuordnen möchtest, musst du dieses Nest zunächst erstellen.',
+            'cancel_button' => 'Abbrechen',
+            'import_button' => 'Importieren',
+        ],
+    ],
+    'new' => [
+        'title' => 'Neues Nest',
+        'heading' => 'Neues Nest',
+        'subheading' => 'Konfiguriere ein neues Nest, das auf allen Nodes bereitgestellt wird.',
+        'breadcrumb_new' => 'Neu',
+        'box_heading' => 'Neues Nest',
+        'name_label' => 'Name',
+        'name_description' => 'Dies sollte ein aussagekräftiger Kategoriename sein, der alle Eggs innerhalb des Nests umfasst.',
+        'description_label' => 'Beschreibung',
+        'save_button' => 'Speichern',
+    ],
+    'view' => [
+        'title' => 'Nests → :name',
+        'name_label' => 'Name',
+        'name_description' => 'Dies sollte ein aussagekräftiger Kategoriename sein, der alle Optionen innerhalb des Dienstes umfasst.',
+        'description_label' => 'Beschreibung',
+        'save_button' => 'Speichern',
+        'nest_id_label' => 'Nest-ID',
+        'nest_id_description' => 'Eine eindeutige ID zur internen Identifizierung dieses Nests und über die API.',
+        'author_label' => 'Autor',
+        'author_description' => 'Der Autor dieser Dienstoption. Bitte richte Fragen und Probleme an diesen, es sei denn, es handelt sich um eine offizielle Option von :support.',
+        'uuid_label' => 'UUID',
+        'uuid_description' => 'Eine UUID, die allen Servern, die diese Option verwenden, zur Identifizierung zugewiesen wird.',
+        'eggs_heading' => 'Nest-Eggs',
+        'table' => [
+            'id' => 'ID',
+            'name' => 'Name',
+            'description' => 'Beschreibung',
+            'servers' => 'Server',
+        ],
+        'new_egg_button' => 'Neues Egg',
+        'js' => [
+            'delete_hover' => ' Nest löschen',
+        ],
+    ],
+    'notices' => [
+        'created' => 'Ein neues Nest, :name, wurde erfolgreich erstellt.',
+        'deleted' => 'Das angeforderte Nest wurde erfolgreich aus dem Panel gelöscht.',
+        'updated' => 'Die Konfigurationsoptionen des Nests wurden erfolgreich aktualisiert.',
+    ],
+    'eggs' => [
+        'notices' => [
+            'imported' => 'Dieses Egg und die zugehörigen Variablen wurden erfolgreich importiert.',
+            'updated_via_import' => 'Dieses Egg wurde mit der bereitgestellten Datei aktualisiert.',
+            'deleted' => 'Das angeforderte Egg wurde erfolgreich aus dem Panel gelöscht.',
+            'updated' => 'Die Egg-Konfiguration wurde erfolgreich aktualisiert.',
+            'script_updated' => 'Das Installationsskript des Eggs wurde aktualisiert und wird bei jeder Server-Installation ausgeführt.',
+            'egg_created' => 'Ein neues Egg wurde erfolgreich gelegt. Du musst alle laufenden Daemons neu starten, damit dieses neue Egg angewendet wird.',
+        ],
+    ],
+    'variables' => [
+        'notices' => [
+            'variable_deleted' => 'Die Variable ":variable" wurde gelöscht und steht Servern nach dem nächsten Neuaufbau nicht mehr zur Verfügung.',
+            'variable_updated' => 'Die Variable ":variable" wurde aktualisiert. Du musst alle Server, die diese Variable verwenden, neu aufbauen, damit die Änderungen wirksam werden.',
+            'variable_created' => 'Eine neue Variable wurde erfolgreich erstellt und diesem Egg zugewiesen.',
+        ],
+    ],
+];

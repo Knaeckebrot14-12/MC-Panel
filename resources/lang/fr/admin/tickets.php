@@ -1,0 +1,61 @@
+<?php
+
+return [
+    'notices' => [
+        'replied' => 'Votre réponse a été envoyée.',
+        'updated' => 'Le ticket a été mis à jour.',
+    ],
+    'status' => [
+        'open' => 'Ouvert',
+        'customer_reply' => 'En attente du support',
+        'answered' => 'Répondu',
+        'closed' => 'Fermé',
+    ],
+    'index' => [
+        'rating_summary' => ":percent % d'évaluations positives (:total évalués)",
+        'title' => 'Tickets',
+        'heading' => 'Tickets',
+        'subheading' => 'Demandes de support de vos utilisateurs.',
+        'list_heading' => 'Liste des tickets',
+        'empty' => 'Aucun ticket ne correspond à vos filtres.',
+    ],
+    'filters' => [
+        'active' => 'Tickets actifs',
+        'all' => 'Tous les tickets',
+        'any_assignee' => 'Tous les assignés',
+        'mine' => 'Qui me sont assignés',
+        'unassigned' => 'Non assigné',
+        'search' => 'Sujet, utilisateur ou #',
+    ],
+    'table' => [
+        'rating' => 'Évaluation',
+        'subject' => 'Sujet',
+        'user' => 'Utilisateur',
+        'category' => 'Catégorie',
+        'priority' => 'Priorité',
+        'status' => 'Statut',
+        'assignee' => 'Assigné à',
+        'last_reply' => 'Dernière activité',
+    ],
+    'view' => [
+        'rating' => 'Évaluation',
+        'title' => 'Ticket #:id',
+        'internal_note' => 'Note interne',
+        'staff' => 'Équipe',
+        'reply_heading' => 'Répondre',
+        'internal_checkbox' => "Note interne (visible uniquement par l'équipe, l'utilisateur n'est pas notifié)",
+        'after_label' => "Après l'envoi",
+        'after_answered' => 'Marquer comme répondu',
+        'after_closed' => 'Fermer le ticket',
+        'after_keep' => 'Conserver le statut actuel',
+        'send' => 'Envoyer',
+        'details_heading' => 'Détails',
+        'server' => 'Serveur',
+        'created' => 'Créé',
+        'save' => 'Enregistrer',
+    ],
+    'rating' => [
+        'up' => 'Utile',
+        'down' => 'Pas utile',
+    ],
+];

@@ -1,0 +1,40 @@
+<?php
+
+return [
+    'title' => 'Backups',
+    'empty_last_page' => 'Es sieht so aus, als gäbe es keine weiteren Backups mehr anzuzeigen. Geh eine Seite zurück.',
+    'empty' => 'Es sieht so aus, als wären derzeit keine Backups für diesen Server gespeichert.',
+    'disabled' => 'Für diesen Server können keine Backups erstellt werden, da das Backup-Limit auf 0 gesetzt ist.',
+    'allocated' => ':used von :limit Backups wurden für diesen Server erstellt.',
+    'row' => [
+        'failed_badge' => 'Fehlgeschlagen',
+        'created_label' => 'Erstellt',
+    ],
+    'context_menu' => [
+        'download' => 'Herunterladen',
+        'restore' => 'Wiederherstellen',
+        'lock' => 'Sperren',
+        'unlock' => 'Entsperren',
+        'delete' => 'Löschen',
+        'unlock_title' => '„:name“ entsperren',
+        'unlock_body' => 'Dieses Backup wird nicht mehr vor automatisiertem oder versehentlichem Löschen geschützt.',
+        'restore_title' => '„:name“ wiederherstellen',
+        'restore_confirm' => 'Wiederherstellen',
+        'restore_body' => 'Dein Server wird gestoppt. Du kannst den Energiestatus nicht steuern, nicht auf den Dateimanager zugreifen oder weitere Backups erstellen, bis der Vorgang abgeschlossen ist.',
+        'restore_truncate_label' => 'Alle Dateien vor der Wiederherstellung des Backups löschen.',
+        'delete_title' => '„:name“ löschen',
+        'delete_confirm' => 'Fortfahren',
+        'delete_body' => 'Dies ist ein dauerhafter Vorgang. Das Backup kann nach dem Löschen nicht wiederhergestellt werden.',
+    ],
+    'create_modal' => [
+        'heading' => 'Server-Backup erstellen',
+        'name_label' => 'Backup-Name',
+        'name_description' => 'Falls angegeben, der Name, unter dem dieses Backup referenziert werden soll.',
+        'ignored_label' => 'Ignorierte Dateien & Verzeichnisse',
+        'ignored_description' => 'Gib die Dateien oder Ordner ein, die beim Erstellen dieses Backups ignoriert werden sollen. Leer lassen, um den Inhalt der .pteroignore-Datei im Stammverzeichnis des Servers zu verwenden, falls vorhanden. Platzhalter für Dateien und Ordner werden unterstützt, ebenso wie das Negieren einer Regel durch Voranstellen eines Ausrufezeichens.',
+        'locked_label' => 'Gesperrt',
+        'locked_description' => 'Verhindert, dass dieses Backup gelöscht wird, bis es explizit entsperrt wird.',
+        'start_button' => 'Backup starten',
+    ],
+    'create_button' => 'Backup erstellen',
+];

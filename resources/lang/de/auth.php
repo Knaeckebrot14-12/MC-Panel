@@ -1,0 +1,80 @@
+<?php
+
+return [
+    'sign_in' => 'Anmelden',
+    'go_to_login' => 'Zur Anmeldung',
+    'failed' => 'Es konnte kein Konto mit diesen Zugangsdaten gefunden werden.',
+    'login_title' => 'Anmelden zum Fortfahren',
+    'username_email_required' => 'Ein Benutzername oder eine E-Mail-Adresse muss angegeben werden.',
+    'password_required' => 'Bitte gib dein Kontopasswort ein.',
+    'register_button' => 'Registrieren',
+    'register' => [
+        'title' => 'Konto erstellen',
+        'first_name_label' => 'Vorname',
+        'last_name_label' => 'Nachname',
+        'username_label' => 'Benutzername',
+        'email_label' => 'E-Mail-Adresse',
+        'password_label' => 'Passwort',
+        'password_description' => 'Mindestens 8 Zeichen.',
+        'confirm_password_label' => 'Passwort bestätigen',
+        'already_have_account' => 'Du hast bereits ein Konto?',
+        'validation' => [
+            'first_name_required' => 'Bitte gib deinen Vornamen ein.',
+            'last_name_required' => 'Bitte gib deinen Nachnamen ein.',
+            'username_required' => 'Ein Benutzername muss angegeben werden.',
+            'email_invalid' => 'Es muss eine gültige E-Mail-Adresse angegeben werden.',
+            'email_required' => 'Eine E-Mail-Adresse muss angegeben werden.',
+            'password_min' => 'Dein Passwort sollte mindestens 8 Zeichen lang sein.',
+            'password_required' => 'Bitte gib ein Passwort ein.',
+            'password_confirmation_mismatch' => 'Die Passwortbestätigung stimmt nicht mit dem eingegebenen Passwort überein.',
+            'password_confirmation_required' => 'Bitte bestätige dein Passwort.',
+        ],
+    ],
+
+    'forgot_password' => [
+        'label' => 'Passwort vergessen?',
+        'label_help' => 'Gib die E-Mail-Adresse deines Kontos ein, um Anweisungen zum Zurücksetzen deines Passworts zu erhalten.',
+        'button' => 'Konto wiederherstellen',
+        'title' => 'Passwort zurücksetzen anfordern',
+        'field_label' => 'Benutzername oder E-Mail',
+        'field_description' => 'Gib deinen Benutzernamen oder die E-Mail-Adresse deines Kontos ein. Wir senden ein neues, vorübergehendes Passwort an die hinterlegte Adresse — nach der Anmeldung damit wirst du gebeten, ein eigenes Passwort festzulegen.',
+        'send_email_button' => 'E-Mail senden',
+        'return_to_login' => 'Zurück zur Anmeldung',
+        'login_required' => 'Bitte gib deinen Benutzernamen oder deine E-Mail-Adresse an.',
+    ],
+    'forced_change' => [
+        'title' => 'Neues Passwort festlegen',
+        'body' => 'Du meldest dich mit einem vorübergehenden Passwort an. Wähle ein eigenes neues Passwort, bevor du fortfährst.',
+        'temporary_password_label' => 'Vorübergehendes Passwort',
+        'new_password_label' => 'Neues Passwort',
+        'confirm_new_password_label' => 'Neues Passwort bestätigen',
+        'update_button' => 'Passwort aktualisieren',
+        'validation' => [
+            'current_required' => 'Bitte gib das dir per E-Mail zugesandte vorübergehende Passwort ein.',
+            'password_min' => 'Dein neues Passwort muss mindestens 8 Zeichen lang sein.',
+            'confirmation_mismatch' => 'Die Passwortbestätigung stimmt nicht überein.',
+        ],
+    ],
+
+    'reset_password' => [
+        'button' => 'Zurücksetzen und anmelden',
+    ],
+
+    'two_factor' => [
+        'label' => '2-Faktor-Code',
+        'label_help' => 'Für dieses Konto ist eine zweite Sicherheitsebene erforderlich. Bitte gib den von deinem Gerät generierten Code ein, um dich anzumelden.',
+        'checkpoint_failed' => 'Der Zwei-Faktor-Authentifizierungscode war ungültig.',
+        'checkpoint_title' => 'Geräteprüfung',
+        'recovery_code_label' => 'Wiederherstellungscode',
+        'auth_code_label' => 'Authentifizierungscode',
+        'recovery_code_help' => 'Gib einen der Wiederherstellungscodes ein, die beim Einrichten der Zwei-Faktor-Authentifizierung für dieses Konto erzeugt wurden, um fortzufahren.',
+        'auth_code_help' => 'Gib den von deinem Gerät generierten Zwei-Faktor-Code ein.',
+        'continue_button' => 'Weiter',
+        'lost_device' => 'Ich habe mein Gerät verloren',
+        'have_device' => 'Ich habe mein Gerät',
+    ],
+
+    'throttle' => 'Zu viele Anmeldeversuche. Bitte versuche es in :seconds Sekunden erneut.',
+    'password_requirements' => 'Das Passwort muss mindestens 8 Zeichen lang und für diese Seite einzigartig sein.',
+    '2fa_must_be_enabled' => 'Der Administrator verlangt, dass für dein Konto die Zwei-Faktor-Authentifizierung aktiviert ist, um das Panel nutzen zu können.',
+];

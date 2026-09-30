@@ -1,0 +1,35 @@
+<?php
+
+return [
+    'title' => 'Server Plans',
+    'heading' => 'Server Plans',
+    'subheading' => 'Fixed server packages sold in the coin shop.',
+    'edit_title' => 'Plan: :name',
+    'edit_subheading' => 'Edit server plan',
+    'create_heading' => 'Create Plan',
+    'create_button' => 'Create Plan',
+    'save_button' => 'Save Plan',
+    'list_heading' => 'All Plans',
+    'empty' => 'No plans yet. Without an active plan the shop sells the single tier from the coin settings.',
+    'price_note' => 'Servers keep the price they were bought at; changing a plan only affects new purchases.',
+    'status' => 'Status',
+    'active' => 'Active',
+    'inactive' => 'Hidden',
+    'notices' => [
+        'created' => 'The plan was created.',
+        'updated' => 'The plan was updated.',
+        'deleted' => 'The plan was deleted. Servers already bought keep running.',
+    ],
+    'form' => [
+        'name' => 'Name',
+        'description' => 'Description',
+        'memory' => 'Memory',
+        'disk' => 'Disk',
+        'cpu' => 'CPU',
+        'backups' => 'Backups',
+        'price' => 'Monthly Price',
+        'price_unit' => 'coins',
+        'sort_order' => 'Sort Order',
+        'active' => 'Offered in the shop',
+    ],
+];

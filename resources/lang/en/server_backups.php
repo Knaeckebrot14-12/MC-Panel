@@ -1,0 +1,40 @@
+<?php
+
+return [
+    'title' => 'Backups',
+    'empty_last_page' => 'Looks like we\'ve run out of backups to show you, try going back a page.',
+    'empty' => 'It looks like there are no backups currently stored for this server.',
+    'disabled' => 'Backups cannot be created for this server because the backup limit is set to 0.',
+    'allocated' => ':used of :limit backups have been created for this server.',
+    'row' => [
+        'failed_badge' => 'Failed',
+        'created_label' => 'Created',
+    ],
+    'context_menu' => [
+        'download' => 'Download',
+        'restore' => 'Restore',
+        'lock' => 'Lock',
+        'unlock' => 'Unlock',
+        'delete' => 'Delete',
+        'unlock_title' => 'Unlock ":name"',
+        'unlock_body' => 'This backup will no longer be protected from automated or accidental deletions.',
+        'restore_title' => 'Restore ":name"',
+        'restore_confirm' => 'Restore',
+        'restore_body' => 'Your server will be stopped. You will not be able to control the power state, access the file manager, or create additional backups until completed.',
+        'restore_truncate_label' => 'Delete all files before restoring backup.',
+        'delete_title' => 'Delete ":name"',
+        'delete_confirm' => 'Continue',
+        'delete_body' => 'This is a permanent operation. The backup cannot be recovered once deleted.',
+    ],
+    'create_modal' => [
+        'heading' => 'Create server backup',
+        'name_label' => 'Backup name',
+        'name_description' => 'If provided, the name that should be used to reference this backup.',
+        'ignored_label' => 'Ignored Files & Directories',
+        'ignored_description' => 'Enter the files or folders to ignore while generating this backup. Leave blank to use the contents of the .pteroignore file in the root of the server directory if present. Wildcard matching of files and folders is supported in addition to negating a rule by prefixing the path with an exclamation point.',
+        'locked_label' => 'Locked',
+        'locked_description' => 'Prevents this backup from being deleted until explicitly unlocked.',
+        'start_button' => 'Start backup',
+    ],
+    'create_button' => 'Create backup',
+];

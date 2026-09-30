@@ -1,0 +1,40 @@
+<?php
+
+return [
+    'title' => 'Backup',
+    'empty_last_page' => 'Sembra che i backup da mostrare siano finiti: prova a tornare alla pagina precedente.',
+    'empty' => 'Sembra che al momento non ci siano backup salvati per questo server.',
+    'disabled' => 'Non è possibile creare backup per questo server perché il limite di backup è impostato a 0.',
+    'allocated' => 'Sono stati creati :used backup su :limit per questo server.',
+    'row' => [
+        'failed_badge' => 'Fallito',
+        'created_label' => 'Creato',
+    ],
+    'context_menu' => [
+        'download' => 'Scarica',
+        'restore' => 'Ripristina',
+        'lock' => 'Blocca',
+        'unlock' => 'Sblocca',
+        'delete' => 'Elimina',
+        'unlock_title' => 'Sblocca ":name"',
+        'unlock_body' => 'Questo backup non sarà più protetto da eliminazioni automatiche o accidentali.',
+        'restore_title' => 'Ripristina ":name"',
+        'restore_confirm' => 'Ripristina',
+        'restore_body' => 'Il tuo server verrà arrestato. Non potrai controllare lo stato di alimentazione, accedere al gestore file né creare altri backup fino al termine.',
+        'restore_truncate_label' => 'Elimina tutti i file prima di ripristinare il backup.',
+        'delete_title' => 'Elimina ":name"',
+        'delete_confirm' => 'Continua',
+        'delete_body' => 'Questa è un\'operazione permanente. Il backup non potrà essere recuperato una volta eliminato.',
+    ],
+    'create_modal' => [
+        'heading' => 'Crea backup del server',
+        'name_label' => 'Nome del backup',
+        'name_description' => 'Se indicato, il nome da usare per fare riferimento a questo backup.',
+        'ignored_label' => 'File e cartelle ignorati',
+        'ignored_description' => 'Inserisci i file o le cartelle da ignorare durante la creazione di questo backup. Lascia vuoto per usare il contenuto del file .pteroignore nella radice della cartella del server, se presente. Sono supportati i caratteri jolly per file e cartelle, oltre alla negazione di una regola anteponendo un punto esclamativo al percorso.',
+        'locked_label' => 'Bloccato',
+        'locked_description' => 'Impedisce l\'eliminazione di questo backup finché non viene sbloccato esplicitamente.',
+        'start_button' => 'Avvia backup',
+    ],
+    'create_button' => 'Crea backup',
+];

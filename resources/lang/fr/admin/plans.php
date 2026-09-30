@@ -1,0 +1,35 @@
+<?php
+
+return [
+    'title' => 'Offres de serveurs',
+    'heading' => 'Offres de serveurs',
+    'subheading' => 'Forfaits de serveurs fixes vendus dans la boutique de coins.',
+    'edit_title' => 'Offre : :name',
+    'edit_subheading' => "Modifier l'offre de serveur",
+    'create_heading' => 'Créer une offre',
+    'create_button' => "Créer l'offre",
+    'save_button' => "Enregistrer l'offre",
+    'list_heading' => 'Toutes les offres',
+    'empty' => "Aucune offre pour l'instant. Sans offre active, la boutique vend l'unique palier des paramètres de coins.",
+    'price_note' => "Les serveurs conservent le prix auquel ils ont été achetés ; modifier une offre n'affecte que les nouveaux achats.",
+    'status' => 'Statut',
+    'active' => 'Active',
+    'inactive' => 'Masquée',
+    'notices' => [
+        'created' => "L'offre a été créée.",
+        'updated' => "L'offre a été mise à jour.",
+        'deleted' => "L'offre a été supprimée. Les serveurs déjà achetés continuent de fonctionner.",
+    ],
+    'form' => [
+        'name' => 'Nom',
+        'description' => 'Description',
+        'memory' => 'Mémoire',
+        'disk' => 'Disque',
+        'cpu' => 'CPU',
+        'backups' => 'Sauvegardes',
+        'price' => 'Prix mensuel',
+        'price_unit' => 'coins',
+        'sort_order' => 'Ordre',
+        'active' => 'Proposée dans la boutique',
+    ],
+];

@@ -1,0 +1,40 @@
+<?php
+
+return [
+    'title' => 'Copias de seguridad',
+    'empty_last_page' => 'Parece que ya no quedan copias de seguridad que mostrar; prueba a volver una página atrás.',
+    'empty' => 'Parece que no hay copias de seguridad almacenadas actualmente para este servidor.',
+    'disabled' => 'No se pueden crear copias de seguridad para este servidor porque el límite de copias está establecido en 0.',
+    'allocated' => 'Se han creado :used de :limit copias de seguridad para este servidor.',
+    'row' => [
+        'failed_badge' => 'Fallida',
+        'created_label' => 'Creada',
+    ],
+    'context_menu' => [
+        'download' => 'Descargar',
+        'restore' => 'Restaurar',
+        'lock' => 'Bloquear',
+        'unlock' => 'Desbloquear',
+        'delete' => 'Eliminar',
+        'unlock_title' => 'Desbloquear «:name»',
+        'unlock_body' => 'Esta copia de seguridad dejará de estar protegida contra eliminaciones automáticas o accidentales.',
+        'restore_title' => 'Restaurar «:name»',
+        'restore_confirm' => 'Restaurar',
+        'restore_body' => 'Tu servidor se detendrá. No podrás controlar el estado de energía, acceder al gestor de archivos ni crear copias de seguridad adicionales hasta que termine.',
+        'restore_truncate_label' => 'Eliminar todos los archivos antes de restaurar la copia de seguridad.',
+        'delete_title' => 'Eliminar «:name»',
+        'delete_confirm' => 'Continuar',
+        'delete_body' => 'Esta es una operación permanente. La copia de seguridad no se podrá recuperar una vez eliminada.',
+    ],
+    'create_modal' => [
+        'heading' => 'Crear copia de seguridad del servidor',
+        'name_label' => 'Nombre de la copia de seguridad',
+        'name_description' => 'Si se indica, el nombre que se usará para referirse a esta copia de seguridad.',
+        'ignored_label' => 'Archivos y directorios ignorados',
+        'ignored_description' => 'Introduce los archivos o carpetas que se ignorarán al generar esta copia de seguridad. Déjalo en blanco para usar el contenido del archivo .pteroignore en la raíz del directorio del servidor, si existe. Se admiten comodines para archivos y carpetas, además de negar una regla anteponiendo un signo de exclamación a la ruta.',
+        'locked_label' => 'Bloqueada',
+        'locked_description' => 'Impide que esta copia de seguridad se elimine hasta que se desbloquee explícitamente.',
+        'start_button' => 'Iniciar copia de seguridad',
+    ],
+    'create_button' => 'Crear copia de seguridad',
+];

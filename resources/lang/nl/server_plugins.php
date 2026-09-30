@@ -1,0 +1,33 @@
+<?php
+
+return [
+    'title' => 'Plugins',
+    'search_placeholder' => 'Zoek plugins op Modrinth…',
+    'search_button' => 'Zoeken',
+    'filter' => [
+        'button' => 'Filteren',
+        'category_label' => 'Categorie',
+        'search' => 'Zoeken',
+        'citybuild' => 'Citybuild',
+        'pvp' => 'PvP',
+        'installed_count' => 'Geïnstalleerd (:count)',
+        'status_label' => 'Status',
+        'all' => 'Alle',
+        'installed' => 'Geïnstalleerd',
+        'not_installed' => 'Niet geïnstalleerd',
+    ],
+    'compatible_with' => 'Resultaten die compatibel zijn met Paper/Spigot/Bukkit voor Minecraft :version.',
+    'installed_empty' => 'Er is nog niets geïnstalleerd in :directory.',
+    'no_results' => 'Er zijn geen overeenkomende plugins gevonden.',
+    'downloads_label' => 'Downloads',
+    'view_on_modrinth' => ':title bekijken op Modrinth',
+    'installed_button' => 'Geïnstalleerd',
+    'install_button' => 'Installeren',
+    'install_success' => ':title is geïnstalleerd in :directory. Herstart de server om het te laden.',
+    'install_incompatible' => 'Er is geen versie van :title gevonden die compatibel is met een Paper/Spigot/Bukkit-server.',
+    'delete_title' => ':label verwijderen',
+    'delete_confirm' => 'Verwijderen',
+    'delete_body' => 'Hiermee wordt het volgende definitief verwijderd uit :directory, inclusief de gegevensmap:',
+    'delete_success' => ':names verwijderd.',
+    'delete_not_found' => 'Er zijn geen geïnstalleerde bestanden van :title gevonden.',
+];

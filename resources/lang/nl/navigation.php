@@ -1,0 +1,32 @@
+<?php
+
+return [
+    'coins_tooltip' => 'Coins — Verdienen, AFK & winkel',
+    'tickets_tooltip' => 'Supporttickets',
+    'dashboard' => 'Dashboard',
+    'admin' => 'Admin',
+    'account_settings' => 'Accountinstellingen',
+    'sign_out' => 'Afmelden',
+    'tabs' => [
+        'account' => 'Account',
+        'api_credentials' => 'API-gegevens',
+        'ssh_keys' => 'SSH-sleutels',
+        'activity' => 'Activiteit',
+        'coins_earn' => 'Verdienen',
+        'coins_afk' => 'AFK',
+        'coins_shop' => 'Winkel',
+        'coins_history' => 'Geschiedenis',
+        'tickets' => 'Mijn tickets',
+        'tickets_new' => 'Nieuw ticket',
+        'console' => 'Console',
+        'files' => 'Bestanden',
+        'plugins' => 'Plugins',
+        'databases' => 'Databases',
+        'schedules' => 'Schema\'s',
+        'users' => 'Gebruikers',
+        'backups' => 'Back-ups',
+        'network' => 'Netwerk',
+        'startup' => 'Opstarten',
+        'settings' => 'Instellingen',
+    ],
+];

@@ -1,0 +1,40 @@
+<?php
+
+return [
+    'title' => 'Back-ups',
+    'empty_last_page' => 'Het lijkt erop dat er geen back-ups meer zijn om te tonen, ga een pagina terug.',
+    'empty' => 'Het lijkt erop dat er momenteel geen back-ups zijn opgeslagen voor deze server.',
+    'disabled' => 'Er kunnen geen back-ups voor deze server worden aangemaakt omdat de back-uplimiet op 0 staat.',
+    'allocated' => ':used van :limit back-ups zijn aangemaakt voor deze server.',
+    'row' => [
+        'failed_badge' => 'Mislukt',
+        'created_label' => 'Aangemaakt',
+    ],
+    'context_menu' => [
+        'download' => 'Downloaden',
+        'restore' => 'Herstellen',
+        'lock' => 'Vergrendelen',
+        'unlock' => 'Ontgrendelen',
+        'delete' => 'Verwijderen',
+        'unlock_title' => '":name" ontgrendelen',
+        'unlock_body' => 'Deze back-up is niet langer beschermd tegen automatisch of per ongeluk verwijderen.',
+        'restore_title' => '":name" herstellen',
+        'restore_confirm' => 'Herstellen',
+        'restore_body' => 'Je server wordt gestopt. Je kunt de aan/uit-status niet beheren, de bestandsbeheerder niet openen en geen extra back-ups maken totdat het klaar is.',
+        'restore_truncate_label' => 'Alle bestanden verwijderen voordat de back-up wordt hersteld.',
+        'delete_title' => '":name" verwijderen',
+        'delete_confirm' => 'Doorgaan',
+        'delete_body' => 'Dit is een permanente bewerking. De back-up kan na verwijdering niet worden hersteld.',
+    ],
+    'create_modal' => [
+        'heading' => 'Serverback-up maken',
+        'name_label' => 'Naam van de back-up',
+        'name_description' => 'Indien opgegeven, de naam die wordt gebruikt om naar deze back-up te verwijzen.',
+        'ignored_label' => 'Genegeerde bestanden en mappen',
+        'ignored_description' => 'Voer de bestanden of mappen in die genegeerd moeten worden bij het maken van deze back-up. Laat leeg om de inhoud van het .pteroignore-bestand in de hoofdmap van de servermap te gebruiken, indien aanwezig. Wildcards voor bestanden en mappen worden ondersteund, en een regel kan worden genegeerd door een uitroepteken voor het pad te zetten.',
+        'locked_label' => 'Vergrendeld',
+        'locked_description' => 'Voorkomt dat deze back-up wordt verwijderd totdat hij expliciet wordt ontgrendeld.',
+        'start_button' => 'Back-up starten',
+    ],
+    'create_button' => 'Back-up maken',
+];

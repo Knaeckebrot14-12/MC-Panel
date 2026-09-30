@@ -1,0 +1,35 @@
+<?php
+
+return [
+    'title' => 'Planes de servidor',
+    'heading' => 'Planes de servidor',
+    'subheading' => 'Paquetes de servidor fijos que se venden en la tienda de coins.',
+    'edit_title' => 'Plan: :name',
+    'edit_subheading' => 'Editar plan de servidor',
+    'create_heading' => 'Crear plan',
+    'create_button' => 'Crear plan',
+    'save_button' => 'Guardar plan',
+    'list_heading' => 'Todos los planes',
+    'empty' => 'Aún no hay planes. Sin un plan activo, la tienda vende el nivel único de los ajustes de coins.',
+    'price_note' => 'Los servidores conservan el precio al que se compraron; cambiar un plan solo afecta a las compras nuevas.',
+    'status' => 'Estado',
+    'active' => 'Activo',
+    'inactive' => 'Oculto',
+    'notices' => [
+        'created' => 'El plan se ha creado.',
+        'updated' => 'El plan se ha actualizado.',
+        'deleted' => 'El plan se ha eliminado. Los servidores ya comprados siguen funcionando.',
+    ],
+    'form' => [
+        'name' => 'Nombre',
+        'description' => 'Descripción',
+        'memory' => 'Memoria',
+        'disk' => 'Disco',
+        'cpu' => 'CPU',
+        'backups' => 'Copias de seguridad',
+        'price' => 'Precio mensual',
+        'price_unit' => 'coins',
+        'sort_order' => 'Orden',
+        'active' => 'Ofrecer en la tienda',
+    ],
+];

@@ -1,0 +1,40 @@
+<?php
+
+return [
+    'title' => 'Backups',
+    'empty_last_page' => 'Parece que não há mais backups para mostrar, tente voltar uma página.',
+    'empty' => 'Parece que não há backups armazenados para este servidor no momento.',
+    'disabled' => 'Não é possível criar backups para este servidor porque o limite de backups está definido como 0.',
+    'allocated' => ':used de :limit backups foram criados para este servidor.',
+    'row' => [
+        'failed_badge' => 'Falhou',
+        'created_label' => 'Criado',
+    ],
+    'context_menu' => [
+        'download' => 'Baixar',
+        'restore' => 'Restaurar',
+        'lock' => 'Bloquear',
+        'unlock' => 'Desbloquear',
+        'delete' => 'Excluir',
+        'unlock_title' => 'Desbloquear ":name"',
+        'unlock_body' => 'Este backup não ficará mais protegido contra exclusões automáticas ou acidentais.',
+        'restore_title' => 'Restaurar ":name"',
+        'restore_confirm' => 'Restaurar',
+        'restore_body' => 'Seu servidor será parado. Você não poderá controlar o estado de energia, acessar o gerenciador de arquivos nem criar backups adicionais até a conclusão.',
+        'restore_truncate_label' => 'Excluir todos os arquivos antes de restaurar o backup.',
+        'delete_title' => 'Excluir ":name"',
+        'delete_confirm' => 'Continuar',
+        'delete_body' => 'Esta é uma operação permanente. O backup não poderá ser recuperado depois de excluído.',
+    ],
+    'create_modal' => [
+        'heading' => 'Criar backup do servidor',
+        'name_label' => 'Nome do backup',
+        'name_description' => 'Se informado, o nome que será usado para referenciar este backup.',
+        'ignored_label' => 'Arquivos e diretórios ignorados',
+        'ignored_description' => 'Digite os arquivos ou pastas a ignorar ao gerar este backup. Deixe em branco para usar o conteúdo do arquivo .pteroignore na raiz do diretório do servidor, se existir. Há suporte a curingas para arquivos e pastas, além de negar uma regra colocando um ponto de exclamação antes do caminho.',
+        'locked_label' => 'Bloqueado',
+        'locked_description' => 'Impede que este backup seja excluído até ser desbloqueado explicitamente.',
+        'start_button' => 'Iniciar backup',
+    ],
+    'create_button' => 'Criar backup',
+];

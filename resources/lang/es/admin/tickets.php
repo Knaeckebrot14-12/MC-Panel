@@ -1,0 +1,61 @@
+<?php
+
+return [
+    'notices' => [
+        'replied' => 'Tu respuesta se ha enviado.',
+        'updated' => 'El ticket se ha actualizado.',
+    ],
+    'status' => [
+        'open' => 'Abierto',
+        'customer_reply' => 'Esperando al soporte',
+        'answered' => 'Respondido',
+        'closed' => 'Cerrado',
+    ],
+    'index' => [
+        'rating_summary' => ':percent % de valoraciones positivas (:total valorados)',
+        'title' => 'Tickets',
+        'heading' => 'Tickets',
+        'subheading' => 'Solicitudes de soporte de tus usuarios.',
+        'list_heading' => 'Lista de tickets',
+        'empty' => 'Ningún ticket coincide con tus filtros.',
+    ],
+    'filters' => [
+        'active' => 'Tickets activos',
+        'all' => 'Todos los tickets',
+        'any_assignee' => 'Cualquier responsable',
+        'mine' => 'Asignados a mí',
+        'unassigned' => 'Sin asignar',
+        'search' => 'Asunto, usuario o #',
+    ],
+    'table' => [
+        'rating' => 'Valoración',
+        'subject' => 'Asunto',
+        'user' => 'Usuario',
+        'category' => 'Categoría',
+        'priority' => 'Prioridad',
+        'status' => 'Estado',
+        'assignee' => 'Asignado a',
+        'last_reply' => 'Última actividad',
+    ],
+    'view' => [
+        'rating' => 'Valoración',
+        'title' => 'Ticket #:id',
+        'internal_note' => 'Nota interna',
+        'staff' => 'Equipo',
+        'reply_heading' => 'Responder',
+        'internal_checkbox' => 'Nota interna (solo visible para el equipo, no se notifica al usuario)',
+        'after_label' => 'Después de enviar',
+        'after_answered' => 'Marcar como respondido',
+        'after_closed' => 'Cerrar ticket',
+        'after_keep' => 'Mantener el estado actual',
+        'send' => 'Enviar',
+        'details_heading' => 'Detalles',
+        'server' => 'Servidor',
+        'created' => 'Creado',
+        'save' => 'Guardar',
+    ],
+    'rating' => [
+        'up' => 'Útil',
+        'down' => 'No útil',
+    ],
+];

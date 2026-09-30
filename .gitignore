@@ -1,0 +1,39 @@
+/vendor
+*.DS_Store*
+!.env.ci
+!.env.example
+.env*
+.vagrant/*
+.vscode/*
+storage/framework/*
+/.idea
+/nbproject
+/.direnv
+
+node_modules
+*.log
+_ide_helper.php
+_ide_helper_models.php
+.phpstorm.meta.php
+.yarn
+public/assets/manifest.json
+
+# Local development compose file (the installer uses docker-compose.prod.yml)
+docker-compose.yml
+docker-compose.override.yml
+
+# Runtime data of an installed panel (see install.sh)
+/state
+/backups
+/.update.lock
+
+# for image related files
+misc
+.php-cs-fixer.cache
+coverage.xml
+resources/lang/locales.js
+.phpunit.result.cache
+
+/public/build
+/public/hot
+result

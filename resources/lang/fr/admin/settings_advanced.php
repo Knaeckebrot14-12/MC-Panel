@@ -1,0 +1,28 @@
+<?php
+
+return [
+    'title' => 'Paramètres avancés',
+    'heading' => 'Paramètres avancés',
+    'subheading' => 'Configurez les paramètres avancés de Pterodactyl.',
+    'recaptcha_heading' => 'reCAPTCHA',
+    'status_label' => 'Statut',
+    'enabled' => 'Activé',
+    'disabled' => 'Désactivé',
+    'recaptcha_status_description' => "Si activé, les formulaires de connexion et de réinitialisation du mot de passe effectueront une vérification captcha silencieuse et afficheront un captcha visible si nécessaire.",
+    'site_key_label' => 'Clé du site',
+    'secret_key_label' => 'Clé secrète',
+    'secret_key_description' => 'Utilisée pour la communication entre votre site et Google. Veillez à la garder secrète.',
+    'recaptcha_warning' => "Vous utilisez actuellement des clés reCAPTCHA fournies avec ce panel. Pour une meilleure sécurité, il est recommandé de :link liées spécifiquement à votre site web.",
+    'recaptcha_warning_link_text' => 'générer de nouvelles clés reCAPTCHA invisibles',
+    'http_connections_heading' => 'Connexions HTTP',
+    'connect_timeout_label' => 'Délai de connexion',
+    'connect_timeout_description' => "Le temps, en secondes, d'attente de l'ouverture d'une connexion avant de générer une erreur.",
+    'request_timeout_label' => 'Délai de requête',
+    'request_timeout_description' => "Le temps, en secondes, d'attente de la fin d'une requête avant de générer une erreur.",
+    'auto_allocation_heading' => "Création automatique d'allocations",
+    'auto_allocation_status_description' => "Si activé, les utilisateurs pourront créer automatiquement de nouvelles allocations pour leur serveur depuis l'interface.",
+    'starting_port_label' => 'Port de début',
+    'starting_port_description' => 'Le premier port de la plage pouvant être alloué automatiquement.',
+    'ending_port_label' => 'Port de fin',
+    'ending_port_description' => 'Le dernier port de la plage pouvant être alloué automatiquement.',
+];

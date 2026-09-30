@@ -1,0 +1,47 @@
+<?php
+
+return [
+    'title' => 'Datenbanken',
+    'empty' => 'Es sieht so aus, als hättest du keine Datenbanken.',
+    'disabled' => 'Für diesen Server können keine Datenbanken erstellt werden.',
+    'allocated' => ':used von :limit Datenbanken wurden diesem Server zugewiesen.',
+    'new_database_button' => 'Neue Datenbank',
+    'rotate_password_button' => 'Passwort erneuern',
+    'labels' => [
+        'endpoint' => 'Endpunkt',
+        'connections_from' => 'Verbindungen von',
+        'username' => 'Benutzername',
+    ],
+    'create' => [
+        'heading' => 'Neue Datenbank erstellen',
+        'name_label' => 'Datenbankname',
+        'name_description' => 'Ein aussagekräftiger Name für deine Datenbankinstanz.',
+        'connections_from_label' => 'Verbindungen von',
+        'connections_from_description' => 'Von wo Verbindungen zugelassen werden sollen. Leer lassen, um Verbindungen von überall aus zuzulassen.',
+        'cancel' => 'Abbrechen',
+        'create_button' => 'Datenbank erstellen',
+        'validation' => [
+            'name_required' => 'Es muss ein Datenbankname angegeben werden.',
+            'name_min' => 'Der Datenbankname muss mindestens 3 Zeichen lang sein.',
+            'name_max' => 'Der Datenbankname darf 48 Zeichen nicht überschreiten.',
+            'name_format' => 'Der Datenbankname darf nur alphanumerische Zeichen, Unterstriche, Bindestriche und/oder Punkte enthalten.',
+            'connections_from_format' => 'Es muss eine gültige Hostadresse angegeben werden.',
+        ],
+    ],
+    'delete' => [
+        'heading' => 'Löschen der Datenbank bestätigen',
+        'body_prefix' => 'Das Löschen einer Datenbank ist ein dauerhafter Vorgang und kann nicht rückgängig gemacht werden. Dadurch wird die Datenbank ',
+        'body_suffix' => ' dauerhaft gelöscht und alle zugehörigen Daten werden entfernt.',
+        'confirm_label' => 'Datenbankname bestätigen',
+        'confirm_description' => 'Gib den Datenbanknamen ein, um das Löschen zu bestätigen.',
+        'confirm_required' => 'Der Datenbankname muss angegeben werden.',
+        'cancel' => 'Abbrechen',
+        'delete_button' => 'Datenbank löschen',
+    ],
+    'connection' => [
+        'heading' => 'Datenbankverbindungsdetails',
+        'jdbc_label' => 'JDBC-Verbindungszeichenfolge',
+        'password_label' => 'Passwort',
+        'close_button' => 'Schließen',
+    ],
+];

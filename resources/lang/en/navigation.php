@@ -1,0 +1,32 @@
+<?php
+
+return [
+    'coins_tooltip' => 'Coins — Earn, AFK & Shop',
+    'tickets_tooltip' => 'Support Tickets',
+    'dashboard' => 'Dashboard',
+    'admin' => 'Admin',
+    'account_settings' => 'Account Settings',
+    'sign_out' => 'Sign Out',
+    'tabs' => [
+        'account' => 'Account',
+        'api_credentials' => 'API Credentials',
+        'ssh_keys' => 'SSH Keys',
+        'activity' => 'Activity',
+        'coins_earn' => 'Earn',
+        'coins_afk' => 'AFK',
+        'coins_shop' => 'Shop',
+        'coins_history' => 'History',
+        'tickets' => 'My Tickets',
+        'tickets_new' => 'New Ticket',
+        'console' => 'Console',
+        'files' => 'Files',
+        'plugins' => 'Plugins',
+        'databases' => 'Databases',
+        'schedules' => 'Schedules',
+        'users' => 'Users',
+        'backups' => 'Backups',
+        'network' => 'Network',
+        'startup' => 'Startup',
+        'settings' => 'Settings',
+    ],
+];

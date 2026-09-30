@@ -1,0 +1,28 @@
+<?php
+
+return [
+    'title' => 'Ajustes avanzados',
+    'heading' => 'Ajustes avanzados',
+    'subheading' => 'Configura los ajustes avanzados de Pterodactyl.',
+    'recaptcha_heading' => 'reCAPTCHA',
+    'status_label' => 'Estado',
+    'enabled' => 'Activado',
+    'disabled' => 'Desactivado',
+    'recaptcha_status_description' => 'Si está activado, los formularios de inicio de sesión y de restablecimiento de contraseña harán una comprobación de captcha silenciosa y mostrarán un captcha visible si es necesario.',
+    'site_key_label' => 'Clave del sitio',
+    'secret_key_label' => 'Clave secreta',
+    'secret_key_description' => 'Se usa para la comunicación entre tu sitio y Google. Asegúrate de mantenerla en secreto.',
+    'recaptcha_warning' => 'Actualmente usas claves de reCAPTCHA que venían incluidas con este panel. Para mayor seguridad se recomienda :link vinculadas específicamente a tu sitio web.',
+    'recaptcha_warning_link_text' => 'generar nuevas claves de reCAPTCHA invisible',
+    'http_connections_heading' => 'Conexiones HTTP',
+    'connect_timeout_label' => 'Tiempo de espera de conexión',
+    'connect_timeout_description' => 'El tiempo en segundos que se espera a que se abra una conexión antes de lanzar un error.',
+    'request_timeout_label' => 'Tiempo de espera de solicitud',
+    'request_timeout_description' => 'El tiempo en segundos que se espera a que se complete una solicitud antes de lanzar un error.',
+    'auto_allocation_heading' => 'Creación automática de asignaciones',
+    'auto_allocation_status_description' => 'Si está activado, los usuarios podrán crear automáticamente nuevas asignaciones para su servidor desde la interfaz.',
+    'starting_port_label' => 'Puerto inicial',
+    'starting_port_description' => 'El puerto inicial del rango que se puede asignar automáticamente.',
+    'ending_port_label' => 'Puerto final',
+    'ending_port_description' => 'El puerto final del rango que se puede asignar automáticamente.',
+];

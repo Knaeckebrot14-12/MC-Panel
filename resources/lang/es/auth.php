@@ -1,0 +1,80 @@
+<?php
+
+return [
+    'sign_in' => 'Iniciar sesión',
+    'go_to_login' => 'Ir al inicio de sesión',
+    'failed' => 'No se encontró ninguna cuenta que coincida con esas credenciales.',
+    'login_title' => 'Inicia sesión para continuar',
+    'username_email_required' => 'Debes indicar un nombre de usuario o un correo electrónico.',
+    'password_required' => 'Introduce la contraseña de tu cuenta.',
+    'register_button' => 'Registrarse',
+    'register' => [
+        'title' => 'Crear una cuenta',
+        'first_name_label' => 'Nombre',
+        'last_name_label' => 'Apellidos',
+        'username_label' => 'Nombre de usuario',
+        'email_label' => 'Dirección de correo electrónico',
+        'password_label' => 'Contraseña',
+        'password_description' => 'Al menos 8 caracteres.',
+        'confirm_password_label' => 'Confirmar contraseña',
+        'already_have_account' => '¿Ya tienes una cuenta?',
+        'validation' => [
+            'first_name_required' => 'Introduce tu nombre.',
+            'last_name_required' => 'Introduce tus apellidos.',
+            'username_required' => 'Debes indicar un nombre de usuario.',
+            'email_invalid' => 'Debes indicar una dirección de correo electrónico válida.',
+            'email_required' => 'Debes indicar una dirección de correo electrónico.',
+            'password_min' => 'Tu contraseña debe tener al menos 8 caracteres.',
+            'password_required' => 'Introduce una contraseña.',
+            'password_confirmation_mismatch' => 'La confirmación no coincide con la contraseña introducida.',
+            'password_confirmation_required' => 'Confirma tu contraseña.',
+        ],
+    ],
+
+    'forgot_password' => [
+        'label' => '¿Olvidaste tu contraseña?',
+        'label_help' => 'Introduce el correo electrónico de tu cuenta para recibir las instrucciones para restablecer tu contraseña.',
+        'button' => 'Recuperar cuenta',
+        'title' => 'Solicitar restablecimiento de contraseña',
+        'field_label' => 'Nombre de usuario o correo electrónico',
+        'field_description' => 'Introduce tu nombre de usuario o el correo electrónico de tu cuenta. Enviaremos una nueva contraseña temporal a la dirección registrada; se te pedirá que establezcas tu propia contraseña después de iniciar sesión con ella.',
+        'send_email_button' => 'Enviar correo',
+        'return_to_login' => 'Volver al inicio de sesión',
+        'login_required' => 'Indica tu nombre de usuario o tu correo electrónico.',
+    ],
+    'forced_change' => [
+        'title' => 'Establecer una nueva contraseña',
+        'body' => 'Estás iniciando sesión con una contraseña temporal. Elige tu propia contraseña antes de continuar.',
+        'temporary_password_label' => 'Contraseña temporal',
+        'new_password_label' => 'Nueva contraseña',
+        'confirm_new_password_label' => 'Confirmar nueva contraseña',
+        'update_button' => 'Actualizar contraseña',
+        'validation' => [
+            'current_required' => 'Introduce la contraseña temporal que te enviamos por correo.',
+            'password_min' => 'Tu nueva contraseña debe tener al menos 8 caracteres.',
+            'confirmation_mismatch' => 'La confirmación de la contraseña no coincide.',
+        ],
+    ],
+
+    'reset_password' => [
+        'button' => 'Restablecer e iniciar sesión',
+    ],
+
+    'two_factor' => [
+        'label' => 'Token de dos factores',
+        'label_help' => 'Esta cuenta requiere una segunda capa de autenticación para continuar. Introduce el código generado por tu dispositivo para completar el inicio de sesión.',
+        'checkpoint_failed' => 'El token de autenticación de dos factores no era válido.',
+        'checkpoint_title' => 'Verificación del dispositivo',
+        'recovery_code_label' => 'Código de recuperación',
+        'auth_code_label' => 'Código de autenticación',
+        'recovery_code_help' => 'Introduce uno de los códigos de recuperación generados al configurar la autenticación de dos factores en esta cuenta para continuar.',
+        'auth_code_help' => 'Introduce el token de dos factores generado por tu dispositivo.',
+        'continue_button' => 'Continuar',
+        'lost_device' => 'He perdido mi dispositivo',
+        'have_device' => 'Tengo mi dispositivo',
+    ],
+
+    'throttle' => 'Demasiados intentos de inicio de sesión. Inténtalo de nuevo en :seconds segundos.',
+    'password_requirements' => 'La contraseña debe tener al menos 8 caracteres y ser única para este sitio.',
+    '2fa_must_be_enabled' => 'El administrador exige que la autenticación de dos factores esté activada en tu cuenta para usar el panel.',
+];

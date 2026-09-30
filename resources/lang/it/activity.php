@@ -1,0 +1,137 @@
+<?php
+
+return [
+    'auth' => [
+        'fail' => 'Accesso non riuscito',
+        'success' => 'Accesso effettuato',
+        'password-reset' => 'Password reimpostata',
+        'reset-password' => 'Richiesta reimpostazione password',
+        'checkpoint' => 'Autenticazione a due fattori richiesta',
+        'recovery-token' => 'Usato il codice di recupero a due fattori',
+        'token' => 'Verifica a due fattori superata',
+        'ip-blocked' => 'Richiesta bloccata da un indirizzo IP non in elenco per :identifier',
+        'sftp' => [
+            'fail' => 'Accesso SFTP non riuscito',
+        ],
+    ],
+    'user' => [
+        'user' => [
+            'create' => 'Creato un nuovo utente :email',
+        ],
+        'account' => [
+            'email-changed' => 'Email cambiata da :old a :new',
+            'password-changed' => 'Password modificata',
+        ],
+        'api-key' => [
+            'create' => 'Creata nuova chiave API :identifier',
+            'delete' => 'Eliminata la chiave API :identifier',
+        ],
+        'ssh-key' => [
+            'create' => 'Aggiunta la chiave SSH :fingerprint all\'account',
+            'delete' => 'Rimossa la chiave SSH :fingerprint dall\'account',
+        ],
+        'two-factor' => [
+            'create' => 'Autenticazione a due fattori attivata',
+            'delete' => 'Autenticazione a due fattori disattivata',
+        ],
+    ],
+    'server' => [
+        'reinstall' => 'Server reinstallato',
+        'console' => [
+            'command' => 'Eseguito ":command" sul server',
+        ],
+        'power' => [
+            'start' => 'Server avviato',
+            'stop' => 'Server arrestato',
+            'restart' => 'Server riavviato',
+            'kill' => 'Processo del server terminato forzatamente',
+        ],
+        'backup' => [
+            'download' => 'Scaricato il backup :name',
+            'delete' => 'Eliminato il backup :name',
+            'restore' => 'Ripristinato il backup :name (file eliminati: :truncate)',
+            'restore-complete' => 'Completato il ripristino del backup :name',
+            'restore-failed' => 'Ripristino del backup :name non riuscito',
+            'start' => 'Avviato un nuovo backup :name',
+            'complete' => 'Backup :name contrassegnato come completato',
+            'fail' => 'Backup :name contrassegnato come non riuscito',
+            'lock' => 'Bloccato il backup :name',
+            'unlock' => 'Sbloccato il backup :name',
+        ],
+        'database' => [
+            'create' => 'Creato nuovo database :name',
+            'rotate-password' => 'Password ruotata per il database :name',
+            'delete' => 'Eliminato il database :name',
+        ],
+        'file' => [
+            'compress_one' => 'Compresso :directory:files.0',
+            'compress_other' => 'Compressi :count file in :directory',
+            'read' => 'Visualizzato il contenuto di :file',
+            'copy' => 'Creata una copia di :file',
+            'create-directory' => 'Creata la cartella :directory:name',
+            'decompress' => 'Decompresso :files in :directory',
+            'delete_one' => 'Eliminato :directory:files.0',
+            'delete_other' => 'Eliminati :count file in :directory',
+            'download' => 'Scaricato :file',
+            'pull' => 'Scaricato un file remoto da :url in :directory',
+            'rename_one' => 'Rinominato :directory:files.0.from in :directory:files.0.to',
+            'rename_other' => 'Rinominati :count file in :directory',
+            'write' => 'Scritto nuovo contenuto in :file',
+            'upload' => 'Avviato il caricamento di un file',
+            'uploaded' => 'Caricato :directory:file',
+        ],
+        'sftp' => [
+            'denied' => 'Accesso SFTP bloccato per mancanza di permessi',
+            'create_one' => 'Creato :files.0',
+            'create_other' => 'Creati :count nuovi file',
+            'write_one' => 'Modificato il contenuto di :files.0',
+            'write_other' => 'Modificato il contenuto di :count file',
+            'delete_one' => 'Eliminato :files.0',
+            'delete_other' => 'Eliminati :count file',
+            'create-directory_one' => 'Creata la cartella :files.0',
+            'create-directory_other' => 'Create :count cartelle',
+            'rename_one' => 'Rinominato :files.0.from in :files.0.to',
+            'rename_other' => 'Rinominati o spostati :count file',
+        ],
+        'allocation' => [
+            'create' => 'Aggiunta :allocation al server',
+            'notes' => 'Aggiornate le note di :allocation da ":old" a ":new"',
+            'primary' => 'Impostata :allocation come allocazione principale del server',
+            'delete' => 'Eliminata l\'allocazione :allocation',
+        ],
+        'schedule' => [
+            'create' => 'Creata la pianificazione :name',
+            'update' => 'Aggiornata la pianificazione :name',
+            'execute' => 'Eseguita manualmente la pianificazione :name',
+            'delete' => 'Eliminata la pianificazione :name',
+        ],
+        'task' => [
+            'create' => 'Creata una nuova attività ":action" per la pianificazione :name',
+            'update' => 'Aggiornata l\'attività ":action" della pianificazione :name',
+            'delete' => 'Eliminata un\'attività della pianificazione :name',
+        ],
+        'settings' => [
+            'rename' => 'Server rinominato da :old a :new',
+            'description' => 'Descrizione del server cambiata da :old a :new',
+        ],
+        'startup' => [
+            'edit' => 'Variabile :variable cambiata da ":old" a ":new"',
+            'image' => 'Aggiornata l\'immagine Docker del server da :old a :new',
+        ],
+        'subuser' => [
+            'create' => 'Aggiunto :email come sotto-utente',
+            'update' => 'Aggiornati i permessi del sotto-utente :email',
+            'delete' => 'Rimosso :email come sotto-utente',
+        ],
+    ],
+    'meta' => [
+        'system_user' => 'Utente di sistema',
+        'system' => 'Sistema',
+        'using_api_key' => 'Con chiave API',
+        'using_sftp' => 'Con SFTP',
+        'clear_filters' => 'Cancella filtri',
+        'server_title' => 'Registro attività',
+        'server_empty' => 'Nessun registro attività disponibile per questo server.',
+        'account_title' => 'Registro attività dell\'account',
+    ],
+];

@@ -1,0 +1,33 @@
+<?php
+
+return [
+    'title' => 'Plugin',
+    'search_placeholder' => 'Cerca plugin su Modrinth…',
+    'search_button' => 'Cerca',
+    'filter' => [
+        'button' => 'Filtra',
+        'category_label' => 'Categoria',
+        'search' => 'Cerca',
+        'citybuild' => 'Citybuild',
+        'pvp' => 'PvP',
+        'installed_count' => 'Installati (:count)',
+        'status_label' => 'Stato',
+        'all' => 'Tutti',
+        'installed' => 'Installati',
+        'not_installed' => 'Non installati',
+    ],
+    'compatible_with' => 'Risultati compatibili con Paper/Spigot/Bukkit per Minecraft :version.',
+    'installed_empty' => 'Non è ancora stato installato nulla in :directory.',
+    'no_results' => 'Nessun plugin corrispondente trovato.',
+    'downloads_label' => 'Download',
+    'view_on_modrinth' => 'Vedi :title su Modrinth',
+    'installed_button' => 'Installato',
+    'install_button' => 'Installa',
+    'install_success' => ':title è stato installato in :directory. Riavvia il server per caricarlo.',
+    'install_incompatible' => 'Non è stata trovata alcuna versione di :title compatibile con un server Paper/Spigot/Bukkit.',
+    'delete_title' => 'Elimina :label',
+    'delete_confirm' => 'Elimina',
+    'delete_body' => 'Questo rimuoverà definitivamente da :directory i seguenti elementi, inclusa la loro cartella dati:',
+    'delete_success' => 'Rimosso :names.',
+    'delete_not_found' => 'Non è stato trovato alcun file installato appartenente a :title.',
+];

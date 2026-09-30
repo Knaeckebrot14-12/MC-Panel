@@ -1,0 +1,33 @@
+<?php
+
+return [
+    'permissions' => [
+        'websocket_*' => 'Consente l\'accesso al websocket di questo server.',
+        'control_console' => 'Consente all\'utente di inviare dati alla console del server.',
+        'control_start' => 'Consente all\'utente di avviare l\'istanza del server.',
+        'control_stop' => 'Consente all\'utente di arrestare l\'istanza del server.',
+        'control_restart' => 'Consente all\'utente di riavviare l\'istanza del server.',
+        'control_kill' => 'Consente all\'utente di terminare forzatamente l\'istanza del server.',
+        'user_create' => 'Consente all\'utente di creare nuovi account utente per il server.',
+        'user_read' => 'Consente all\'utente di vedere gli utenti associati a questo server.',
+        'user_update' => 'Consente all\'utente di modificare gli altri utenti associati a questo server.',
+        'user_delete' => 'Consente all\'utente di eliminare gli altri utenti associati a questo server.',
+        'file_create' => 'Consente all\'utente di creare nuovi file e cartelle.',
+        'file_read' => 'Consente all\'utente di vedere file e cartelle associati a questa istanza del server e di visualizzarne il contenuto.',
+        'file_update' => 'Consente all\'utente di aggiornare file e cartelle associati al server.',
+        'file_delete' => 'Consente all\'utente di eliminare file e cartelle.',
+        'file_archive' => 'Consente all\'utente di creare archivi di file e decomprimere archivi esistenti.',
+        'file_sftp' => 'Consente all\'utente di eseguire le azioni sui file sopra indicate tramite un client SFTP.',
+        'allocation_read' => 'Consente l\'accesso alle pagine di gestione delle allocazioni del server.',
+        'allocation_update' => 'Consente all\'utente di modificare le allocazioni del server.',
+        'database_create' => 'Consente all\'utente di creare un nuovo database per il server.',
+        'database_read' => 'Consente all\'utente di vedere i database del server.',
+        'database_update' => 'Consente all\'utente di modificare un database. Se l\'utente non ha anche il permesso "Visualizza password" non potrà modificare la password.',
+        'database_delete' => 'Consente all\'utente di eliminare un\'istanza di database.',
+        'database_view_password' => 'Consente all\'utente di vedere la password di un database nel sistema.',
+        'schedule_create' => 'Consente all\'utente di creare una nuova pianificazione per il server.',
+        'schedule_read' => 'Consente all\'utente di vedere le pianificazioni di un server.',
+        'schedule_update' => 'Consente all\'utente di modificare una pianificazione esistente del server.',
+        'schedule_delete' => 'Consente all\'utente di eliminare una pianificazione del server.',
+    ],
+];

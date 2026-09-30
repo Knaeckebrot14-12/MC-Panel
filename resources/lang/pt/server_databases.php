@@ -1,0 +1,47 @@
+<?php
+
+return [
+    'title' => 'Bancos de dados',
+    'empty' => 'Parece que você não tem bancos de dados.',
+    'disabled' => 'Não é possível criar bancos de dados para este servidor.',
+    'allocated' => ':used de :limit bancos de dados foram alocados a este servidor.',
+    'new_database_button' => 'Novo banco de dados',
+    'rotate_password_button' => 'Rotacionar senha',
+    'labels' => [
+        'endpoint' => 'Endpoint',
+        'connections_from' => 'Conexões de',
+        'username' => 'Nome de usuário',
+    ],
+    'create' => [
+        'heading' => 'Criar novo banco de dados',
+        'name_label' => 'Nome do banco de dados',
+        'name_description' => 'Um nome descritivo para a sua instância de banco de dados.',
+        'connections_from_label' => 'Conexões de',
+        'connections_from_description' => 'De onde as conexões devem ser permitidas. Deixe em branco para permitir conexões de qualquer lugar.',
+        'cancel' => 'Cancelar',
+        'create_button' => 'Criar banco de dados',
+        'validation' => [
+            'name_required' => 'É necessário informar o nome do banco de dados.',
+            'name_min' => 'O nome do banco de dados deve ter pelo menos 3 caracteres.',
+            'name_max' => 'O nome do banco de dados não deve exceder 48 caracteres.',
+            'name_format' => 'O nome do banco de dados deve conter apenas caracteres alfanuméricos, sublinhados, hifens e/ou pontos.',
+            'connections_from_format' => 'É necessário informar um endereço de host válido.',
+        ],
+    ],
+    'delete' => [
+        'heading' => 'Confirmar exclusão do banco de dados',
+        'body_prefix' => 'Excluir um banco de dados é uma ação permanente e não pode ser desfeita. Isso excluirá permanentemente o banco de dados',
+        'body_suffix' => ' e removerá todos os dados associados.',
+        'confirm_label' => 'Confirmar nome do banco de dados',
+        'confirm_description' => 'Digite o nome do banco de dados para confirmar a exclusão.',
+        'confirm_required' => 'É necessário informar o nome do banco de dados.',
+        'cancel' => 'Cancelar',
+        'delete_button' => 'Excluir banco de dados',
+    ],
+    'connection' => [
+        'heading' => 'Detalhes de conexão do banco de dados',
+        'jdbc_label' => 'String de conexão JDBC',
+        'password_label' => 'Senha',
+        'close_button' => 'Fechar',
+    ],
+];

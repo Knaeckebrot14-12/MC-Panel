@@ -1,0 +1,88 @@
+<?php
+
+return [
+    'notices' => [
+        'created' => 'Un nouveau nest, :name, a été créé avec succès.',
+        'deleted' => 'Le nest demandé a été supprimé du panel avec succès.',
+        'updated' => 'Les options de configuration du nest ont été mises à jour avec succès.',
+    ],
+    'eggs' => [
+        'notices' => [
+            'imported' => 'Un nouvel egg et ses variables associées ont été importés avec succès.',
+            'updated_via_import' => 'Cet egg a été mis à jour à partir du fichier fourni.',
+            'deleted' => "L'egg demandé a été supprimé du panel avec succès.",
+            'updated' => "La configuration de l'egg a été mise à jour avec succès.",
+            'script_updated' => "Le script d'installation de l'egg a été mis à jour et sera exécuté pour chaque installation de serveur à partir de maintenant.",
+            'egg_created' => 'Un nouvel egg a été créé avec succès. Vous devriez redémarrer les daemons en cours d\'exécution pour appliquer ce nouvel egg.',
+        ],
+    ],
+    'variables' => [
+        'notices' => [
+            'variable_deleted' => 'La variable « :variable » a été supprimée et ne sera plus disponible pour les serveurs après leur prochaine reconstruction.',
+            'variable_updated' => 'La variable « :variable » a été mise à jour. Vous devrez redémarrer les serveurs utilisant cette variable pour que les changements prennent effet.',
+            'variable_created' => 'Une nouvelle variable a été créée avec succès et assignée à cet egg.',
+        ],
+    ],
+    'title' => 'Nests',
+    'breadcrumb_nests' => 'Nests',
+    'index' => [
+        'heading' => 'Nests',
+        'subheading' => 'Tous les nests actuellement disponibles sur ce système.',
+        'egg_warning' => "Les eggs sont une fonctionnalité puissante de Pterodactyl Panel qui offre une flexibilité et une configuration extrêmes. Notez que, malgré cette puissance, modifier un egg de manière incorrecte peut très facilement rendre vos serveurs inutilisables et causer davantage de problèmes. Veuillez éviter de modifier nos eggs par défaut — ceux fournis par :support — sauf si vous êtes absolument sûr de ce que vous faites.",
+        'configured_heading' => 'Nests configurés',
+        'import_egg_button' => 'Importer un egg',
+        'create_new_button' => 'Créer',
+        'table' => [
+            'id' => 'ID',
+            'name' => 'Nom',
+            'description' => 'Description',
+            'eggs' => 'Eggs',
+            'servers' => 'Serveurs',
+        ],
+        'modal' => [
+            'close_aria' => 'Fermer',
+            'title' => 'Importer un egg',
+            'file_label' => "Fichier de l'egg",
+            'file_description' => "Sélectionnez le fichier :ext du nouvel egg que vous souhaitez importer.",
+            'nest_label' => 'Nest associé',
+            'nest_description' => "Sélectionnez dans la liste le nest auquel cet egg sera associé. Si vous souhaitez l'associer à un nouveau nest, vous devrez d'abord créer ce nest avant de continuer.",
+            'cancel_button' => 'Annuler',
+            'import_button' => 'Importer',
+        ],
+    ],
+    'new' => [
+        'title' => 'Nouveau nest',
+        'heading' => 'Nouveau nest',
+        'subheading' => 'Configurez un nouveau nest à déployer sur tous les nodes.',
+        'breadcrumb_new' => 'Nouveau',
+        'box_heading' => 'Nouveau nest',
+        'name_label' => 'Nom',
+        'name_description' => 'Il doit s\'agir d\'un nom de catégorie descriptif qui englobe tous les eggs du nest.',
+        'description_label' => 'Description',
+        'save_button' => 'Enregistrer',
+    ],
+    'view' => [
+        'title' => 'Nests → :name',
+        'name_label' => 'Nom',
+        'name_description' => 'Il doit s\'agir d\'un nom de catégorie descriptif qui englobe toutes les options du service.',
+        'description_label' => 'Description',
+        'save_button' => 'Enregistrer',
+        'nest_id_label' => 'ID du nest',
+        'nest_id_description' => "Un ID unique servant à identifier ce nest en interne et via l'API.",
+        'author_label' => 'Auteur',
+        'author_description' => "L'auteur de cette option de service. Veuillez lui adresser vos questions et problèmes, sauf s'il s'agit d'une option officielle créée par :support.",
+        'uuid_label' => 'UUID',
+        'uuid_description' => "Un UUID attribué à tous les serveurs utilisant cette option à des fins d'identification.",
+        'eggs_heading' => 'Eggs du nest',
+        'table' => [
+            'id' => 'ID',
+            'name' => 'Nom',
+            'description' => 'Description',
+            'servers' => 'Serveurs',
+        ],
+        'new_egg_button' => 'Nouvel egg',
+        'js' => [
+            'delete_hover' => ' Supprimer le nest',
+        ],
+    ],
+];

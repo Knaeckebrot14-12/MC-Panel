@@ -1,0 +1,28 @@
+<?php
+
+return [
+    'title' => 'Advanced Settings',
+    'heading' => 'Advanced Settings',
+    'subheading' => 'Configure advanced settings for Pterodactyl.',
+    'recaptcha_heading' => 'reCAPTCHA',
+    'status_label' => 'Status',
+    'enabled' => 'Enabled',
+    'disabled' => 'Disabled',
+    'recaptcha_status_description' => 'If enabled, login forms and password reset forms will do a silent captcha check and display a visible captcha if needed.',
+    'site_key_label' => 'Site Key',
+    'secret_key_label' => 'Secret Key',
+    'secret_key_description' => 'Used for communication between your site and Google. Be sure to keep it a secret.',
+    'recaptcha_warning' => 'You are currently using reCAPTCHA keys that were shipped with this Panel. For improved security it is recommended to :link that tied specifically to your website.',
+    'recaptcha_warning_link_text' => 'generate new invisible reCAPTCHA keys',
+    'http_connections_heading' => 'HTTP Connections',
+    'connect_timeout_label' => 'Connection Timeout',
+    'connect_timeout_description' => 'The amount of time in seconds to wait for a connection to be opened before throwing an error.',
+    'request_timeout_label' => 'Request Timeout',
+    'request_timeout_description' => 'The amount of time in seconds to wait for a request to be completed before throwing an error.',
+    'auto_allocation_heading' => 'Automatic Allocation Creation',
+    'auto_allocation_status_description' => 'If enabled users will have the option to automatically create new allocations for their server via the frontend.',
+    'starting_port_label' => 'Starting Port',
+    'starting_port_description' => 'The starting port in the range that can be automatically allocated.',
+    'ending_port_label' => 'Ending Port',
+    'ending_port_description' => 'The ending port in the range that can be automatically allocated.',
+];

@@ -1,0 +1,47 @@
+<?php
+
+return [
+    'title' => 'Bases de datos',
+    'empty' => 'Parece que no tienes ninguna base de datos.',
+    'disabled' => 'No se pueden crear bases de datos para este servidor.',
+    'allocated' => 'Se han asignado :used de :limit bases de datos a este servidor.',
+    'new_database_button' => 'Nueva base de datos',
+    'rotate_password_button' => 'Rotar contraseña',
+    'labels' => [
+        'endpoint' => 'Punto de conexión',
+        'connections_from' => 'Conexiones desde',
+        'username' => 'Nombre de usuario',
+    ],
+    'create' => [
+        'heading' => 'Crear nueva base de datos',
+        'name_label' => 'Nombre de la base de datos',
+        'name_description' => 'Un nombre descriptivo para tu instancia de base de datos.',
+        'connections_from_label' => 'Conexiones desde',
+        'connections_from_description' => 'Desde dónde se deben permitir las conexiones. Déjalo en blanco para permitir conexiones desde cualquier lugar.',
+        'cancel' => 'Cancelar',
+        'create_button' => 'Crear base de datos',
+        'validation' => [
+            'name_required' => 'Debes indicar un nombre para la base de datos.',
+            'name_min' => 'El nombre de la base de datos debe tener al menos 3 caracteres.',
+            'name_max' => 'El nombre de la base de datos no debe superar los 48 caracteres.',
+            'name_format' => 'El nombre de la base de datos solo debe contener caracteres alfanuméricos, guiones bajos, guiones y/o puntos.',
+            'connections_from_format' => 'Debes indicar una dirección de host válida.',
+        ],
+    ],
+    'delete' => [
+        'heading' => 'Confirmar eliminación de la base de datos',
+        'body_prefix' => 'Eliminar una base de datos es una acción permanente y no se puede deshacer. Esto eliminará permanentemente la base de datos ',
+        'body_suffix' => ' y todos los datos asociados.',
+        'confirm_label' => 'Confirmar nombre de la base de datos',
+        'confirm_description' => 'Introduce el nombre de la base de datos para confirmar la eliminación.',
+        'confirm_required' => 'Debes indicar el nombre de la base de datos.',
+        'cancel' => 'Cancelar',
+        'delete_button' => 'Eliminar base de datos',
+    ],
+    'connection' => [
+        'heading' => 'Detalles de conexión de la base de datos',
+        'jdbc_label' => 'Cadena de conexión JDBC',
+        'password_label' => 'Contraseña',
+        'close_button' => 'Cerrar',
+    ],
+];

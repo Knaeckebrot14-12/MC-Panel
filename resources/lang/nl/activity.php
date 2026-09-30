@@ -1,0 +1,137 @@
+<?php
+
+return [
+    'auth' => [
+        'fail' => 'Mislukte aanmelding',
+        'success' => 'Aangemeld',
+        'password-reset' => 'Wachtwoord opnieuw ingesteld',
+        'reset-password' => 'Wachtwoordherstel aangevraagd',
+        'checkpoint' => 'Tweestapsverificatie gevraagd',
+        'recovery-token' => 'Herstelcode voor tweestapsverificatie gebruikt',
+        'token' => 'Tweestapsverificatie voltooid',
+        'ip-blocked' => 'Verzoek geblokkeerd vanaf niet-vermeld IP-adres voor :identifier',
+        'sftp' => [
+            'fail' => 'Mislukte SFTP-aanmelding',
+        ],
+    ],
+    'user' => [
+        'user' => [
+            'create' => 'Nieuwe gebruiker :email aangemaakt',
+        ],
+        'account' => [
+            'email-changed' => 'E-mailadres gewijzigd van :old naar :new',
+            'password-changed' => 'Wachtwoord gewijzigd',
+        ],
+        'api-key' => [
+            'create' => 'Nieuwe API-sleutel :identifier aangemaakt',
+            'delete' => 'API-sleutel :identifier verwijderd',
+        ],
+        'ssh-key' => [
+            'create' => 'SSH-sleutel :fingerprint aan account toegevoegd',
+            'delete' => 'SSH-sleutel :fingerprint van account verwijderd',
+        ],
+        'two-factor' => [
+            'create' => 'Tweestapsverificatie ingeschakeld',
+            'delete' => 'Tweestapsverificatie uitgeschakeld',
+        ],
+    ],
+    'server' => [
+        'reinstall' => 'Server opnieuw geïnstalleerd',
+        'console' => [
+            'command' => '":command" uitgevoerd op de server',
+        ],
+        'power' => [
+            'start' => 'Server gestart',
+            'stop' => 'Server gestopt',
+            'restart' => 'Server herstart',
+            'kill' => 'Serverproces geforceerd beëindigd',
+        ],
+        'backup' => [
+            'download' => 'Back-up :name gedownload',
+            'delete' => 'Back-up :name verwijderd',
+            'restore' => 'Back-up :name hersteld (verwijderde bestanden: :truncate)',
+            'restore-complete' => 'Herstel van back-up :name voltooid',
+            'restore-failed' => 'Herstel van back-up :name mislukt',
+            'start' => 'Nieuwe back-up :name gestart',
+            'complete' => 'Back-up :name gemarkeerd als voltooid',
+            'fail' => 'Back-up :name gemarkeerd als mislukt',
+            'lock' => 'Back-up :name vergrendeld',
+            'unlock' => 'Back-up :name ontgrendeld',
+        ],
+        'database' => [
+            'create' => 'Nieuwe database :name aangemaakt',
+            'rotate-password' => 'Wachtwoord van database :name geroteerd',
+            'delete' => 'Database :name verwijderd',
+        ],
+        'file' => [
+            'compress_one' => ':directory:files.0 gecomprimeerd',
+            'compress_other' => ':count bestanden gecomprimeerd in :directory',
+            'read' => 'Inhoud van :file bekeken',
+            'copy' => 'Kopie van :file gemaakt',
+            'create-directory' => 'Map :directory:name aangemaakt',
+            'decompress' => ':files uitgepakt in :directory',
+            'delete_one' => ':directory:files.0 verwijderd',
+            'delete_other' => ':count bestanden verwijderd in :directory',
+            'download' => ':file gedownload',
+            'pull' => 'Extern bestand gedownload van :url naar :directory',
+            'rename_one' => ':directory:files.0.from hernoemd naar :directory:files.0.to',
+            'rename_other' => ':count bestanden hernoemd in :directory',
+            'write' => 'Nieuwe inhoud geschreven naar :file',
+            'upload' => 'Bestandsupload gestart',
+            'uploaded' => ':directory:file geüpload',
+        ],
+        'sftp' => [
+            'denied' => 'SFTP-toegang geblokkeerd wegens rechten',
+            'create_one' => ':files.0 aangemaakt',
+            'create_other' => ':count nieuwe bestanden aangemaakt',
+            'write_one' => 'Inhoud van :files.0 gewijzigd',
+            'write_other' => 'Inhoud van :count bestanden gewijzigd',
+            'delete_one' => ':files.0 verwijderd',
+            'delete_other' => ':count bestanden verwijderd',
+            'create-directory_one' => 'Map :files.0 aangemaakt',
+            'create-directory_other' => ':count mappen aangemaakt',
+            'rename_one' => ':files.0.from hernoemd naar :files.0.to',
+            'rename_other' => ':count bestanden hernoemd of verplaatst',
+        ],
+        'allocation' => [
+            'create' => ':allocation aan de server toegevoegd',
+            'notes' => 'Notities van :allocation gewijzigd van ":old" naar ":new"',
+            'primary' => ':allocation ingesteld als primaire serverallocatie',
+            'delete' => 'Allocatie :allocation verwijderd',
+        ],
+        'schedule' => [
+            'create' => 'Schema :name aangemaakt',
+            'update' => 'Schema :name bijgewerkt',
+            'execute' => 'Schema :name handmatig uitgevoerd',
+            'delete' => 'Schema :name verwijderd',
+        ],
+        'task' => [
+            'create' => 'Nieuwe taak ":action" aangemaakt voor schema :name',
+            'update' => 'Taak ":action" van schema :name bijgewerkt',
+            'delete' => 'Een taak van schema :name verwijderd',
+        ],
+        'settings' => [
+            'rename' => 'Server hernoemd van :old naar :new',
+            'description' => 'Serverbeschrijving gewijzigd van :old naar :new',
+        ],
+        'startup' => [
+            'edit' => 'Variabele :variable gewijzigd van ":old" naar ":new"',
+            'image' => 'Docker-image van de server bijgewerkt van :old naar :new',
+        ],
+        'subuser' => [
+            'create' => ':email toegevoegd als subgebruiker',
+            'update' => 'Rechten van subgebruiker :email bijgewerkt',
+            'delete' => ':email verwijderd als subgebruiker',
+        ],
+    ],
+    'meta' => [
+        'system_user' => 'Systeemgebruiker',
+        'system' => 'Systeem',
+        'using_api_key' => 'Via API-sleutel',
+        'using_sftp' => 'Via SFTP',
+        'clear_filters' => 'Filters wissen',
+        'server_title' => 'Activiteitenlogboek',
+        'server_empty' => 'Geen activiteitenlogboeken beschikbaar voor deze server.',
+        'account_title' => 'Activiteitenlogboek van het account',
+    ],
+];

@@ -1,0 +1,61 @@
+<?php
+
+return [
+    'notices' => [
+        'replied' => 'Deine Antwort wurde gesendet.',
+        'updated' => 'Das Ticket wurde aktualisiert.',
+    ],
+    'status' => [
+        'open' => 'Offen',
+        'customer_reply' => 'Wartet auf Support',
+        'answered' => 'Beantwortet',
+        'closed' => 'Geschlossen',
+    ],
+    'index' => [
+        'rating_summary' => ':percent% positive Bewertungen (:total bewertet)',
+        'title' => 'Tickets',
+        'heading' => 'Tickets',
+        'subheading' => 'Support-Anfragen deiner Benutzer.',
+        'list_heading' => 'Ticket-Liste',
+        'empty' => 'Keine Tickets entsprechen deinen Filtern.',
+    ],
+    'filters' => [
+        'active' => 'Aktive Tickets',
+        'all' => 'Alle Tickets',
+        'any_assignee' => 'Alle Bearbeiter',
+        'mine' => 'Mir zugewiesen',
+        'unassigned' => 'Nicht zugewiesen',
+        'search' => 'Betreff, Benutzer oder #',
+    ],
+    'table' => [
+        'rating' => 'Bewertung',
+        'subject' => 'Betreff',
+        'user' => 'Benutzer',
+        'category' => 'Kategorie',
+        'priority' => 'Priorität',
+        'status' => 'Status',
+        'assignee' => 'Zugewiesen an',
+        'last_reply' => 'Letzte Aktivität',
+    ],
+    'view' => [
+        'rating' => 'Bewertung',
+        'title' => 'Ticket #:id',
+        'internal_note' => 'Interne Notiz',
+        'staff' => 'Team',
+        'reply_heading' => 'Antworten',
+        'internal_checkbox' => 'Interne Notiz (nur für das Team sichtbar, der Benutzer wird nicht benachrichtigt)',
+        'after_label' => 'Nach dem Senden',
+        'after_answered' => 'Als beantwortet markieren',
+        'after_closed' => 'Ticket schließen',
+        'after_keep' => 'Status beibehalten',
+        'send' => 'Senden',
+        'details_heading' => 'Details',
+        'server' => 'Server',
+        'created' => 'Erstellt',
+        'save' => 'Speichern',
+    ],
+    'rating' => [
+        'up' => 'Hilfreich',
+        'down' => 'Nicht hilfreich',
+    ],
+];

@@ -1,0 +1,32 @@
+<?php
+
+return [
+    'coins_tooltip' => 'Монеты — заработок, AFK и магазин',
+    'tickets_tooltip' => 'Обращения в поддержку',
+    'dashboard' => 'Панель',
+    'admin' => 'Admin',
+    'account_settings' => 'Настройки аккаунта',
+    'sign_out' => 'Выйти',
+    'tabs' => [
+        'account' => 'Аккаунт',
+        'api_credentials' => 'Данные API',
+        'ssh_keys' => 'SSH-ключи',
+        'activity' => 'Активность',
+        'coins_earn' => 'Заработок',
+        'coins_afk' => 'AFK',
+        'coins_shop' => 'Магазин',
+        'coins_history' => 'История',
+        'tickets' => 'Мои обращения',
+        'tickets_new' => 'Новое обращение',
+        'console' => 'Консоль',
+        'files' => 'Файлы',
+        'plugins' => 'Плагины',
+        'databases' => 'Базы данных',
+        'schedules' => 'Расписания',
+        'users' => 'Пользователи',
+        'backups' => 'Резервные копии',
+        'network' => 'Сеть',
+        'startup' => 'Запуск',
+        'settings' => 'Настройки',
+    ],
+];
