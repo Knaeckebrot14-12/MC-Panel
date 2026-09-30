@@ -175,6 +175,12 @@ install_panel() {
         die "$INSTALL_DIR already exists and is not empty. Remove it or set INSTALL_DIR to another location."
     fi
 
+    if [ -f /var/www/pterodactyl/artisan ]; then
+        warn "A Pterodactyl panel was found in /var/www/pterodactyl."
+        warn "To keep its users, servers and nodes, choose 'Upgrade' instead of a new installation."
+        confirm "Install a separate, empty Recoded Ptero anyway?" n || die "Aborted. Run the installer again and choose the upgrade option."
+    fi
+
     install_packages
     install_docker
     ensure_swap
@@ -632,6 +638,345 @@ uninstall_wings() {
     ok "Wings removed."
 }
 
+# ---------------------------------------------------------------- upgrade from Pterodactyl
+#
+# Moves an existing (non-Docker) Pterodactyl panel onto Recoded Ptero without losing data:
+#  - the old database is only READ (dumped); it is never changed or deleted,
+#  - the old panel directory, its .env and the nginx config are kept (plus backups of each),
+#  - the copy is verified table by table before anything is switched over,
+#  - on any error the old panel is switched back on automatically.
+# Wings nodes keep working: the panel URL and the APP_KEY (which encrypts node tokens,
+# 2FA secrets and database host passwords) stay the same.
+
+OLD_DIR=""
+UPG_BACKUP=""
+UPG_DOWNTIME=0
+UPG_NGINX_SWITCHED=0
+UPG_PTEROQ_WAS_ACTIVE=0
+
+old_env() {
+    grep -m1 "^$1=" "$OLD_DIR/.env" 2>/dev/null | cut -d= -f2- | sed -e 's/[[:space:]]*$//' -e 's/^"\(.*\)"$/\1/' -e "s/^'\(.*\)'$/\1/"
+}
+
+old_mysql() {
+    MYSQL_PWD="$OLD_DB_PASS" "$MYSQL_BIN" -h "$OLD_DB_HOST" -P "$OLD_DB_PORT" -u "$OLD_DB_USER" "$@"
+}
+
+old_artisan() {
+    (cd "$OLD_DIR" && php artisan "$@")
+}
+
+# Puts the old panel back exactly as it was. Safe to call at any point of the upgrade.
+upgrade_rollback() {
+    warn "Switching back to your Pterodactyl panel..."
+    if [ "$UPG_NGINX_SWITCHED" = "1" ] && [ -f "$UPG_BACKUP/nginx-site.conf" ]; then
+        cp -f "$UPG_BACKUP/nginx-site.conf" "$NGINX_SITE"
+        nginx -t >/dev/null 2>&1 && { systemctl reload nginx 2>/dev/null || nginx -s reload; }
+    fi
+    [ -f "$COMPOSE_FILE" ] && dc stop >/dev/null 2>&1
+    if [ "$UPG_DOWNTIME" = "1" ]; then
+        [ -f "$UPG_BACKUP/crontab.txt" ] && crontab "$UPG_BACKUP/crontab.txt"
+        [ "$UPG_PTEROQ_WAS_ACTIVE" = "1" ] && systemctl start pteroq >/dev/null 2>&1
+        old_artisan up >/dev/null 2>&1
+    fi
+    ok "Your Pterodactyl panel runs exactly as before. Its database was never changed."
+}
+
+upgrade_fail() {
+    printf '%s ✘ %s%s\n' "$C_RED" "$*" "$C_RESET" >&2
+    upgrade_rollback
+    [ -n "$UPG_BACKUP" ] && echo " Backups made before the upgrade: $UPG_BACKUP"
+    exit 1
+}
+
+# Row count of every table, one "table count" line each.
+table_counts_old() {
+    local t
+    for t in $(old_mysql -N -e "SHOW TABLES" "$OLD_DB_NAME"); do
+        echo "$t $(old_mysql -N -e "SELECT COUNT(*) FROM \`$t\`" "$OLD_DB_NAME")"
+    done
+}
+
+table_counts_new() {
+    dc exec -T database sh -c 'for t in $(mariadb -uroot -p"$MYSQL_ROOT_PASSWORD" -N -e "SHOW TABLES" panel); do echo "$t $(mariadb -uroot -p"$MYSQL_ROOT_PASSWORD" -N -e "SELECT COUNT(*) FROM \`$t\`" panel)"; done' 2>/dev/null | tr -d '\r'
+}
+
+write_proxy_site() {
+    local names="$1" cert="$2" key="$3" port="$4" v6="$5"
+    {
+        echo "# Recoded Ptero (upgraded from Pterodactyl on $(date -u +%Y-%m-%d))."
+        echo "# The original file is saved in $UPG_BACKUP/nginx-site.conf"
+        echo "server {"
+        echo "    listen 80;"
+        [ "$v6" = "1" ] && echo "    listen [::]:80;"
+        echo "    server_name $names;"
+        echo
+        echo "    # Certificates are still renewed through this server block (webroot or nginx plugin)."
+        echo "    location ^~ /.well-known/acme-challenge/ { root $OLD_DIR/public; }"
+        if [ -n "$cert" ]; then
+            echo '    location / { return 301 https://$host$request_uri; }'
+            echo "}"
+            echo
+            echo "server {"
+            echo "    listen 443 ssl;"
+            [ "$v6" = "1" ] && echo "    listen [::]:443 ssl;"
+            echo "    server_name $names;"
+            echo "    ssl_certificate $cert;"
+            echo "    ssl_certificate_key $key;"
+            echo "    ssl_protocols TLSv1.2 TLSv1.3;"
+            echo "    ssl_session_cache shared:RecodedPteroSSL:10m;"
+        fi
+        echo "    client_max_body_size 100m;"
+        echo "    location / {"
+        echo "        proxy_pass http://127.0.0.1:$port;"
+        echo '        proxy_set_header Host $host;'
+        echo '        proxy_set_header X-Real-IP $remote_addr;'
+        echo '        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;'
+        echo '        proxy_set_header X-Forwarded-Proto $scheme;'
+        echo '        proxy_set_header X-Forwarded-Host $host;'
+        echo "        proxy_read_timeout 300s;"
+        echo "        proxy_request_buffering off;"
+        echo "    }"
+        echo "}"
+    } > "$NGINX_SITE"
+}
+
+upgrade_panel() {
+    [ -f "$INSTALL_DIR/.env" ] && die "Recoded Ptero is already installed in $INSTALL_DIR."
+    if [ -e "$INSTALL_DIR" ] && [ -n "$(ls -A "$INSTALL_DIR" 2>/dev/null)" ]; then
+        die "$INSTALL_DIR already exists and is not empty."
+    fi
+
+    echo
+    printf '%s%s%s\n' "$C_BOLD" "Upgrade Pterodactyl to Recoded Ptero" "$C_RESET"
+    ask OLD_DIR "Where is your Pterodactyl panel installed?" "/var/www/pterodactyl"
+    OLD_DIR="${OLD_DIR%/}"
+    { [ -f "$OLD_DIR/artisan" ] && [ -f "$OLD_DIR/.env" ]; } || die "No Pterodactyl panel found in $OLD_DIR (artisan and .env are missing)."
+
+    local old_version
+    old_version="$(grep -oE "'version' => '[^']+'" "$OLD_DIR/config/app.php" 2>/dev/null | cut -d"'" -f4)"
+    [[ "$old_version" == 1.* || "$old_version" == "canary" ]] \
+        || die "Pterodactyl '${old_version:-unknown}' is not supported. Update it to 1.x first: https://pterodactyl.io/panel/1.0/updating.html"
+    command -v php >/dev/null 2>&1 || die "php was not found; is this the server the panel runs on?"
+
+    OLD_APP_URL="$(old_env APP_URL)"; OLD_APP_URL="${OLD_APP_URL%/}"
+    OLD_DB_HOST="$(old_env DB_HOST)"; OLD_DB_HOST="${OLD_DB_HOST:-127.0.0.1}"
+    OLD_DB_PORT="$(old_env DB_PORT)"; OLD_DB_PORT="${OLD_DB_PORT:-3306}"
+    OLD_DB_NAME="$(old_env DB_DATABASE)"; OLD_DB_NAME="${OLD_DB_NAME:-panel}"
+    OLD_DB_USER="$(old_env DB_USERNAME)"
+    OLD_DB_PASS="$(old_env DB_PASSWORD)"
+    [ -n "$(old_env APP_KEY)" ] || die "The old .env has no APP_KEY; without it the encrypted data can't be moved."
+    [[ "$OLD_APP_URL" =~ ^https?:// ]] || die "APP_URL in $OLD_DIR/.env is missing or invalid."
+
+    if command -v mariadb >/dev/null 2>&1; then MYSQL_BIN=mariadb; DUMP_BIN=mariadb-dump
+    elif command -v mysql >/dev/null 2>&1; then MYSQL_BIN=mysql; DUMP_BIN=mysqldump
+    else die "No MySQL/MariaDB client found on this server."
+    fi
+    command -v "$DUMP_BIN" >/dev/null 2>&1 || DUMP_BIN=mysqldump
+    command -v "$DUMP_BIN" >/dev/null 2>&1 || die "No mysqldump/mariadb-dump found on this server."
+    old_mysql -N -e "SELECT 1 FROM users LIMIT 1" "$OLD_DB_NAME" >/dev/null 2>&1 \
+        || die "Could not read the panel database with the credentials from $OLD_DIR/.env."
+
+    command -v nginx >/dev/null 2>&1 || die "Only panels served by nginx can be upgraded automatically. Nothing was changed."
+    NGINX_SITE="$(grep -rlsE "root[[:space:]]+$OLD_DIR/public/?;" /etc/nginx/sites-enabled /etc/nginx/conf.d /etc/nginx/sites-available 2>/dev/null | head -n1)"
+    [ -n "$NGINX_SITE" ] || die "Could not find the nginx config that serves $OLD_DIR. Nothing was changed."
+    NGINX_SITE="$(readlink -f "$NGINX_SITE")"
+    # The file is replaced as a whole, so it must not serve anything else.
+    if grep -E '^[[:space:]]*root[[:space:]]' "$NGINX_SITE" | grep -vqE "$OLD_DIR/public/?;"; then
+        die "$NGINX_SITE also serves other websites; move the panel into its own file first. Nothing was changed."
+    fi
+
+    local names cert key v6=0 users servers nodes port=8085
+    names="$(grep -m1 -E '^[[:space:]]*server_name' "$NGINX_SITE" | sed -E 's/^[[:space:]]*server_name[[:space:]]+//; s/;.*$//')"
+    [ -n "$names" ] || names="$(echo "$OLD_APP_URL" | sed -E 's#^https?://##; s#[:/].*$##')"
+    cert="$(grep -m1 -E '^[[:space:]]*ssl_certificate[[:space:]]' "$NGINX_SITE" | awk '{print $2}' | tr -d ';')"
+    key="$(grep -m1 -E '^[[:space:]]*ssl_certificate_key[[:space:]]' "$NGINX_SITE" | awk '{print $2}' | tr -d ';')"
+    grep -qE 'listen[[:space:]]+\[::\]' "$NGINX_SITE" && v6=1
+    { [ -z "$cert" ] || { [ -f "$cert" ] && [ -f "$key" ]; }; } || die "The certificate files named in $NGINX_SITE don't exist. Nothing was changed."
+    while port_in_use "$port"; do port=$((port + 1)); done
+
+    users="$(old_mysql -N -e "SELECT COUNT(*) FROM users" "$OLD_DB_NAME")"
+    servers="$(old_mysql -N -e "SELECT COUNT(*) FROM servers" "$OLD_DB_NAME")"
+    nodes="$(old_mysql -N -e "SELECT COUNT(*) FROM nodes" "$OLD_DB_NAME")"
+
+    echo
+    echo " Found Pterodactyl $old_version in $OLD_DIR"
+    echo "   URL:       $OLD_APP_URL"
+    echo "   Database:  $OLD_DB_NAME on $OLD_DB_HOST ($users users, $servers servers, $nodes nodes)"
+    echo "   nginx:     $NGINX_SITE${cert:+ (HTTPS)}"
+    echo
+    echo " What happens:"
+    echo "   1. Recoded Ptero is downloaded and built while your panel keeps running."
+    echo "   2. Your panel goes into maintenance mode (a few minutes of downtime; game servers keep running)."
+    echo "   3. Backups: database dump, .env, nginx config, crontab and the panel files."
+    echo "   4. The database is copied into Recoded Ptero and checked table by table."
+    echo "   5. nginx now forwards $OLD_APP_URL to Recoded Ptero. Same URL, same logins, Wings keep working."
+    echo " Your old panel directory and database are NOT changed or deleted. If anything fails,"
+    echo " the old panel is switched back on automatically."
+    echo
+    if [ "${MC_UPGRADE_CONFIRM:-}" != "yes" ]; then
+        confirm "Start the upgrade?" n || die "Aborted, nothing was changed."
+    fi
+
+    install_packages
+    install_docker
+    ensure_swap
+
+    info "Downloading Recoded Ptero from github.com/$GITHUB_REPO ..."
+    git clone --quiet --branch "$GITHUB_BRANCH" "https://github.com/$GITHUB_REPO.git" "$INSTALL_DIR" \
+        || die "Could not download the repository. Nothing was changed."
+    local commit
+    commit="$(git -C "$INSTALL_DIR" rev-parse HEAD)"
+
+    local old_name old_tz
+    old_name="$(old_env APP_NAME)"
+    old_tz="$(old_env APP_TIMEZONE)"
+    (
+        umask 077
+        cat > "$INSTALL_DIR/.env" <<EOF
+# Written by install.sh (upgrade from Pterodactyl in $OLD_DIR). Contains secrets, keep it private.
+INSTALL_DIR=$INSTALL_DIR
+COMPOSE_PROJECT_NAME=recodedptero
+MC_PANEL_REPO=$GITHUB_REPO
+MC_PANEL_BRANCH=$GITHUB_BRANCH
+APP_URL=$OLD_APP_URL
+APP_NAME="${old_name:-Recoded Ptero}"
+APP_TIMEZONE=${old_tz:-$(system_timezone)}
+APP_SERVICE_AUTHOR=$(old_env APP_SERVICE_AUTHOR)
+DB_PASSWORD=$(random_string 32)
+DB_ROOT_PASSWORD=$(random_string 32)
+HTTP_BIND=127.0.0.1
+HTTP_PORT=$port
+HTTPS_PORT=$((port + 1000))
+LE_EMAIL=
+TRUSTED_PROXIES=*
+EOF
+    )
+    mkdir -p "$INSTALL_DIR/state" "$INSTALL_DIR/backups"
+    ln -sf "$INSTALL_DIR/installer/recoded-ptero" /usr/local/bin/recoded-ptero
+    chmod +x "$INSTALL_DIR/installer/recoded-ptero" "$INSTALL_DIR/installer/updater/updater.sh"
+
+    info "Building Recoded Ptero (5-15 minutes). Your panel keeps running meanwhile..."
+    dc build --build-arg "MC_COMMIT=$commit" panel || die "The build failed, your panel was not touched. Scroll up for the reason."
+    dc build updater >/dev/null 2>&1
+    ok "Recoded Ptero built"
+
+    # ------------------------------------------------------------ downtime starts here
+    UPG_BACKUP="$INSTALL_DIR/backups/pterodactyl-$(date -u +%Y%m%d-%H%M%S)"
+    mkdir -p "$UPG_BACKUP"; chmod 700 "$UPG_BACKUP"
+    cp -p "$OLD_DIR/.env" "$UPG_BACKUP/old.env"
+    cp -p "$NGINX_SITE" "$UPG_BACKUP/nginx-site.conf"
+    crontab -l > "$UPG_BACKUP/crontab.txt" 2>/dev/null || : > "$UPG_BACKUP/crontab.txt"
+
+    info "Putting your Pterodactyl panel into maintenance mode..."
+    UPG_DOWNTIME=1
+    old_artisan down >/dev/null 2>&1 || upgrade_fail "Could not put the old panel into maintenance mode."
+    if systemctl is-active --quiet pteroq 2>/dev/null; then
+        UPG_PTEROQ_WAS_ACTIVE=1
+        systemctl stop pteroq >/dev/null 2>&1
+    fi
+    # Its scheduler must not run next to the new one (server schedules would fire twice).
+    if grep -q "$OLD_DIR/artisan" "$UPG_BACKUP/crontab.txt"; then
+        sed "s|^\([^#].*$OLD_DIR/artisan.*\)$|# disabled by Recoded Ptero upgrade: \1|" "$UPG_BACKUP/crontab.txt" | crontab - \
+            || upgrade_fail "Could not pause the old panel's cron job."
+    fi
+
+    info "Backing up the old database..."
+    local dump="$UPG_BACKUP/database.sql.gz"
+    MYSQL_PWD="$OLD_DB_PASS" "$DUMP_BIN" -h "$OLD_DB_HOST" -P "$OLD_DB_PORT" -u "$OLD_DB_USER" \
+        --single-transaction --quick --no-tablespaces --default-character-set=utf8mb4 "$OLD_DB_NAME" 2>"$UPG_BACKUP/dump.err" | gzip > "$dump"
+    [ "${PIPESTATUS[0]}" -eq 0 ] || upgrade_fail "The database dump failed: $(head -c 300 "$UPG_BACKUP/dump.err")"
+    gzip -dc "$dump" | grep -q 'CREATE TABLE `users`' || upgrade_fail "The database dump looks incomplete."
+    ok "Database backup: $dump ($(du -h "$dump" | cut -f1))"
+    tar czf "$UPG_BACKUP/panel-files.tar.gz" -C "$(dirname "$OLD_DIR")" --exclude="$(basename "$OLD_DIR")/vendor" \
+        --exclude="$(basename "$OLD_DIR")/node_modules" "$(basename "$OLD_DIR")" 2>/dev/null
+    ok "Panel files backup: $UPG_BACKUP/panel-files.tar.gz"
+    table_counts_old > "$UPG_BACKUP/row-counts-old.txt" || upgrade_fail "Could not count the rows of the old database."
+
+    info "Copying the database into Recoded Ptero..."
+    dc up --no-start >/dev/null 2>&1 || upgrade_fail "Could not create the containers."
+    # Keep APP_KEY (decrypts node tokens, 2FA secrets...), hashids salt, mail, reCAPTCHA and backup
+    # settings. Database and Redis settings come from the new stack.
+    grep -E '^(APP_KEY|APP_LOCALE|APP_THEME|HASHIDS_SALT|HASHIDS_LENGTH|MAIL_[A-Z_]+|RECAPTCHA_[A-Z_]+|AWS_[A-Z_]+|BACKUP_[A-Z_]+|APP_BACKUP_DRIVER|PTERODACTYL_[A-Z_]+|SESSION_LIFETIME)=' \
+        "$OLD_DIR/.env" > "$UPG_BACKUP/panel-var.env"
+    docker run --rm --entrypoint sh -v recodedptero_panel_var:/v -v "$UPG_BACKUP/panel-var.env:/src.env:ro" recodedptero-panel:latest \
+        -c 'cp /src.env /v/.env && chmod 644 /v/.env' || upgrade_fail "Could not write the panel settings."
+
+    dc up -d database cache >/dev/null 2>&1 || upgrade_fail "Could not start the database."
+    local tries=0
+    until dc exec -T database sh -c 'mariadb -uroot -p"$MYSQL_ROOT_PASSWORD" -e "SELECT 1" panel' >/dev/null 2>&1; do
+        tries=$((tries + 1)); [ "$tries" -ge 60 ] && upgrade_fail "The new database did not start."
+        sleep 3
+    done
+    # MySQL 8 collations that older MariaDB versions don't know are mapped to their equivalent.
+    gzip -dc "$dump" | sed -e 's/utf8mb4_0900_ai_ci/utf8mb4_unicode_ci/g' \
+        | dc exec -T database sh -c 'mariadb -uroot -p"$MYSQL_ROOT_PASSWORD" panel' 2>"$UPG_BACKUP/import.err" \
+        || upgrade_fail "Importing the database failed: $(head -c 300 "$UPG_BACKUP/import.err")"
+
+    table_counts_new > "$UPG_BACKUP/row-counts-new.txt"
+    if ! diff -q <(sort "$UPG_BACKUP/row-counts-old.txt") <(sort "$UPG_BACKUP/row-counts-new.txt") >/dev/null; then
+        diff <(sort "$UPG_BACKUP/row-counts-old.txt") <(sort "$UPG_BACKUP/row-counts-new.txt") | head -n 20
+        upgrade_fail "The copied database does not match the original (see above)."
+    fi
+    ok "Database copied and verified: $(wc -l < "$UPG_BACKUP/row-counts-old.txt") tables, every row count matches"
+
+    info "Starting Recoded Ptero (database updates run now)..."
+    dc up -d >/dev/null 2>&1 || upgrade_fail "Could not start Recoded Ptero."
+    local waited=0 code
+    while [ "$waited" -lt 420 ]; do
+        code="$(curl -s -o /dev/null -w '%{http_code}' --max-time 5 "http://127.0.0.1:$port/auth/login" 2>/dev/null || true)"
+        if [ -n "$code" ] && [ "$code" != "000" ] && [ "$code" -lt 500 ]; then break; fi
+        sleep 5; waited=$((waited + 5))
+    done
+    [ "$waited" -lt 420 ] || { dc logs --tail 40 panel; upgrade_fail "Recoded Ptero did not start in time (logs above)."; }
+    local new_users
+    new_users="$(dc exec -T database sh -c 'mariadb -uroot -p"$MYSQL_ROOT_PASSWORD" -N -e "SELECT COUNT(*) FROM users" panel' 2>/dev/null | tr -d '\r')"
+    [ "$new_users" = "$users" ] || upgrade_fail "User count changed during the database update ($users -> $new_users)."
+    ok "Recoded Ptero is running with all $users users, $servers servers and $nodes nodes"
+
+    info "Switching nginx over to Recoded Ptero..."
+    UPG_NGINX_SWITCHED=1
+    write_proxy_site "$names" "$cert" "$key" "$port" "$v6"
+    nginx -t >"$UPG_BACKUP/nginx-test.txt" 2>&1 || upgrade_fail "The new nginx config is invalid: $(tail -n 3 "$UPG_BACKUP/nginx-test.txt")"
+    { systemctl reload nginx 2>/dev/null || nginx -s reload; } || upgrade_fail "nginx could not be reloaded."
+    sleep 2
+    local host="${OLD_APP_URL#*://}"; host="${host%%/*}"; host="${host%%:*}"
+    local scheme_port=80; [[ "$OLD_APP_URL" == https://* ]] && scheme_port=443
+    code="$(curl -sk -o /dev/null -w '%{http_code}' --max-time 10 --resolve "$host:$scheme_port:127.0.0.1" "$OLD_APP_URL/auth/login" 2>/dev/null || true)"
+    { [ -n "$code" ] && [ "$code" != "000" ] && [ "$code" -lt 500 ]; } || upgrade_fail "$OLD_APP_URL does not answer through nginx (HTTP $code)."
+
+    # Done. The old panel stays in maintenance mode, its queue and cron stay off.
+    UPG_DOWNTIME=0; UPG_NGINX_SWITCHED=0
+    cat > "$UPG_BACKUP/rollback.sh" <<EOF
+#!/usr/bin/env bash
+# Switches back to the old Pterodactyl panel. Changes made in Recoded Ptero after the upgrade
+# are NOT in the old database (they stay in Recoded Ptero's database).
+cp -f "$UPG_BACKUP/nginx-site.conf" "$NGINX_SITE" && nginx -t && (systemctl reload nginx || nginx -s reload)
+docker compose -f "$COMPOSE_FILE" --project-directory "$INSTALL_DIR" stop
+crontab "$UPG_BACKUP/crontab.txt"
+[ "$UPG_PTEROQ_WAS_ACTIVE" = "1" ] && systemctl start pteroq
+cd "$OLD_DIR" && php artisan up
+EOF
+    chmod 700 "$UPG_BACKUP/rollback.sh"
+
+    local owner
+    owner="$(dc exec -T database sh -c 'mariadb -uroot -p"$MYSQL_ROOT_PASSWORD" -N -e "SELECT username FROM users WHERE role=\"owner\" LIMIT 1" panel' 2>/dev/null | tr -d '\r')"
+
+    echo
+    printf '%s%s%s\n' "$C_GREEN" "======================================================" "$C_RESET"
+    printf '%s%s%s\n' "$C_GREEN$C_BOLD" " Upgrade to Recoded Ptero finished" "$C_RESET"
+    printf '%s%s%s\n' "$C_GREEN" "======================================================" "$C_RESET"
+    echo " URL:        $OLD_APP_URL (unchanged, log in as before)"
+    echo " Owner:      ${owner:-first admin} (admins are now 'admin', the first admin is 'owner')"
+    echo " Data:       $users users, $servers servers, $nodes nodes, all tables verified"
+    echo " Backups:    $UPG_BACKUP"
+    echo " Old panel:  $OLD_DIR and its database are untouched (maintenance mode, queue and cron off)."
+    echo "             Back to Pterodactyl if ever needed: bash $UPG_BACKUP/rollback.sh"
+    echo
+    echo " Handy commands:  recoded-ptero status | update | logs | backup | restart"
+    echo
+}
+
 # ---------------------------------------------------------------- main
 
 main() {
@@ -645,21 +990,23 @@ main() {
     local action="${MC_ACTION:-}"
     if [ -z "$action" ]; then
         echo "What do you want to do?"
-        echo "  [1] Install the panel"
-        echo "  [2] Install Wings (game server daemon) on this machine"
-        echo "  [3] Install the panel and Wings on this machine"
-        echo "  [4] Update the panel now"
-        echo "  [5] Uninstall the panel"
-        echo "  [6] Uninstall Wings"
+        echo "  [1] Install Recoded Ptero (new panel)"
+        echo "  [2] Upgrade an existing Pterodactyl panel to Recoded Ptero (keeps all data)"
+        echo "  [3] Install Wings (game server daemon) on this machine"
+        echo "  [4] Install Recoded Ptero and Wings on this machine"
+        echo "  [5] Update Recoded Ptero to the newest version"
+        echo "  [6] Uninstall Recoded Ptero"
+        echo "  [7] Uninstall Wings"
         echo "  [0] Quit"
         ask CHOICE "Choose" ""
         case "$CHOICE" in
             1) action="panel" ;;
-            2) action="wings" ;;
-            3) action="both" ;;
-            4) action="update" ;;
-            5) action="uninstall-panel" ;;
-            6) action="uninstall-wings" ;;
+            2) action="upgrade" ;;
+            3) action="wings" ;;
+            4) action="both" ;;
+            5) action="update" ;;
+            6) action="uninstall-panel" ;;
+            7) action="uninstall-wings" ;;
             *) exit 0 ;;
         esac
     fi
@@ -668,6 +1015,7 @@ main() {
         panel) install_panel ;;
         wings) install_wings ;;
         both) WITH_WINGS=1; install_panel; install_wings ;;
+        upgrade) upgrade_panel ;;
         update) update_panel ;;
         uninstall-panel) uninstall_panel ;;
         uninstall-wings) uninstall_wings ;;

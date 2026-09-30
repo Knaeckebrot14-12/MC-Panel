@@ -46,7 +46,6 @@ services:
       - ${INSTALL_DIR:-.}/state:/app/updater
     environment:
       APP_NAME: ${APP_NAME:-Recoded Ptero}
-      MAIL_FROM_NAME: ${APP_NAME:-Recoded Ptero}
       APP_URL: ${APP_URL:-http://localhost}
       APP_TIMEZONE: ${APP_TIMEZONE:-UTC}
       APP_SERVICE_AUTHOR: ${APP_SERVICE_AUTHOR:-noreply@example.com}
