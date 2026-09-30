@@ -540,6 +540,102 @@ EOF
         || warn "The renewal test failed. The certificate works for now, but check port 80 and the DNS record before it expires."
 }
 
+# ---------------------------------------------------------------- database server for game servers
+#
+# Plugins like LuckPerms need a MySQL database. Pterodactyl can create one per server, but only
+# once a "database host" exists. This sets up a MariaDB container next to Wings and registers it.
+
+GAMEDB_CONTAINER="recoded-gamedb"
+GAMEDB_ENV="/etc/recoded-ptero/gamedb.env"
+
+gamedb_value() {
+    grep -m1 "^$1=" "$GAMEDB_ENV" 2>/dev/null | cut -d= -f2-
+}
+
+wait_for_gamedb() {
+    local tries=0
+    until docker exec "$GAMEDB_CONTAINER" healthcheck.sh --connect --innodb_initialized >/dev/null 2>&1; do
+        tries=$((tries + 1))
+        [ "$tries" -ge 40 ] && return 1
+        sleep 3
+    done
+}
+
+grant_gamedb_user() {
+    # The panel creates a database and a user per server, so its account needs GRANT OPTION.
+    docker exec "$GAMEDB_CONTAINER" sh -c 'mariadb -uroot -p"$MARIADB_ROOT_PASSWORD" -e "GRANT ALL PRIVILEGES ON *.* TO \"$MARIADB_USER\"@\"%\" WITH GRANT OPTION; FLUSH PRIVILEGES;"'
+}
+
+prepare_gamedb() {
+    wait_for_gamedb && grant_gamedb_user
+}
+
+start_gamedb() {
+    docker run -d --name "$GAMEDB_CONTAINER" --restart unless-stopped \
+        -p 3306:3306 -v recoded_gamedb:/var/lib/mysql --env-file "$GAMEDB_ENV" \
+        mariadb:11 --bind-address=0.0.0.0
+}
+
+# Creates the container once; later runs keep it (and its data) and only make sure it runs.
+setup_game_database() {
+    if docker ps -a --format '{{.Names}}' | grep -qx "$GAMEDB_CONTAINER"; then
+        docker start "$GAMEDB_CONTAINER" >/dev/null 2>&1
+        run_step "Starting the database server for game servers" "Database server for game servers is running" wait_for_gamedb \
+            || { warn "The database server for game servers does not start. See: docker logs $GAMEDB_CONTAINER"; return 1; }
+        return 0
+    fi
+
+    if port_in_use 3306; then
+        warn "Port 3306 is already used by another database server, so none was set up for game servers."
+        warn "Add it yourself under Admin > Databases > Create New."
+        return 1
+    fi
+
+    mkdir -p "$(dirname "$GAMEDB_ENV")"
+    (
+        umask 077
+        cat > "$GAMEDB_ENV" <<EOF
+# Database server for game servers (container $GAMEDB_CONTAINER). Keep this file private.
+MARIADB_ROOT_PASSWORD=$(random_string 32)
+MARIADB_USER=pterodactyluser
+MARIADB_PASSWORD=$(random_string 32)
+EOF
+    )
+
+    run_step "Downloading the database server for game servers" "Database server downloaded" docker pull mariadb:11 \
+        || { warn "Could not download the database server."; return 1; }
+    start_gamedb >/dev/null 2>&1 || { warn "Could not start the database server for game servers."; return 1; }
+    run_step "Setting up the database server for game servers" "Database server for game servers is running" prepare_gamedb \
+        || { warn "The database server did not become ready. See: docker logs $GAMEDB_CONTAINER"; return 1; }
+    open_firewall_ports 3306/tcp
+}
+
+# Panel on this machine: add the database server in the panel directly.
+register_game_database_local() {
+    local id
+    id="$(dc exec -T panel php artisan p:database-host:quick-setup --host="$NODE_FQDN" --port=3306 \
+        --username="$(gamedb_value MARIADB_USER)" --password="$(gamedb_value MARIADB_PASSWORD)" \
+        --node="${NODE_ID:-}" 2>&1 | tr -d '\r' | tail -n1)"
+    if [[ "$id" =~ ^[0-9]+$ ]]; then
+        ok "Database host added to the panel: users can now create databases for their servers"
+    else
+        warn "The database server runs, but the panel could not add it: $id"
+        print_game_database_details
+    fi
+}
+
+print_game_database_details() {
+    echo
+    printf '%s%s%s\n' "$C_BOLD" "Add the database server in the panel" "$C_RESET"
+    echo "  Admin > Databases > Create New, and enter:"
+    echo "    Host:         ${NODE_FQDN:-$(public_ip)}"
+    echo "    Port:         3306"
+    echo "    Username:     $(gamedb_value MARIADB_USER)"
+    echo "    Password:     $(gamedb_value MARIADB_PASSWORD)"
+    echo "    Linked Node:  this node"
+    echo "  (The password is also stored in $GAMEDB_ENV.)"
+}
+
 # ---------------------------------------------------------------- wings
 
 install_wings_binary() {
@@ -720,6 +816,7 @@ setup_local_node() {
         [ "$tries" -ge 12 ] && die "Could not create the node in the panel. Check: recoded-ptero logs panel"
         sleep 5
     done
+    NODE_ID="$node_id"
     ok "Node #$node_id is set up in the panel"
 
     dc exec -T panel php artisan p:node:configuration "$node_id" --format=yaml > /etc/pterodactyl/config.yml.new \
@@ -798,6 +895,22 @@ install_wings() {
         setup_remote_node
     fi
 
+    # Database server for game servers (MC_GAME_DB=0 skips it in unattended installs).
+    local with_db=1
+    if [ -n "${MC_GAME_DB:-}" ]; then
+        [ "$MC_GAME_DB" = "1" ] || with_db=0
+    elif ! docker ps -a --format '{{.Names}}' | grep -qx "$GAMEDB_CONTAINER"; then
+        echo
+        confirm "Also set up a MySQL database server so game servers can get databases (plugins like LuckPerms need one)?" y || with_db=0
+    fi
+    if [ "$with_db" = "1" ] && setup_game_database; then
+        if [ "$panel_here" = "1" ]; then
+            register_game_database_local
+        else
+            print_game_database_details
+        fi
+    fi
+
     echo
     ok "Wings installation finished."
     echo " Game server ports are not created or opened automatically. Add them under"
@@ -811,6 +924,13 @@ uninstall_wings() {
     rm -f /etc/systemd/system/wings.service /usr/local/bin/wings /etc/letsencrypt/renewal-hooks/deploy/recoded-ptero-wings.sh
     systemctl daemon-reload 2>/dev/null || true
     if confirm "Also delete /etc/pterodactyl (node configuration)?" n; then rm -rf /etc/pterodactyl; fi
+    if docker ps -a --format '{{.Names}}' 2>/dev/null | grep -qx "$GAMEDB_CONTAINER" \
+        && confirm "Also DELETE the database server for game servers and ALL databases in it?" n; then
+        docker rm -f "$GAMEDB_CONTAINER" >/dev/null 2>&1
+        docker volume rm recoded_gamedb >/dev/null 2>&1
+        rm -f "$GAMEDB_ENV"
+        ok "Database server for game servers removed."
+    fi
     ok "Wings removed."
 }
 
