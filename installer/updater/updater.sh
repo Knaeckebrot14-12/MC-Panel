@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
-# MC Panel updater.
+# Recoded Ptero updater.
 #
 #   updater.sh daemon              watch state/request.json (used by the "updater" container)
-#   updater.sh run [id] [auto] [force]   apply an update right now (used by `mc-panel update`)
+#   updater.sh run [id] [auto] [force]   apply an update right now (used by `recoded-ptero update`)
 #
 # An update = fetch the repository, back up the database, build the new image next to the
 # running one, swap the container, verify it answers, and roll back if it does not.
@@ -17,7 +17,7 @@ BACKUP_DIR="$INSTALL_DIR/backups"
 BRANCH="${MC_PANEL_BRANCH:-main}"
 COMPOSE_FILE="$INSTALL_DIR/${MC_COMPOSE_FILE:-docker-compose.prod.yml}"
 # Image name of the panel service (the "image:" entry in the compose file).
-IMAGE="${MC_PANEL_IMAGE:-mcpanel-panel}"
+IMAGE="${MC_PANEL_IMAGE:-recodedptero-panel}"
 LOCK="$INSTALL_DIR/.update.lock"
 STATUS_FILE="$STATE_DIR/status.json"
 LOG_FILE="$STATE_DIR/update.log"

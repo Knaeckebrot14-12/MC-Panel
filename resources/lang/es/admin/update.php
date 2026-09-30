@@ -27,7 +27,7 @@ return [
     ],
     'errors' => [
         'dev_build' => 'Esta es una compilación de desarrollo y no se puede actualizar desde el panel.',
-        'updater_offline' => 'El servicio de actualización no está en marcha. Actualizar desde el panel requiere la instalación con el instalador; en el servidor, ejecuta «mc-panel update».',
+        'updater_offline' => 'El servicio de actualización no está en marcha. Actualizar desde el panel requiere la instalación con el instalador; en el servidor, ejecuta «recoded-ptero update».',
         'busy' => 'Ya hay una actualización en curso.',
         'not_writable' => 'El panel no pudo pasar la actualización al servicio de actualización.',
         'nothing_to_update' => 'El panel ya está actualizado.',

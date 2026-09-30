@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# MC Panel installer.
+# Recoded Ptero installer.
 #
-#   bash <(curl -sSL https://raw.githubusercontent.com/Knaeckebrot14-12/MC-Panel/main/install.sh)
+#   bash <(curl -sSL https://raw.githubusercontent.com/Knaeckebrot14-12/Recoded-Ptero/main/install.sh)
 #
 # Installs the panel (Docker based, with one-click and automatic updates) and/or Wings, the
 # daemon that runs the game servers. Run it as root on a fresh Debian/Ubuntu/RHEL-family server.
@@ -11,9 +11,9 @@
 
 set -uo pipefail
 
-GITHUB_REPO="${MC_PANEL_REPO:-Knaeckebrot14-12/MC-Panel}"
+GITHUB_REPO="${MC_PANEL_REPO:-Knaeckebrot14-12/Recoded-Ptero}"
 GITHUB_BRANCH="${MC_PANEL_BRANCH:-main}"
-INSTALL_DIR="${INSTALL_DIR:-/opt/mc-panel}"
+INSTALL_DIR="${INSTALL_DIR:-/opt/recoded-ptero}"
 COMPOSE_FILE="$INSTALL_DIR/docker-compose.prod.yml"
 
 if [ -t 1 ]; then
@@ -169,7 +169,7 @@ dc() {
 
 install_panel() {
     if [ -f "$INSTALL_DIR/.env" ]; then
-        die "A panel is already installed in $INSTALL_DIR. Use the update option instead (or run: mc-panel update)."
+        die "A panel is already installed in $INSTALL_DIR. Use the update option instead (or run: recoded-ptero update)."
     fi
     if [ -e "$INSTALL_DIR" ] && [ -n "$(ls -A "$INSTALL_DIR" 2>/dev/null)" ]; then
         die "$INSTALL_DIR already exists and is not empty. Remove it or set INSTALL_DIR to another location."
@@ -253,9 +253,9 @@ install_panel() {
     (
         umask 077
         cat > "$INSTALL_DIR/.env" <<EOF
-# Written by install.sh. Contains secrets, keep it private. Changes apply after: mc-panel restart
+# Written by install.sh. Contains secrets, keep it private. Changes apply after: recoded-ptero restart
 INSTALL_DIR=$INSTALL_DIR
-COMPOSE_PROJECT_NAME=mcpanel
+COMPOSE_PROJECT_NAME=recodedptero
 MC_PANEL_REPO=$GITHUB_REPO
 MC_PANEL_BRANCH=$GITHUB_BRANCH
 APP_URL=$APP_URL
@@ -271,8 +271,8 @@ TRUSTED_PROXIES=$TRUSTED_PROXIES
 EOF
     )
     mkdir -p "$INSTALL_DIR/state" "$INSTALL_DIR/backups"
-    ln -sf "$INSTALL_DIR/installer/mc-panel" /usr/local/bin/mc-panel
-    chmod +x "$INSTALL_DIR/installer/mc-panel" "$INSTALL_DIR/installer/updater/updater.sh"
+    ln -sf "$INSTALL_DIR/installer/recoded-ptero" /usr/local/bin/recoded-ptero
+    chmod +x "$INSTALL_DIR/installer/recoded-ptero" "$INSTALL_DIR/installer/updater/updater.sh"
 
     info "Building the panel. This takes 5-15 minutes on the first run, please be patient..."
     if ! dc build --build-arg "MC_COMMIT=$commit" panel; then
@@ -290,7 +290,7 @@ EOF
         if [ -n "$code" ] && [ "$code" != "000" ] && [ "$code" -lt 500 ]; then break; fi
         sleep 5; waited=$((waited + 5))
     done
-    [ "$waited" -lt 420 ] || die "The panel did not come up in time. Check: mc-panel logs panel"
+    [ "$waited" -lt 420 ] || die "The panel did not come up in time. Check: recoded-ptero logs panel"
     ok "Panel is running"
 
     info "Creating the owner account..."
@@ -298,7 +298,7 @@ EOF
     until dc exec -T panel php artisan p:user:make --email="$ADMIN_EMAIL" --username="$ADMIN_USER" \
         --name-first="$ADMIN_FIRST" --name-last="$ADMIN_LAST" --password="$ADMIN_PASS" --admin=1 --role=owner >/dev/null 2>&1; do
         tries=$((tries + 1))
-        [ "$tries" -ge 5 ] && die "Could not create the owner account. Try: mc-panel artisan p:user:make --role=owner"
+        [ "$tries" -ge 5 ] && die "Could not create the owner account. Try: recoded-ptero artisan p:user:make --role=owner"
         sleep 5
     done
     ok "Owner account created"
@@ -312,7 +312,7 @@ EOF
 
     echo
     printf '%s%s%s\n' "$C_GREEN" "======================================================" "$C_RESET"
-    printf '%s%s%s\n' "$C_GREEN$C_BOLD" " MC Panel is installed" "$C_RESET"
+    printf '%s%s%s\n' "$C_GREEN$C_BOLD" " Recoded Ptero is installed" "$C_RESET"
     printf '%s%s%s\n' "$C_GREEN" "======================================================" "$C_RESET"
     echo " URL:       $APP_URL"
     echo " E-mail:    $ADMIN_EMAIL"
@@ -334,7 +334,7 @@ EOF
         echo "     machine it guides you through connecting it."
     fi
     echo
-    echo " Handy commands:  mc-panel status | update | logs | backup | restart"
+    echo " Handy commands:  recoded-ptero status | update | logs | backup | restart"
     echo " Files:           $INSTALL_DIR  (secrets in $INSTALL_DIR/.env)"
     [ "$MODE" = "3" ] && echo " Reverse proxy:   forward $APP_URL to http://127.0.0.1:$HTTP_PORT"
     echo
@@ -354,8 +354,8 @@ uninstall_panel() {
         if [ "${MC_NONINTERACTIVE:-0}" = "1" ]; then answer="DELETE"; else read -r -p "Type DELETE to confirm: " answer </dev/tty; fi
         [ "$answer" = "DELETE" ] || die "Aborted, nothing was removed."
         dc down -v --remove-orphans
-        docker image rm mcpanel-panel:latest mcpanel-panel:rollback mcpanel-updater:latest >/dev/null 2>&1 || true
-        rm -f /usr/local/bin/mc-panel
+        docker image rm recodedptero-panel:latest recodedptero-panel:rollback recodedptero-updater:latest >/dev/null 2>&1 || true
+        rm -f /usr/local/bin/recoded-ptero
         rm -rf "$INSTALL_DIR"
         ok "Panel and all its data were removed."
     else
@@ -396,8 +396,11 @@ install_certbot() {
 port80_hooks() {
     CERT_PRE=""; CERT_POST=""
     port_in_use 80 || return 0
-    if docker ps --format '{{.Names}}' 2>/dev/null | grep -qx 'mcpanel-panel-1'; then
-        CERT_PRE="docker stop mcpanel-panel-1"; CERT_POST="docker start mcpanel-panel-1"
+    local panel_container
+    panel_container="$(env_value COMPOSE_PROJECT_NAME)"
+    panel_container="${panel_container:-recodedptero}-panel-1"
+    if docker ps --format '{{.Names}}' 2>/dev/null | grep -qx "$panel_container"; then
+        CERT_PRE="docker stop $panel_container"; CERT_POST="docker start $panel_container"
         return 0
     fi
     local svc
@@ -416,7 +419,7 @@ enable_cert_renewal() {
     elif systemctl list-unit-files 2>/dev/null | grep -q '^certbot-renew.timer'; then
         systemctl enable --now certbot-renew.timer >/dev/null 2>&1
     else
-        echo "17 3,15 * * * root certbot renew -q" > /etc/cron.d/mc-panel-certbot
+        echo "17 3,15 * * * root certbot renew -q" > /etc/cron.d/recoded-ptero-certbot
     fi
 }
 
@@ -427,13 +430,13 @@ obtain_certificate() {
     install_certbot
 
     mkdir -p /etc/letsencrypt/renewal-hooks/deploy
-    cat > /etc/letsencrypt/renewal-hooks/deploy/mc-panel-wings.sh <<'EOF'
+    cat > /etc/letsencrypt/renewal-hooks/deploy/recoded-ptero-wings.sh <<'EOF'
 #!/bin/sh
-# Installed by the MC Panel installer: Wings only reads its certificate on start.
+# Installed by the Recoded Ptero installer: Wings only reads its certificate on start.
 systemctl is-active --quiet wings && systemctl restart wings
 exit 0
 EOF
-    chmod +x /etc/letsencrypt/renewal-hooks/deploy/mc-panel-wings.sh
+    chmod +x /etc/letsencrypt/renewal-hooks/deploy/recoded-ptero-wings.sh
 
     if [ -f "/etc/letsencrypt/live/$domain/fullchain.pem" ]; then
         ok "A certificate for $domain already exists"
@@ -534,7 +537,7 @@ setup_local_node() {
             --memory="$mem_mb" --disk="$disk_mb" 2>/dev/null | tr -d '\r' | tail -n1)" \
             && [[ "$node_id" =~ ^[0-9]+$ ]]; do
         tries=$((tries + 1))
-        [ "$tries" -ge 12 ] && die "Could not create the node in the panel. Check: mc-panel logs panel"
+        [ "$tries" -ge 12 ] && die "Could not create the node in the panel. Check: recoded-ptero logs panel"
         sleep 5
     done
     ok "Node #$node_id created"
@@ -623,7 +626,7 @@ uninstall_wings() {
     [ -f /usr/local/bin/wings ] || die "Wings is not installed."
     confirm "Remove Wings? Servers stay in /var/lib/pterodactyl until you delete them." n || die "Aborted."
     systemctl disable --now wings >/dev/null 2>&1 || true
-    rm -f /etc/systemd/system/wings.service /usr/local/bin/wings /etc/letsencrypt/renewal-hooks/deploy/mc-panel-wings.sh
+    rm -f /etc/systemd/system/wings.service /usr/local/bin/wings /etc/letsencrypt/renewal-hooks/deploy/recoded-ptero-wings.sh
     systemctl daemon-reload 2>/dev/null || true
     if confirm "Also delete /etc/pterodactyl (node configuration)?" n; then rm -rf /etc/pterodactyl; fi
     ok "Wings removed."
@@ -635,7 +638,7 @@ main() {
     require_root
     detect_system
 
-    printf '\n%s%s%s\n' "$C_BOLD" "MC Panel installer" "$C_RESET"
+    printf '\n%s%s%s\n' "$C_BOLD" "Recoded Ptero installer" "$C_RESET"
     echo "Source: github.com/$GITHUB_REPO ($GITHUB_BRANCH)"
     echo
 

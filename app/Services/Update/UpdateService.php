@@ -334,7 +334,7 @@ class UpdateService
 
     private function http(): PendingRequest
     {
-        $request = Http::timeout(10)->withUserAgent('MC-Panel-Updater');
+        $request = Http::timeout(10)->withUserAgent('Recoded-Ptero-Updater');
         if ($token = config('mcpanel.github_token')) {
             $request = $request->withToken($token);
         }

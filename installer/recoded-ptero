@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Command line helper for a panel installed with install.sh.
-# Installed as /usr/local/bin/mc-panel (a symlink to this file).
+# Installed as /usr/local/bin/recoded-ptero (a symlink to this file).
 
 set -uo pipefail
 
@@ -14,16 +14,16 @@ dc() {
 
 usage() {
     cat <<'EOT'
-mc-panel - manage your MC Panel installation
+recoded-ptero - manage your Recoded Ptero installation
 
-  mc-panel update [--force]   install the newest version now (same as the Update button)
-  mc-panel status             show the running version and containers
-  mc-panel logs [service]     follow logs (panel, database, cache, updater)
-  mc-panel restart            restart all services
-  mc-panel stop | start       stop or start all services
-  mc-panel backup             back up the database and panel settings now
-  mc-panel artisan <args>     run a panel artisan command, e.g. mc-panel artisan p:user:make
-  mc-panel install-dir        print the install directory
+  recoded-ptero update [--force]   install the newest version now (same as the Update button)
+  recoded-ptero status             show the running version and containers
+  recoded-ptero logs [service]     follow logs (panel, database, cache, updater)
+  recoded-ptero restart            restart all services
+  recoded-ptero stop | start       stop or start all services
+  recoded-ptero backup             back up the database and panel settings now
+  recoded-ptero artisan <args>     run a panel artisan command, e.g. recoded-ptero artisan p:user:make
+  recoded-ptero install-dir        print the install directory
 EOT
 }
 

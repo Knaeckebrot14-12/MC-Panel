@@ -27,7 +27,7 @@ return [
     ],
     'errors' => [
         'dev_build' => 'Ceci est une version de développement et elle ne peut pas être mise à jour depuis le panel.',
-        'updater_offline' => 'Le service de mise à jour ne tourne pas. Les mises à jour depuis le panel nécessitent l\'installation via l\'installateur ; sur le serveur, exécutez plutôt « mc-panel update ».',
+        'updater_offline' => 'Le service de mise à jour ne tourne pas. Les mises à jour depuis le panel nécessitent l\'installation via l\'installateur ; sur le serveur, exécutez plutôt « recoded-ptero update ».',
         'busy' => 'Une mise à jour est déjà en cours.',
         'not_writable' => 'Le panel n\'a pas pu transmettre la mise à jour au service de mise à jour.',
         'nothing_to_update' => 'Le panel est déjà à jour.',

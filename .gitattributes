@@ -2,7 +2,7 @@
 *.sh text eol=lf
 install.sh text eol=lf
 installer/** text eol=lf
-installer/mc-panel text eol=lf
+installer/recoded-ptero text eol=lf
 .github/docker/* text eol=lf
 *.png binary
 *.jpg binary

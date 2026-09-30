@@ -2,7 +2,7 @@
 
 return [
     // The GitHub repository (owner/name) and branch this panel updates itself from.
-    'repository' => env('MC_PANEL_REPO', 'Knaeckebrot14-12/MC-Panel'),
+    'repository' => env('MC_PANEL_REPO', 'Knaeckebrot14-12/Recoded-Ptero'),
     'branch' => env('MC_PANEL_BRANCH', 'main'),
 
     // Optional GitHub token, only needed for private forks or to lift the API rate limit.

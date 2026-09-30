@@ -27,7 +27,7 @@ return [
     ],
     'errors' => [
         'dev_build' => 'This is a development build and cannot be updated from the panel.',
-        'updater_offline' => 'The updater service is not running. Updating from the panel needs the installer setup; on the server, run "mc-panel update" instead.',
+        'updater_offline' => 'The updater service is not running. Updating from the panel needs the installer setup; on the server, run "recoded-ptero update" instead.',
         'busy' => 'An update is already running.',
         'not_writable' => 'The panel could not hand the update over to the updater service.',
         'nothing_to_update' => 'The panel is already up to date.',
