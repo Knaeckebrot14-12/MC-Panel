@@ -50,6 +50,8 @@ services:
       APP_SERVICE_AUTHOR: ${APP_SERVICE_AUTHOR:-noreply@example.com}
       APP_ENV: production
       APP_ENVIRONMENT_ONLY: "false"
+      # Off by default so the first login works; enable with your own keys under Settings -> Advanced.
+      RECAPTCHA_ENABLED: ${RECAPTCHA_ENABLED:-false}
       LE_EMAIL: ${LE_EMAIL:-}
       TRUSTED_PROXIES: ${TRUSTED_PROXIES:-}
       CACHE_DRIVER: redis
