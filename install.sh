@@ -284,7 +284,7 @@ EOF
     info "Waiting for the panel to come up (first start sets up the database)..."
     local waited=0 code
     while [ "$waited" -lt 420 ]; do
-        code="$(curl -s -o /dev/null -w '%{http_code}' --max-time 5 "http://127.0.0.1:$HTTP_PORT/auth/login" 2>/dev/null || true)"
+        code="$(curl -s -o /dev/null -w '%{http_code}' --max-time 5 "http://${MC_WAIT_HOST:-127.0.0.1}:$HTTP_PORT/auth/login" 2>/dev/null || true)"
         if [ -n "$code" ] && [ "$code" != "000" ] && [ "$code" -lt 500 ]; then break; fi
         sleep 5; waited=$((waited + 5))
     done
