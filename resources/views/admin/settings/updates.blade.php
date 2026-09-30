@@ -58,8 +58,10 @@
                     </div>
                     <div class="box-body">
                         <p id="progress-step" style="font-weight:bold;"></p>
-                        <div class="progress" id="progress-bar-wrap" style="display:none;"><div class="progress-bar progress-bar-striped active" style="width:100%"></div></div>
-                        <pre id="progress-log" style="max-height:260px;overflow:auto;font-size:11px;"></pre>
+                        <ul id="progress-steps" class="list-unstyled" style="margin:0 0 10px;font-size:14px;"></ul>
+                        <pre id="progress-error" style="display:none;max-height:220px;overflow:auto;font-size:11px;"></pre>
+                        <a href="#" id="progress-details-toggle" class="small">@lang('admin/update.details_show')</a>
+                        <pre id="progress-log" style="display:none;margin-top:8px;max-height:220px;overflow:auto;font-size:11px;"></pre>
                     </div>
                 </div>
             </div>
@@ -135,6 +137,46 @@
 
             function busy(state) { return state === 'queued' || state === 'running'; }
 
+            // Steps of an update in order: blue = running, green = done, grey = still to come, red = failed.
+            var STEPS = ['fetch', 'backup', 'apply', 'build', 'swap', 'health', 'cleanup'];
+
+            function renderSteps(s) {
+                var list = $('#progress-steps').empty();
+                if (s.message && s.state === 'success' && s.step === 'done') {
+                    list.append($('<li>').html('<i class="fa fa-fw fa-check-circle text-green"></i> ').append(document.createTextNode(s.message)));
+                    return;
+                }
+                var current = STEPS.indexOf(s.step);
+                var failed = s.state === 'failed' || s.state === 'rolled_back';
+                STEPS.forEach(function (step, index) {
+                    var icon, klass, text = T.steps[step] || step;
+                    if (s.state === 'success' || (current > -1 && index < current) || (s.step === 'rollback' && step !== 'cleanup')) {
+                        icon = 'fa-check-circle'; klass = 'text-green'; text = T.steps_done[step] || text;
+                    } else if (index === current && failed) {
+                        icon = 'fa-times-circle'; klass = 'text-red';
+                    } else if (index === current && busy(s.state)) {
+                        icon = 'fa-circle-o-notch fa-spin'; klass = 'text-aqua';
+                    } else {
+                        icon = 'fa-circle-o'; klass = 'text-muted';
+                    }
+                    list.append($('<li style="padding:2px 0;">').addClass(klass)
+                        .html('<i class="fa fa-fw ' + icon + '"></i> ').append(document.createTextNode(text)));
+                });
+                if (s.step === 'rollback' || s.state === 'rolled_back') {
+                    var done = s.state === 'rolled_back';
+                    list.append($('<li style="padding:2px 0;">').addClass(done ? 'text-green' : 'text-aqua')
+                        .html('<i class="fa fa-fw ' + (done ? 'fa-check-circle' : 'fa-circle-o-notch fa-spin') + '"></i> ')
+                        .append(document.createTextNode(done ? T.steps_done.rollback : T.steps.rollback)));
+                }
+            }
+
+            $('#progress-details-toggle').on('click', function (e) {
+                e.preventDefault();
+                var log = $('#progress-log').toggle();
+                $(this).text(log.is(':visible') ? T.details_hide : T.details_show);
+                log.scrollTop(log[0].scrollHeight);
+            });
+
             function render() {
                 var s = data.status || { state: 'idle' };
                 var box = $('#version-box').removeClass('box-success box-warning box-danger');
@@ -186,10 +228,13 @@
                 var show = busy(s.state) || (s.state && s.state !== 'idle' && recent);
                 $('#progress-row').toggle(!!show);
                 if (show) {
-                    var step = s.step && T.steps[s.step] ? T.steps[s.step] : '';
                     var line = T['state_' + s.state] || s.state;
-                    $('#progress-step').text(line + (busy(s.state) && step ? ' — ' + step : '') + (s.message ? ' — ' + s.message : ''));
-                    $('#progress-bar-wrap').toggle(busy(s.state));
+                    var failed = s.state === 'failed' || s.state === 'rolled_back';
+                    $('#progress-step').text(line + (s.message ? ' — ' + s.message : ''))
+                        .toggleClass('text-red', failed).toggleClass('text-green', s.state === 'success');
+                    renderSteps(s);
+                    // Raw output only helps when something went wrong.
+                    $('#progress-error').toggle(failed && !!s.log_tail).text(s.log_tail || '');
                     var log = $('#progress-log');
                     log.text(s.log || '');
                     log.scrollTop(log[0].scrollHeight);

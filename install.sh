@@ -1203,6 +1203,7 @@ EOF
         sed "s|^\([^#].*$OLD_DIR/artisan.*\)$|# disabled by Recoded Ptero upgrade: \1|" "$UPG_BACKUP/crontab.txt" | crontab - \
             || upgrade_fail "Could not pause the old panel's cron job."
     fi
+    ok "Pterodactyl is in maintenance mode, its queue worker and cron job are paused"
 
     info "Backing up the old database..."
     local dump="$UPG_BACKUP/database.sql.gz"
@@ -1267,6 +1268,7 @@ EOF
     local scheme_port=80; [[ "$OLD_APP_URL" == https://* ]] && scheme_port=443
     code="$(curl -sk -o /dev/null -w '%{http_code}' --max-time 10 --resolve "$host:$scheme_port:127.0.0.1" "$OLD_APP_URL/auth/login" 2>/dev/null || true)"
     { [ -n "$code" ] && [ "$code" != "000" ] && [ "$code" -lt 500 ]; } || upgrade_fail "$OLD_APP_URL does not answer through nginx (HTTP $code)."
+    ok "nginx now serves Recoded Ptero at $OLD_APP_URL"
 
     # Done. The old panel stays in maintenance mode, its queue and cron stay off.
     UPG_DOWNTIME=0; UPG_NGINX_SWITCHED=0

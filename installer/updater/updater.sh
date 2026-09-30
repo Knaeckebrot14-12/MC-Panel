@@ -36,9 +36,54 @@ dc() {
 
 now() { date -u +%Y-%m-%dT%H:%M:%SZ; }
 
+# Run from the server (recoded-ptero update): one coloured line per step, like the installer.
+# Inside the updater container the plain log lines go to "docker logs" instead.
+HOST_MODE=1
+[ -f /.dockerenv ] && HOST_MODE=0
+if [ -t 1 ]; then
+    C_RESET=$'\033[0m'; C_RED=$'\033[31m'; C_GREEN=$'\033[32m'; C_BLUE=$'\033[36m'
+else
+    C_RESET=""; C_RED=""; C_GREEN=""; C_BLUE=""
+fi
+UI_STEP=""
+
+step_label() {
+    case "$1:$2" in
+        fetch:run) echo "Downloading the new version" ;;       fetch:done) echo "New version downloaded" ;;
+        backup:run) echo "Backing up the database" ;;          backup:done) echo "Database backed up" ;;
+        apply:run) echo "Applying the new files" ;;            apply:done) echo "New files applied" ;;
+        build:run) echo "Building the new version (a few minutes)" ;; build:done) echo "New version built" ;;
+        swap:run) echo "Restarting the panel" ;;               swap:done) echo "Panel restarted" ;;
+        health:run) echo "Checking the new version" ;;         health:done) echo "New version is running" ;;
+        cleanup:run) echo "Cleaning up" ;;                     cleanup:done) echo "Cleaned up" ;;
+        rollback:run) echo "Restoring the previous version" ;; rollback:done) echo "Previous version restored" ;;
+        *) echo "$1" ;;
+    esac
+}
+
+# Prints the step lines on the server screen; called from write_status.
+ui_status() {
+    local state="$1" step="$2" message="$3"
+    [ "$HOST_MODE" = "1" ] || return 0
+    if [ "$state" = "running" ] && [ "$step" != "$UI_STEP" ]; then
+        [ -n "$UI_STEP" ] && printf '%s ✔%s %s\n' "$C_GREEN" "$C_RESET" "$(step_label "$UI_STEP" done)"
+        printf '%s==>%s %s\n' "$C_BLUE" "$C_RESET" "$(step_label "$step" run)"
+        UI_STEP="$step"
+    elif [ "$state" = "success" ]; then
+        [ -n "$UI_STEP" ] && printf '%s ✔%s %s\n' "$C_GREEN" "$C_RESET" "$(step_label "$UI_STEP" done)"
+        printf '%s ✔%s %s\n' "$C_GREEN" "$C_RESET" "${message:-Update finished: now running ${RUN_TO:0:7}}"
+        UI_STEP=""
+    elif [ "$state" = "failed" ] || [ "$state" = "rolled_back" ]; then
+        printf '%s ✘ %s%s\n' "$C_RED" "$message" "$C_RESET"
+        printf '   Details: %s\n' "$LOG_FILE"
+        UI_STEP=""
+    fi
+}
+
 log() {
     mkdir -p "$STATE_DIR"
-    printf '[%s] %s\n' "$(date -u +%H:%M:%S)" "$*" | tee -a "$LOG_FILE"
+    printf '[%s] %s\n' "$(date -u +%H:%M:%S)" "$*" >> "$LOG_FILE"
+    [ "$HOST_MODE" = "1" ] || printf '[%s] %s\n' "$(date -u +%H:%M:%S)" "$*"
 }
 
 jesc() {
@@ -54,6 +99,7 @@ write_status() {
         "$RUN_STARTED" "$([ -n "$finished" ] && printf '"%s"' "$finished" || printf 'null')" \
         > "$STATUS_FILE.tmp" && mv -f "$STATUS_FILE.tmp" "$STATUS_FILE"
     chmod 644 "$STATUS_FILE" 2>/dev/null || true
+    ui_status "$state" "$step" "$message"
 }
 
 acquire_lock() {
@@ -188,7 +234,7 @@ do_update() {
     if [ -n "$(git -c core.fileMode=false status --porcelain --untracked-files=no 2>/dev/null)" ]; then
         write_status failed fetch "The install directory has local changes. Commit or discard them first." "$(now)"
         log "ERROR: local changes in $INSTALL_DIR:"
-        git status --short --untracked-files=no | head -n 20 | tee -a "$LOG_FILE"
+        git status --short --untracked-files=no | head -n 20 >> "$LOG_FILE"
         return 1
     fi
     if ! git merge-base --is-ancestor HEAD "origin/$BRANCH" 2>/dev/null; then
@@ -203,11 +249,11 @@ do_update() {
     log "Backing up..."
     backup_data
 
-    write_status running fetch
+    write_status running apply
     if git reset --hard "origin/$BRANCH" >>"$LOG_FILE" 2>&1; then
         chmod +x install.sh installer/recoded-ptero installer/updater/updater.sh 2>/dev/null || true
     else
-        write_status failed fetch "Could not apply the new files." "$(now)"
+        write_status failed apply "Could not apply the new files." "$(now)"
         log "ERROR: git reset failed."
         git reset --hard "$old_sha" >>"$LOG_FILE" 2>&1
         return 1

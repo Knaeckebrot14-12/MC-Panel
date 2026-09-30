@@ -262,8 +262,11 @@ class UpdateService
             $status['state'] = 'queued';
         }
 
-        $log = $this->readFile($this->dir() . '/update.log') ?: '';
-        $status['log'] = implode("\n", array_slice(explode("\n", trim($log)), -60));
+        $lines = explode("\n", trim($this->readFile($this->dir() . '/update.log') ?: ''));
+        // The updater's own messages ("[12:00:00] ...") for the details view; the build output in between
+        // is only useful when something failed, so just the last lines of it are passed along.
+        $status['log'] = implode("\n", array_slice(array_values(preg_grep('/^\[\d{2}:\d{2}:\d{2}\] /', $lines)), -40));
+        $status['log_tail'] = implode("\n", array_slice($lines, -25));
 
         return $status;
     }
