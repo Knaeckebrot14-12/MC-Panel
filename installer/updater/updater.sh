@@ -15,7 +15,9 @@ INSTALL_DIR="${INSTALL_DIR:-$(cd "$(dirname "$SELF")/../.." && pwd)}"
 STATE_DIR="${STATE_DIR:-$INSTALL_DIR/state}"
 BACKUP_DIR="$INSTALL_DIR/backups"
 BRANCH="${MC_PANEL_BRANCH:-main}"
-COMPOSE_FILE="$INSTALL_DIR/docker-compose.prod.yml"
+COMPOSE_FILE="$INSTALL_DIR/${MC_COMPOSE_FILE:-docker-compose.prod.yml}"
+# Image name of the panel service (the "image:" entry in the compose file).
+IMAGE="${MC_PANEL_IMAGE:-mcpanel-panel}"
 LOCK="$INSTALL_DIR/.update.lock"
 STATUS_FILE="$STATE_DIR/status.json"
 LOG_FILE="$STATE_DIR/update.log"
@@ -128,8 +130,8 @@ rollback() {
     write_status running rollback
     log "Rolling back to ${old_sha:0:7}..."
     git -C "$INSTALL_DIR" reset --hard "$old_sha" >>"$LOG_FILE" 2>&1
-    if docker image inspect mcpanel-panel:rollback >/dev/null 2>&1; then
-        docker tag mcpanel-panel:rollback mcpanel-panel:latest
+    if docker image inspect "$IMAGE:rollback" >/dev/null 2>&1; then
+        docker tag "$IMAGE:rollback" "$IMAGE:latest"
         dc up -d --no-deps --no-build panel >>"$LOG_FILE" 2>&1
         if wait_healthy "$old_sha"; then
             log "The previous version is running again."
@@ -178,6 +180,20 @@ do_update() {
         return 0
     fi
     [ -n "$current" ] && RUN_FROM="$current"
+
+    # Never throw away work: refuse when files were edited by hand or commits exist that GitHub doesn't have.
+    if [ -n "$(git status --porcelain --untracked-files=no 2>/dev/null)" ]; then
+        write_status failed fetch "The install directory has local changes. Commit or discard them first." "$(now)"
+        log "ERROR: local changes in $INSTALL_DIR:"
+        git status --short --untracked-files=no | head -n 20 | tee -a "$LOG_FILE"
+        return 1
+    fi
+    if ! git merge-base --is-ancestor HEAD "origin/$BRANCH" 2>/dev/null; then
+        write_status failed fetch "The install directory has commits that are not on GitHub. Push them first." "$(now)"
+        log "ERROR: HEAD ${old_sha:0:7} is not part of origin/$BRANCH (local commits that were not pushed?)."
+        return 1
+    fi
+
     log "Updating ${RUN_FROM:0:7} -> ${new_sha:0:7}"
 
     write_status running backup
@@ -193,7 +209,7 @@ do_update() {
     fi
 
     # Keep the running image around so a failed update can be undone.
-    docker tag mcpanel-panel:latest mcpanel-panel:rollback 2>/dev/null || true
+    docker tag "$IMAGE:latest" "$IMAGE:rollback" 2>/dev/null || true
 
     write_status running build
     log "Building the new version. This takes a few minutes and the panel keeps running meanwhile..."

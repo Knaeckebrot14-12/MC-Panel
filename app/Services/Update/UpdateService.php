@@ -53,6 +53,14 @@ class UpdateService
      */
     public function latest(bool $force = false): ?array
     {
+        $latest = $this->fetchLatest($force);
+        $this->resolveRelation($latest);
+
+        return $latest;
+    }
+
+    private function fetchLatest(bool $force): ?array
+    {
         $cached = Cache::get(self::CACHE_KEY);
         if (!$force && $cached && CarbonImmutable::parse($cached['checked_at'])->gt(now()->subMinutes(15))) {
             return $cached;
@@ -123,7 +131,62 @@ class UpdateService
         $installed = $this->installed();
         $latest ??= $this->cachedLatest();
 
-        return !$installed['is_dev'] && $latest && $latest['commit'] !== $installed['commit'];
+        if ($installed['is_dev'] || !$latest || $latest['commit'] === $installed['commit']) {
+            return false;
+        }
+
+        // Only a GitHub version that is *ahead* of the installed one is an update; a panel running
+        // commits that were never pushed must not be "updated" backwards. Until GitHub has been
+        // asked (latest() does that), a different commit counts as an update.
+        $relation = Cache::get($this->relationKey($installed['commit'], $latest['commit']));
+
+        return $relation === null || $relation === 'ahead';
+    }
+
+    /**
+     * How $head relates to $base on GitHub: ahead, behind, identical, diverged, or unknown
+     * when GitHub doesn't know $base (never pushed). Cached, since commits never change.
+     */
+    private function relation(string $base, string $head): ?string
+    {
+        $key = $this->relationKey($base, $head);
+        if (($cached = Cache::get($key)) !== null) {
+            return $cached;
+        }
+
+        try {
+            $repo = config('mcpanel.repository');
+            $response = $this->http()->get("https://api.github.com/repos/$repo/compare/$base...$head");
+            if ($response->status() === 404) {
+                $relation = 'unknown';
+            } elseif ($response->successful()) {
+                $relation = (string) $response->json('status');
+            } else {
+                return null;
+            }
+        } catch (\Throwable) {
+            return null;
+        }
+
+        Cache::put($key, $relation, now()->addWeek());
+
+        return $relation;
+    }
+
+    private function relationKey(string $base, string $head): string
+    {
+        return 'mcpanel:update:rel:' . $base . ':' . $head;
+    }
+
+    /**
+     * Makes sure the relation between the installed and the newest commit is known.
+     */
+    private function resolveRelation(?array $latest): void
+    {
+        $installed = $this->installed();
+        if ($latest && !$installed['is_dev'] && $latest['commit'] !== $installed['commit']) {
+            $this->relation($installed['commit'], $latest['commit']);
+        }
     }
 
     /**
