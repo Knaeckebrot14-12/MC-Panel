@@ -29,9 +29,10 @@ What the installer asks:
    - `1` HTTP by IP or domain (quick test setups),
    - `2` HTTPS with Let's Encrypt: enter the domain (its DNS A record must already point at the server) and an e-mail for certificate notices,
    - `3` behind your own reverse proxy (Nginx, Caddy, Cloudflare Tunnel): enter the public URL and a local port.
-3. **Owner account**: e-mail, username, name and password (leave empty to generate one).
-4. **Automatic updates**: on or off (can be changed later under Settings → Updates).
-5. **Wings on this server too?** Say yes and panel, node and Wings are set up in one run.
+3. **Timezone**: the server's timezone is suggested; press Enter or type another one (e.g. Europe/Berlin).
+4. **Owner account**: e-mail, username, name and password (leave empty to generate one).
+5. **Automatic updates**: on or off (can be changed later under Settings → Updates).
+6. **Wings on this server too?** Say yes and panel, node and Wings are set up in one run.
 
 Then it builds and starts everything (5–15 minutes the first time) and prints the URL and login.
 

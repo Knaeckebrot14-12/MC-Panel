@@ -178,7 +178,32 @@ port_in_use() {
 }
 
 system_timezone() {
-    timedatectl show -p Timezone --value 2>/dev/null || cat /etc/timezone 2>/dev/null || echo UTC
+    local tz
+    tz="$(timedatectl show -p Timezone --value 2>/dev/null || cat /etc/timezone 2>/dev/null)"
+    [ -z "$tz" ] && [ -L /etc/localtime ] && tz="$(readlink /etc/localtime | sed 's|.*/zoneinfo/||')"
+    echo "${tz:-UTC}"
+}
+
+# A timezone like Europe/Berlin. Checked against the system's timezone database when it exists.
+valid_timezone() {
+    [[ "$1" =~ ^[A-Za-z0-9_+-]+(/[A-Za-z0-9_+-]+)*$ ]] || return 1
+    [ -d /usr/share/zoneinfo ] || return 0
+    [ -f "/usr/share/zoneinfo/$1" ]
+}
+
+ask_timezone() {
+    local default
+    default="$(system_timezone)"
+    valid_timezone "$default" || default="UTC"
+    while true; do
+        ask TIMEZONE "Select timezone (e.g. Europe/Berlin, America/New_York)" "$default"
+        valid_timezone "$TIMEZONE" && return 0
+        # A preset or non-interactive value that isn't valid can't be asked again.
+        if [ -n "${MC_TIMEZONE:-}" ] || [ "${MC_NONINTERACTIVE:-0}" = "1" ]; then
+            die "Unknown timezone: $TIMEZONE"
+        fi
+        warn "Unknown timezone '$TIMEZONE'. Examples: Europe/Berlin, Europe/Vienna, Europe/Zurich, UTC."
+    done
 }
 
 # Opens the ports the panel and Wings need (web, daemon, SFTP) when ufw is active.
@@ -285,6 +310,9 @@ install_panel() {
     APP_URL="${APP_URL%/}"
 
     echo
+    ask_timezone
+
+    echo
     printf '%s%s%s\n' "$C_BOLD" "Owner account (full access)" "$C_RESET"
     ask ADMIN_EMAIL "E-mail" ""
     [[ "$ADMIN_EMAIL" == *@*.* ]] || die "Please enter a valid e-mail address."
@@ -326,7 +354,7 @@ COMPOSE_PROJECT_NAME=recodedptero
 MC_PANEL_REPO=$GITHUB_REPO
 MC_PANEL_BRANCH=$GITHUB_BRANCH
 APP_URL=$APP_URL
-APP_TIMEZONE=$(system_timezone)
+APP_TIMEZONE=$TIMEZONE
 APP_SERVICE_AUTHOR=$ADMIN_EMAIL
 DB_PASSWORD=$(random_string 32)
 DB_ROOT_PASSWORD=$(random_string 32)
