@@ -324,9 +324,13 @@ EOF
     echo " Next steps:"
     echo "  1. Log in and set up mail under Admin > Settings > Mail."
     echo "  2. Updates: Admin > Settings > Updates (button + automatic updates)."
-    echo "  3. Game servers need Wings: run this installer again and choose the Wings option."
-    echo "     On this machine it creates the node and certificate by itself; on another"
-    echo "     machine it guides you through connecting it."
+    if [ "${WITH_WINGS:-0}" = "1" ]; then
+        echo "  3. Wings is installed next and connected to the panel automatically."
+    else
+        echo "  3. Game servers need Wings: run this installer again and choose the Wings option."
+        echo "     On this machine it creates the node and certificate by itself; on another"
+        echo "     machine it guides you through connecting it."
+    fi
     echo
     echo " Handy commands:  mc-panel status | update | logs | backup | restart"
     echo " Files:           $INSTALL_DIR  (secrets in $INSTALL_DIR/.env)"
@@ -453,7 +457,7 @@ install_wings_binary() {
     curl -fsSL -o /usr/local/bin/wings "https://github.com/pterodactyl/wings/releases/latest/download/wings_linux_$ARCH" \
         || die "Could not download Wings."
     chmod u+x /usr/local/bin/wings
-    ok "Wings $(/usr/local/bin/wings --version 2>/dev/null | head -n1) installed"
+    ok "Wings installed"
 
     cat > /etc/systemd/system/wings.service <<'EOF'
 [Unit]
@@ -487,6 +491,10 @@ env_value() {
 }
 
 start_wings() {
+    if ! command -v systemctl >/dev/null 2>&1; then
+        warn "systemd is not available here; start Wings yourself with: /usr/local/bin/wings"
+        return 0
+    fi
     systemctl restart wings >/dev/null 2>&1
     sleep 5
     if systemctl is-active --quiet wings; then
@@ -653,7 +661,7 @@ main() {
     case "$action" in
         panel) install_panel ;;
         wings) install_wings ;;
-        both) install_panel; install_wings ;;
+        both) WITH_WINGS=1; install_panel; install_wings ;;
         update) update_panel ;;
         uninstall-panel) uninstall_panel ;;
         uninstall-wings) uninstall_wings ;;
