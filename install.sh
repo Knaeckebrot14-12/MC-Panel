@@ -315,6 +315,7 @@ install_panel() {
         || die "Could not download the repository. Check the internet connection and that github.com/$GITHUB_REPO exists."
     local commit
     commit="$(git -C "$INSTALL_DIR" rev-parse HEAD)"
+    git -C "$INSTALL_DIR" config core.fileMode false
 
     (
         umask 077
@@ -398,6 +399,7 @@ EOF
 update_panel() {
     [ -f "$INSTALL_DIR/.env" ] || die "No panel installation found in $INSTALL_DIR."
     info "Updating the panel..."
+    git -C "$INSTALL_DIR" config core.fileMode false
     exec bash "$INSTALL_DIR/installer/updater/updater.sh" run "installer-$(date +%s)" false 0
 }
 
@@ -973,6 +975,7 @@ upgrade_panel() {
         || die "Could not download the repository. Nothing was changed."
     local commit
     commit="$(git -C "$INSTALL_DIR" rev-parse HEAD)"
+    git -C "$INSTALL_DIR" config core.fileMode false
 
     local old_name old_tz old_recaptcha
     old_name="$(old_env APP_NAME)"

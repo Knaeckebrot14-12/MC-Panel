@@ -158,6 +158,9 @@ do_update() {
     trap release_lock EXIT
 
     cd "$INSTALL_DIR" || return 1
+    # Only content counts as a local change: making the scripts executable (chmod +x) must not
+    # block updates. Older installs lacked this setting.
+    git config core.fileMode false
     local old_sha new_sha current
     old_sha="$(git rev-parse HEAD)"
     RUN_FROM="$old_sha"
@@ -182,7 +185,7 @@ do_update() {
     [ -n "$current" ] && RUN_FROM="$current"
 
     # Never throw away work: refuse when files were edited by hand or commits exist that GitHub doesn't have.
-    if [ -n "$(git status --porcelain --untracked-files=no 2>/dev/null)" ]; then
+    if [ -n "$(git -c core.fileMode=false status --porcelain --untracked-files=no 2>/dev/null)" ]; then
         write_status failed fetch "The install directory has local changes. Commit or discard them first." "$(now)"
         log "ERROR: local changes in $INSTALL_DIR:"
         git status --short --untracked-files=no | head -n 20 | tee -a "$LOG_FILE"
@@ -201,7 +204,9 @@ do_update() {
     backup_data
 
     write_status running fetch
-    if ! git reset --hard "origin/$BRANCH" >>"$LOG_FILE" 2>&1; then
+    if git reset --hard "origin/$BRANCH" >>"$LOG_FILE" 2>&1; then
+        chmod +x install.sh installer/recoded-ptero installer/updater/updater.sh 2>/dev/null || true
+    else
         write_status failed fetch "Could not apply the new files." "$(now)"
         log "ERROR: git reset failed."
         git reset --hard "$old_sha" >>"$LOG_FILE" 2>&1
