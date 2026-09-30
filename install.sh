@@ -126,7 +126,32 @@ detect_system() {
     command -v systemctl >/dev/null 2>&1 || warn "systemd was not found, some steps (starting Docker/Wings on boot) may not work."
 }
 
+# Brings the system's own packages up to date (apt update + apt upgrade). Runs before the installation
+# changes anything and once more at the end, so the server finishes with everything current.
+# MC_SKIP_SYSTEM_UPGRADE=1 skips it.
+upgrade_system() {
+    local doing="$1" done_msg="$2"
+    [ "${MC_SKIP_SYSTEM_UPGRADE:-0}" = "1" ] && return 0
+    case "$PKG" in
+        # Existing config files are kept, needrestart restarts services without asking, and a
+        # package manager that is still busy (unattended-upgrades on a fresh server) is waited for.
+        apt) run_step "$doing" "$done_msg" env DEBIAN_FRONTEND=noninteractive NEEDRESTART_MODE=a sh -c \
+                'apt-get -o DPkg::Lock::Timeout=300 update -y && apt-get -o DPkg::Lock::Timeout=300 -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confold upgrade -y' ;;
+        dnf) run_step "$doing" "$done_msg" dnf upgrade -y ;;
+        yum) run_step "$doing" "$done_msg" yum update -y ;;
+    esac || warn "Not all system updates could be installed; the installation goes on. Details: $INSTALL_LOG"
+    SYSTEM_UPGRADED=1
+}
+
+# Tells whether the system updates need a restart to take effect (a new kernel, for example).
+reboot_notice() {
+    if [ -f /var/run/reboot-required ]; then
+        warn "The system updates need a restart to take full effect. Everything starts again on its own:  reboot"
+    fi
+}
+
 install_packages() {
+    [ "${SYSTEM_UPGRADED:-0}" = "1" ] || upgrade_system "Updating the system (apt update && apt upgrade)" "System updated"
     case "$PKG" in
         apt) run_step "Installing required packages" "Required packages installed" \
                 env DEBIAN_FRONTEND=noninteractive sh -c 'apt-get update -y && apt-get install -y curl git ca-certificates openssl tar' ;;
@@ -1348,6 +1373,16 @@ main() {
         uninstall-panel) uninstall_panel ;;
         uninstall-wings) uninstall_wings ;;
         *) die "Unknown action: $action" ;;
+    esac
+
+    # Everything that was installed or upgraded ends up on its newest version as well.
+    case "$action" in
+        panel|wings|both|upgrade)
+            if [ "${SYSTEM_UPGRADED:-0}" = "1" ]; then
+                upgrade_system "Installing the last system updates" "System is up to date"
+                reboot_notice
+            fi
+            ;;
     esac
 }
 
