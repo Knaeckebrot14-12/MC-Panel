@@ -212,12 +212,9 @@ do_update() {
     docker tag "$IMAGE:latest" "$IMAGE:rollback" 2>/dev/null || true
 
     write_status running build
-    log "Building the new version. This takes a few minutes and the panel keeps running meanwhile..."
-    # Inside the updater container the output only goes to the log; on the host it is shown too.
-    local out=/dev/stdout
-    [ -f /.dockerenv ] && out=/dev/null
-    BUILDKIT_PROGRESS=plain dc build --build-arg "MC_COMMIT=$new_sha" panel 2>&1 | tee -a "$LOG_FILE" > "$out"
-    if [ "${PIPESTATUS[0]}" -ne 0 ]; then
+    log "Building the new version. This takes a few minutes and the panel keeps running meanwhile (details: $LOG_FILE)..."
+    # The build output only goes to the log file; the screen keeps showing one line per step.
+    if ! BUILDKIT_PROGRESS=plain dc build --build-arg "MC_COMMIT=$new_sha" panel >> "$LOG_FILE" 2>&1; then
         log "ERROR: the build failed. Nothing was changed."
         git reset --hard "$old_sha" >>"$LOG_FILE" 2>&1
         write_status failed build "The new version could not be built. Nothing was changed." "$(now)"

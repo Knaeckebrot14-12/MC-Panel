@@ -17,15 +17,50 @@ INSTALL_DIR="${INSTALL_DIR:-/opt/recoded-ptero}"
 COMPOSE_FILE="$INSTALL_DIR/docker-compose.prod.yml"
 
 if [ -t 1 ]; then
-    C_RESET=$'\033[0m'; C_BOLD=$'\033[1m'; C_RED=$'\033[31m'; C_GREEN=$'\033[32m'; C_YELLOW=$'\033[33m'; C_BLUE=$'\033[36m'
+    C_RESET=$'\033[0m'; C_BOLD=$'\033[1m'; C_RED=$'\033[31m'; C_GREEN=$'\033[32m'; C_YELLOW=$'\033[33m'; C_BLUE=$'\033[36m'; C_DIM=$'\033[2m'
 else
-    C_RESET=""; C_BOLD=""; C_RED=""; C_GREEN=""; C_YELLOW=""; C_BLUE=""
+    C_RESET=""; C_BOLD=""; C_RED=""; C_GREEN=""; C_YELLOW=""; C_BLUE=""; C_DIM=""
 fi
+
+# Everything the installer runs is written here; the screen only shows one line per step.
+INSTALL_LOG="${INSTALL_LOG:-/var/log/recoded-ptero-install.log}"
 
 info() { printf '%s==>%s %s\n' "$C_BLUE" "$C_RESET" "$*"; }
 ok() { printf '%s ✔%s %s\n' "$C_GREEN" "$C_RESET" "$*"; }
 warn() { printf '%s !%s %s\n' "$C_YELLOW" "$C_RESET" "$*"; }
 die() { printf '%s ✘ %s%s\n' "$C_RED" "$*" "$C_RESET" >&2; exit 1; }
+
+# run_step "Building the panel" "Panel built" command [args...]
+# Shows "==> Building the panel (0:42)" with a running timer while the command works, then
+# " ✔ Panel built". The command's own output goes to $INSTALL_LOG and is only shown when it fails.
+run_step() {
+    local doing="$1" done_msg="$2" pid rc start elapsed
+    shift 2
+    printf '\n===== %s  (%s)\n' "$doing" "$(date '+%F %T')" >> "$INSTALL_LOG"
+    start=$(date +%s)
+    "$@" >> "$INSTALL_LOG" 2>&1 < /dev/null &
+    pid=$!
+    if [ -t 1 ]; then
+        while kill -0 "$pid" 2>/dev/null; do
+            elapsed=$(( $(date +%s) - start ))
+            printf '\r%s==>%s %s %s(%d:%02d)%s' "$C_BLUE" "$C_RESET" "$doing" "$C_DIM" $((elapsed / 60)) $((elapsed % 60)) "$C_RESET"
+            sleep 1
+        done
+        printf '\r\033[K'
+    else
+        printf '%s==>%s %s\n' "$C_BLUE" "$C_RESET" "$doing"
+    fi
+    wait "$pid"
+    rc=$?
+    if [ "$rc" -eq 0 ]; then
+        printf '%s ✔%s %s\n' "$C_GREEN" "$C_RESET" "$done_msg"
+    else
+        printf '%s ✘ %s failed%s\n' "$C_RED" "$doing" "$C_RESET"
+        tail -n 20 "$INSTALL_LOG" | sed 's/^/     /'
+        printf '     Full log: %s\n' "$INSTALL_LOG"
+    fi
+    return "$rc"
+}
 
 # ---------------------------------------------------------------- prompts
 
@@ -90,26 +125,21 @@ detect_system() {
 }
 
 install_packages() {
-    info "Installing required packages..."
     case "$PKG" in
-        apt)
-            export DEBIAN_FRONTEND=noninteractive
-            apt-get update -y >/dev/null && apt-get install -y curl git ca-certificates openssl tar >/dev/null || die "Could not install packages."
-            ;;
-        dnf) dnf install -y curl git ca-certificates openssl tar >/dev/null || die "Could not install packages." ;;
-        yum) yum install -y curl git ca-certificates openssl tar >/dev/null || die "Could not install packages." ;;
-    esac
-    ok "Packages ready"
+        apt) run_step "Installing required packages" "Required packages installed" \
+                env DEBIAN_FRONTEND=noninteractive sh -c 'apt-get update -y && apt-get install -y curl git ca-certificates openssl tar' ;;
+        dnf) run_step "Installing required packages" "Required packages installed" dnf install -y curl git ca-certificates openssl tar ;;
+        yum) run_step "Installing required packages" "Required packages installed" yum install -y curl git ca-certificates openssl tar ;;
+    esac || die "Could not install packages."
 }
 
 install_docker() {
     if command -v docker >/dev/null 2>&1 && docker compose version >/dev/null 2>&1; then
         ok "Docker $(docker --version | awk '{print $3}' | tr -d ,) is already installed"
     else
-        info "Installing Docker (this uses the official get.docker.com script)..."
-        curl -fsSL https://get.docker.com | sh >/dev/null 2>&1 || die "Docker installation failed. Install Docker manually and run this installer again."
+        run_step "Installing Docker" "Docker installed" sh -c 'curl -fsSL https://get.docker.com | sh' \
+            || die "Docker installation failed. Install Docker manually and run this installer again."
         docker compose version >/dev/null 2>&1 || die "Docker was installed but the 'docker compose' plugin is missing."
-        ok "Docker installed"
     fi
     if command -v systemctl >/dev/null 2>&1; then
         systemctl enable --now docker >/dev/null 2>&1 || true
@@ -166,6 +196,28 @@ dc() {
 }
 
 # ---------------------------------------------------------------- panel
+
+# Waits until the panel answers on the given port (the first start migrates the database).
+wait_for_panel() {
+    local port="$1" waited=0 code
+    while [ "$waited" -lt 420 ]; do
+        code="$(curl -s -o /dev/null -w '%{http_code}' --max-time 5 "http://${MC_WAIT_HOST:-127.0.0.1}:$port/auth/login" 2>/dev/null || true)"
+        if [ -n "$code" ] && [ "$code" != "000" ] && [ "$code" -lt 500 ]; then return 0; fi
+        sleep 5
+        waited=$((waited + 5))
+    done
+    return 1
+}
+
+create_owner() {
+    local tries=0
+    until dc exec -T panel php artisan p:user:make --email="$ADMIN_EMAIL" --username="$ADMIN_USER" \
+        --name-first="$ADMIN_FIRST" --name-last="$ADMIN_LAST" --password="$ADMIN_PASS" --admin=1 --role=owner; do
+        tries=$((tries + 1))
+        [ "$tries" -ge 5 ] && return 1
+        sleep 5
+    done
+}
 
 install_panel() {
     if [ -f "$INSTALL_DIR/.env" ]; then
@@ -258,14 +310,12 @@ install_panel() {
         fi
     fi
 
-    info "Downloading the panel from github.com/$GITHUB_REPO ..."
-    git clone --quiet --branch "$GITHUB_BRANCH" "https://github.com/$GITHUB_REPO.git" "$INSTALL_DIR" \
+    run_step "Downloading Recoded Ptero" "Recoded Ptero downloaded" \
+        git clone --quiet --branch "$GITHUB_BRANCH" "https://github.com/$GITHUB_REPO.git" "$INSTALL_DIR" \
         || die "Could not download the repository. Check the internet connection and that github.com/$GITHUB_REPO exists."
     local commit
     commit="$(git -C "$INSTALL_DIR" rev-parse HEAD)"
-    ok "Downloaded version $(cat "$INSTALL_DIR/VERSION" 2>/dev/null) (${commit:0:7})"
 
-    info "Writing configuration..."
     (
         umask 077
         cat > "$INSTALL_DIR/.env" <<EOF
@@ -289,36 +339,17 @@ EOF
     mkdir -p "$INSTALL_DIR/state" "$INSTALL_DIR/backups"
     ln -sf "$INSTALL_DIR/installer/recoded-ptero" /usr/local/bin/recoded-ptero
     chmod +x "$INSTALL_DIR/installer/recoded-ptero" "$INSTALL_DIR/installer/updater/updater.sh"
+    ok "Configuration written"
 
-    info "Building the panel. This takes 5-15 minutes on the first run, please be patient..."
-    dc build updater >/dev/null 2>&1 || die "Could not build the updater service."
-    if ! dc build --build-arg "MC_COMMIT=$commit" panel; then
-        die "The build failed. Scroll up for the reason (a common one is too little memory: 4 GB or swap is recommended)."
-    fi
-    ok "Panel built"
-
-    info "Starting the services..."
-    dc up -d || die "Could not start the services. Check: docker compose -f $COMPOSE_FILE logs"
-
-    info "Waiting for the panel to come up (first start sets up the database)..."
-    local waited=0 code
-    while [ "$waited" -lt 420 ]; do
-        code="$(curl -s -o /dev/null -w '%{http_code}' --max-time 5 "http://${MC_WAIT_HOST:-127.0.0.1}:$HTTP_PORT/auth/login" 2>/dev/null || true)"
-        if [ -n "$code" ] && [ "$code" != "000" ] && [ "$code" -lt 500 ]; then break; fi
-        sleep 5; waited=$((waited + 5))
-    done
-    [ "$waited" -lt 420 ] || die "The panel did not come up in time. Check: recoded-ptero logs panel"
-    ok "Panel is running"
-
-    info "Creating the owner account..."
-    local tries=0
-    until dc exec -T panel php artisan p:user:make --email="$ADMIN_EMAIL" --username="$ADMIN_USER" \
-        --name-first="$ADMIN_FIRST" --name-last="$ADMIN_LAST" --password="$ADMIN_PASS" --admin=1 --role=owner >/dev/null 2>&1; do
-        tries=$((tries + 1))
-        [ "$tries" -ge 5 ] && die "Could not create the owner account. Try: recoded-ptero artisan p:user:make --role=owner"
-        sleep 5
-    done
-    ok "Owner account created"
+    run_step "Building the updater" "Updater built" dc build updater || die "Could not build the updater service."
+    run_step "Building the panel (5-15 minutes the first time)" "Panel built" \
+        dc build --build-arg "MC_COMMIT=$commit" panel \
+        || die "The build failed (a common reason is too little memory: 4 GB or swap is recommended)."
+    run_step "Starting the services" "Services started" dc up -d || die "Could not start the services."
+    run_step "Setting up the database and starting the panel" "Panel is running" wait_for_panel "$HTTP_PORT" \
+        || die "The panel did not come up in time. Check: recoded-ptero logs panel"
+    run_step "Creating the owner account" "Owner account created" create_owner \
+        || die "Could not create the owner account. Try: recoded-ptero artisan p:user:make --role=owner"
 
     [ "$AUTO_UPDATE" = "1" ] && dc exec -T panel php artisan p:update:auto on >/dev/null 2>&1 && ok "Automatic updates enabled"
 
@@ -399,11 +430,10 @@ check_dns() {
 
 install_certbot() {
     command -v certbot >/dev/null 2>&1 && return 0
-    info "Installing certbot..."
     case "$PKG" in
-        apt) apt-get install -y certbot >/dev/null ;;
-        dnf) dnf install -y epel-release >/dev/null 2>&1; dnf install -y certbot >/dev/null ;;
-        yum) yum install -y epel-release >/dev/null 2>&1; yum install -y certbot >/dev/null ;;
+        apt) run_step "Installing certbot" "Certbot installed" env DEBIAN_FRONTEND=noninteractive apt-get install -y certbot ;;
+        dnf) run_step "Installing certbot" "Certbot installed" sh -c 'dnf install -y epel-release; dnf install -y certbot' ;;
+        yum) run_step "Installing certbot" "Certbot installed" sh -c 'yum install -y epel-release; yum install -y certbot' ;;
     esac
     command -v certbot >/dev/null 2>&1 || die "Could not install certbot."
 }
@@ -417,13 +447,13 @@ port80_hooks() {
     panel_container="$(env_value COMPOSE_PROJECT_NAME)"
     panel_container="${panel_container:-recodedptero}-panel-1"
     if docker ps --format '{{.Names}}' 2>/dev/null | grep -qx "$panel_container"; then
-        CERT_PRE="docker stop $panel_container"; CERT_POST="docker start $panel_container"
+        CERT_PRE="docker stop $panel_container >/dev/null"; CERT_POST="docker start $panel_container >/dev/null"
         return 0
     fi
     local svc
     for svc in nginx apache2 httpd caddy haproxy lighttpd; do
         if systemctl is-active --quiet "$svc" 2>/dev/null; then
-            CERT_PRE="systemctl stop $svc"; CERT_POST="systemctl start $svc"
+            CERT_PRE="systemctl stop $svc >/dev/null"; CERT_POST="systemctl start $svc >/dev/null"
             return 0
         fi
     done
@@ -461,11 +491,10 @@ EOF
         check_dns "$domain"
         port80_hooks
         open_firewall_ports 80/tcp
-        info "Requesting a Let's Encrypt certificate for $domain..."
         local args=(certonly --standalone --non-interactive --agree-tos -m "$email" -d "$domain")
         [ -n "$CERT_PRE" ] && args+=(--pre-hook "$CERT_PRE" --post-hook "$CERT_POST")
-        certbot "${args[@]}" || die "Could not get a certificate for $domain. Check that the domain points at this server and port 80 is reachable from the internet."
-        ok "Certificate for $domain installed"
+        run_step "Requesting a Let's Encrypt certificate for $domain" "Certificate for $domain installed" certbot "${args[@]}" \
+            || die "Could not get a certificate for $domain. Check that the domain points at this server and port 80 is reachable from the internet."
     fi
     enable_cert_renewal
     ok "Certificates renew automatically"
@@ -474,12 +503,11 @@ EOF
 # ---------------------------------------------------------------- wings
 
 install_wings_binary() {
-    info "Downloading Wings..."
     mkdir -p /etc/pterodactyl
-    curl -fsSL -o /usr/local/bin/wings "https://github.com/pterodactyl/wings/releases/latest/download/wings_linux_$ARCH" \
+    run_step "Downloading Wings" "Wings downloaded" \
+        curl -fsSL -o /usr/local/bin/wings "https://github.com/pterodactyl/wings/releases/latest/download/wings_linux_$ARCH" \
         || die "Could not download Wings."
     chmod u+x /usr/local/bin/wings
-    ok "Wings installed"
 
     cat > /etc/systemd/system/wings.service <<'EOF'
 [Unit]
@@ -613,8 +641,8 @@ setup_local_node() {
     email="$(env_value LE_EMAIL)"; [ -n "$email" ] || email="$(env_value APP_SERVICE_AUTHOR)"
 
     # An older panel may lack what this needs (the direct panel -> Wings route); bring it up to date first.
-    info "Making sure the panel is up to date..."
-    bash "$INSTALL_DIR/installer/updater/updater.sh" run "wings-setup-$(date +%s)" false 0 >/dev/null 2>&1 \
+    run_step "Making sure the panel is up to date" "Panel is up to date" \
+        bash "$INSTALL_DIR/installer/updater/updater.sh" run "wings-setup-$(date +%s)" false 0 \
         || warn "The panel could not be updated right now; continuing with the installed version."
 
     # Installing panel and Wings together: no extra questions, Wings uses the panel's address.
@@ -779,7 +807,7 @@ upgrade_rollback() {
     warn "Switching back to your Pterodactyl panel..."
     if [ "$UPG_NGINX_SWITCHED" = "1" ] && [ -f "$UPG_BACKUP/nginx-site.conf" ]; then
         cp -f "$UPG_BACKUP/nginx-site.conf" "$NGINX_SITE"
-        nginx -t >/dev/null 2>&1 && { systemctl reload nginx 2>/dev/null || nginx -s reload; }
+        nginx -t >/dev/null 2>&1 && { systemctl reload nginx 2>/dev/null || nginx -s reload 2>/dev/null; }
     fi
     [ -f "$COMPOSE_FILE" ] && dc stop >/dev/null 2>&1
     if [ "$UPG_DOWNTIME" = "1" ]; then
@@ -930,8 +958,8 @@ upgrade_panel() {
     install_docker
     ensure_swap
 
-    info "Downloading Recoded Ptero from github.com/$GITHUB_REPO ..."
-    git clone --quiet --branch "$GITHUB_BRANCH" "https://github.com/$GITHUB_REPO.git" "$INSTALL_DIR" \
+    run_step "Downloading Recoded Ptero" "Recoded Ptero downloaded" \
+        git clone --quiet --branch "$GITHUB_BRANCH" "https://github.com/$GITHUB_REPO.git" "$INSTALL_DIR" \
         || die "Could not download the repository. Nothing was changed."
     local commit
     commit="$(git -C "$INSTALL_DIR" rev-parse HEAD)"
@@ -967,10 +995,9 @@ EOF
     ln -sf "$INSTALL_DIR/installer/recoded-ptero" /usr/local/bin/recoded-ptero
     chmod +x "$INSTALL_DIR/installer/recoded-ptero" "$INSTALL_DIR/installer/updater/updater.sh"
 
-    info "Building Recoded Ptero (5-15 minutes). Your panel keeps running meanwhile..."
-    dc build --build-arg "MC_COMMIT=$commit" panel || die "The build failed, your panel was not touched. Scroll up for the reason."
-    dc build updater >/dev/null 2>&1
-    ok "Recoded Ptero built"
+    run_step "Building the updater" "Updater built" dc build updater || die "Could not build the updater, your panel was not touched."
+    run_step "Building Recoded Ptero (5-15 minutes, your panel keeps running)" "Recoded Ptero built" \
+        dc build --build-arg "MC_COMMIT=$commit" panel || die "The build failed, your panel was not touched."
 
     # ------------------------------------------------------------ downtime starts here
     UPG_BACKUP="$INSTALL_DIR/backups/pterodactyl-$(date -u +%Y%m%d-%H%M%S)"
@@ -1049,7 +1076,7 @@ EOF
     UPG_NGINX_SWITCHED=1
     write_proxy_site "$names" "$cert" "$key" "$port" "$v6"
     nginx -t >"$UPG_BACKUP/nginx-test.txt" 2>&1 || upgrade_fail "The new nginx config is invalid: $(tail -n 3 "$UPG_BACKUP/nginx-test.txt")"
-    { systemctl reload nginx 2>/dev/null || nginx -s reload; } || upgrade_fail "nginx could not be reloaded."
+    { systemctl reload nginx 2>/dev/null || nginx -s reload 2>/dev/null; } || upgrade_fail "nginx could not be reloaded."
     sleep 2
     local host="${OLD_APP_URL#*://}"; host="${host%%/*}"; host="${host%%:*}"
     local scheme_port=80; [[ "$OLD_APP_URL" == https://* ]] && scheme_port=443
@@ -1123,7 +1150,10 @@ main() {
     fi
 
     case "$action" in
-        panel) install_panel; [ "${WITH_WINGS:-0}" = "1" ] && install_wings ;;
+        panel)
+            install_panel
+            if [ "${WITH_WINGS:-0}" = "1" ]; then install_wings; fi
+            ;;
         wings) install_wings ;;
         both) WITH_WINGS=1; install_panel; install_wings ;;
         upgrade) upgrade_panel ;;
