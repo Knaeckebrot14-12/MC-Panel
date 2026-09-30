@@ -828,9 +828,10 @@ upgrade_panel() {
     local commit
     commit="$(git -C "$INSTALL_DIR" rev-parse HEAD)"
 
-    local old_name old_tz
+    local old_name old_tz old_recaptcha
     old_name="$(old_env APP_NAME)"
     old_tz="$(old_env APP_TIMEZONE)"
+    old_recaptcha="$(old_env RECAPTCHA_ENABLED)"
     (
         umask 077
         cat > "$INSTALL_DIR/.env" <<EOF
@@ -850,6 +851,8 @@ HTTP_PORT=$port
 HTTPS_PORT=$((port + 1000))
 LE_EMAIL=
 TRUSTED_PROXIES=*
+# Same login protection as before (stock Pterodactyl enables reCAPTCHA by default).
+RECAPTCHA_ENABLED=${old_recaptcha:-true}
 EOF
     )
     mkdir -p "$INSTALL_DIR/state" "$INSTALL_DIR/backups"
