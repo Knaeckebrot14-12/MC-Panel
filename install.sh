@@ -977,7 +977,9 @@ old_env() {
 }
 
 old_mysql() {
-    MYSQL_PWD="$OLD_DB_PASS" "$MYSQL_BIN" -h "$OLD_DB_HOST" -P "$OLD_DB_PORT" -u "$OLD_DB_USER" "$@"
+    # Newer MariaDB clients print a warning about SSL verification for every query when the
+    # password comes from MYSQL_PWD; keep those (and real errors) in the log, not on screen.
+    MYSQL_PWD="$OLD_DB_PASS" "$MYSQL_BIN" -h "$OLD_DB_HOST" -P "$OLD_DB_PORT" -u "$OLD_DB_USER" "$@" 2>>"$INSTALL_LOG"
 }
 
 old_artisan() {
