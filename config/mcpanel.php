@@ -16,6 +16,9 @@ return [
     // update requests in here and reads the progress the updater writes back.
     'updater_dir' => env('MC_UPDATER_DIR', '/app/updater'),
 
+    // Version of the Wings build the installer installs (GitHub release "wings-v<version>" of this repository).
+    'wings_version' => env('MC_PANEL_WINGS_VERSION', '1.0.0'),
+
     // Admin -> Settings -> Login & Registration.
     'registration' => [
         // New sign-ups must confirm their e-mail address before earning coins or getting servers.

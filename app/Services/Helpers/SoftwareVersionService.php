@@ -37,7 +37,8 @@ class SoftwareVersionService
      */
     public function getDaemon(): string
     {
-        return Arr::get(self::$result, 'wings') ?? 'error';
+        // Recoded Ptero ships its own Wings build (see install.sh), so that is the version to compare with.
+        return config('mcpanel.wings_version') ?: (Arr::get(self::$result, 'wings') ?? 'error');
     }
 
     /**

@@ -14,6 +14,8 @@ set -uo pipefail
 GITHUB_REPO="${MC_PANEL_REPO:-Knaeckebrot14-12/Recoded-Ptero}"
 GITHUB_BRANCH="${MC_PANEL_BRANCH:-main}"
 INSTALL_DIR="${INSTALL_DIR:-/opt/recoded-ptero}"
+# Wings build installed on nodes: official Pterodactyl Wings, published as release "wings-v<version>" here.
+WINGS_VERSION="${MC_WINGS_VERSION:-1.0.0}"
 COMPOSE_FILE="$INSTALL_DIR/docker-compose.prod.yml"
 
 if [ -t 1 ]; then
@@ -660,8 +662,8 @@ print_game_database_details() {
 
 install_wings_binary() {
     mkdir -p /etc/pterodactyl
-    run_step "Downloading Wings" "Wings downloaded" \
-        curl -fsSL -o /usr/local/bin/wings "https://github.com/pterodactyl/wings/releases/latest/download/wings_linux_$ARCH" \
+    run_step "Downloading Wings v$WINGS_VERSION" "Wings v$WINGS_VERSION downloaded" \
+        curl -fsSL -o /usr/local/bin/wings "https://github.com/$GITHUB_REPO/releases/download/wings-v$WINGS_VERSION/wings_linux_$ARCH" \
         || die "Could not download Wings."
     chmod u+x /usr/local/bin/wings
 
