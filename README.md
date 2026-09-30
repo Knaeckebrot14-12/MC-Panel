@@ -43,6 +43,7 @@ Then it builds and starts everything (5–15 minutes the first time) and prints 
 - *Databases for game servers*: the installer can also set up a MariaDB server next to Wings (container recoded-gamedb, port 3306, credentials in /etc/recoded-ptero/gamedb.env) and adds it under Admin → Databases, so users can create databases for plugins like LuckPerms right away. On a separate Wings machine it prints the values to enter there.
 - Running the Wings option again on the panel server repairs the setup (same node, fresh configuration). Wings gets a Docker network range that does not collide with the panel's own Docker network, and the panel talks to Wings directly on the machine instead of through the public address.
 - Firewall: if ufw is active, the installer opens only the ports the panel and Wings need (80/443 or your panel port, 8080 for Wings, 2022 for SFTP). Game server ports are never created or opened automatically; add them per node under Admin → Nodes → Allocation.
+- Before the first certificate, the installer shows Let's Encrypt's current Terms of Service and asks you to agree (unattended installs: MC_LE_AGREE=1).
 - All certificates renew automatically (the panel's inside its container, Wings' via the certbot timer, restarting Wings afterwards).
 
 ## Log in with Discord

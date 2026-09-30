@@ -289,6 +289,7 @@ install_panel() {
             [ -n "$DOMAIN" ] || die "A domain is required for HTTPS."
             ask LE_EMAIL "E-mail address for Let's Encrypt (expiry notices)" ""
             [ -n "$LE_EMAIL" ] || die "An e-mail address is required for Let's Encrypt."
+            agree_letsencrypt_tos
             port_in_use 80 && die "Port 80 is in use. Let's Encrypt needs ports 80 and 443; stop the service using them (for example Apache or Nginx) first."
             port_in_use 443 && die "Port 443 is in use. Let's Encrypt needs ports 80 and 443; stop the service using them first."
             domain_ip="$(getent hosts "$DOMAIN" | awk '{print $1; exit}')"
@@ -453,6 +454,24 @@ uninstall_panel() {
 
 is_ip() { [[ "$1" =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; }
 
+# Let's Encrypt requires agreeing to its Subscriber Agreement before issuing certificates. Asked once
+# per run; MC_LE_AGREE=1 agrees in unattended installs.
+LE_AGREED=0
+agree_letsencrypt_tos() {
+    [ "$LE_AGREED" = "1" ] && return 0
+    local tos
+    tos="$(curl -fsS --max-time 8 https://acme-v02.api.letsencrypt.org/directory 2>/dev/null | grep -o '"termsOfService": *"[^"]*"' | sed 's/.*"\(http[^"]*\)"/\1/')"
+    echo
+    echo "Let's Encrypt needs you to agree to its Terms of Service (Subscriber Agreement):"
+    echo "  ${tos:-https://letsencrypt.org/repository/}"
+    if [ "${MC_LE_AGREE:-}" = "1" ]; then
+        LE_AGREED=1
+        return 0
+    fi
+    confirm "Do you agree?" n || die "Without agreeing no certificate can be requested. Run the installer again and choose HTTP or your own reverse proxy instead."
+    LE_AGREED=1
+}
+
 # Warns when DOMAIN doesn't point at this server, since Let's Encrypt would then fail.
 check_dns() {
     local domain="$1" server_ip domain_ip
@@ -525,6 +544,7 @@ EOF
     if [ -f "/etc/letsencrypt/live/$domain/fullchain.pem" ]; then
         ok "A certificate for $domain already exists"
     else
+        agree_letsencrypt_tos
         check_dns "$domain"
         port80_hooks
         open_firewall_ports 80/tcp
