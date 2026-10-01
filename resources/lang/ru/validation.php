@@ -74,10 +74,12 @@ return [
     'uploaded' => 'Не удалось загрузить поле :attribute.',
     'url' => 'Формат поля :attribute недопустим.',
     'attributes' => [
-
     ],
     'internal' => [
         'variable_value' => 'переменная :env',
         'invalid_password' => 'Указанный пароль недействителен для этого аккаунта.',
+    ],
+    'password' => [
+        'uncompromised' => 'Этот пароль появлялся в утечке данных. Выберите другой пароль.',
     ],
 ];

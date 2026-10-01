@@ -66,6 +66,20 @@ class SettingsServiceProvider extends ServiceProvider
         'mcpanel:status_page:enabled',
         'mcpanel:maintenance:mode',
         'mcpanel:maintenance:message',
+        'mcpanel:monitoring:discord_webhook',
+        'mcpanel:monitoring:notify_offline',
+        'mcpanel:monitoring:disk_percent',
+        'mcpanel:monitoring:memory_percent',
+        'mcpanel:branding:accent',
+        'mcpanel:branding:background',
+        'mcpanel:branding:logo',
+        'mcpanel:branding:favicon',
+        'mcpanel:branding:default_theme',
+        'mcpanel:subdomains:enabled',
+        'mcpanel:subdomains:cloudflare_token',
+        'mcpanel:subdomains:domains',
+        'mcpanel:push:public_key',
+        'mcpanel:push:private_key',
     ];
 
     /**
@@ -89,6 +103,9 @@ class SettingsServiceProvider extends ServiceProvider
     protected static array $encrypted = [
         'mail:mailers:smtp:password',
         'mcpanel:discord:client_secret',
+        'mcpanel:monitoring:discord_webhook',
+        'mcpanel:subdomains:cloudflare_token',
+        'mcpanel:push:private_key',
     ];
 
     /**

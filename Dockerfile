@@ -32,6 +32,7 @@ RUN rm /usr/local/etc/php-fpm.conf \
     && mkdir -p /var/run/php /var/run/nginx /var/www/acme
 
 COPY .github/docker/default.conf /etc/nginx/http.d/default.conf
+COPY .github/docker/security.conf /etc/nginx/recoded-ptero/security.conf
 COPY .github/docker/www.conf /usr/local/etc/php-fpm.conf
 COPY .github/docker/supervisord.conf /etc/supervisord.conf
 

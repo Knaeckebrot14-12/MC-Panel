@@ -28,5 +28,7 @@ return [
         'network' => 'Netwerk',
         'startup' => 'Opstarten',
         'settings' => 'Instellingen',
+        'software' => 'Versie',
     ],
+    'theme_tooltip' => 'Licht / donker',
 ];

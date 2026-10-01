@@ -51,4 +51,9 @@ return [
         'restoring_title' => 'Herstellen vanuit back-up',
         'restoring_message' => 'Je server wordt momenteel hersteld vanuit een back-up, kom over enkele minuten terug.',
     ],
+    'crash_push' => [
+        'title' => ':server is gecrasht',
+        'out_of_memory' => 'De server had te weinig geheugen en is opnieuw gestart.',
+        'exit_code' => 'De server stopte onverwacht (exitcode :code) en is opnieuw gestart.',
+    ],
 ];

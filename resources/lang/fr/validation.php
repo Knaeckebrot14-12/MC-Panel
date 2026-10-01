@@ -1,19 +1,8 @@
 <?php
 
 return [
-    /*
-    |--------------------------------------------------------------------------
-    | Validation Language Lines
-    |--------------------------------------------------------------------------
-    |
-    | The following language lines contain the default error messages used by
-    | the validator class. Some of these rules have multiple versions such
-    | as the size rules. Feel free to tweak each of these messages here.
-    |
-    */
-
     'accepted' => 'Le champ :attribute doit être accepté.',
-    'active_url' => "Le champ :attribute n'est pas une URL valide.",
+    'active_url' => 'Le champ :attribute n\'est pas une URL valide.',
     'after' => 'Le champ :attribute doit être une date postérieure au :date.',
     'after_or_equal' => 'Le champ :attribute doit être une date postérieure ou égale au :date.',
     'alpha' => 'Le champ :attribute ne peut contenir que des lettres.',
@@ -30,12 +19,12 @@ return [
     ],
     'boolean' => 'Le champ :attribute doit être vrai ou faux.',
     'confirmed' => 'La confirmation du champ :attribute ne correspond pas.',
-    'date' => "Le champ :attribute n'est pas une date valide.",
+    'date' => 'Le champ :attribute n\'est pas une date valide.',
     'date_format' => 'Le champ :attribute ne correspond pas au format :format.',
     'different' => 'Les champs :attribute et :other doivent être différents.',
     'digits' => 'Le champ :attribute doit contenir :digits chiffres.',
     'digits_between' => 'Le champ :attribute doit contenir entre :min et :max chiffres.',
-    'dimensions' => "Le champ :attribute a des dimensions d'image invalides.",
+    'dimensions' => 'Le champ :attribute a des dimensions d\'image invalides.',
     'distinct' => 'Le champ :attribute a une valeur en double.',
     'email' => 'Le champ :attribute doit être une adresse e-mail valide.',
     'exists' => 'Le champ :attribute sélectionné est invalide.',
@@ -43,7 +32,7 @@ return [
     'filled' => 'Le champ :attribute est obligatoire.',
     'image' => 'Le champ :attribute doit être une image.',
     'in' => 'Le champ :attribute sélectionné est invalide.',
-    'in_array' => "Le champ :attribute n'existe pas dans :other.",
+    'in_array' => 'Le champ :attribute n\'existe pas dans :other.',
     'integer' => 'Le champ :attribute doit être un nombre entier.',
     'ip' => 'Le champ :attribute doit être une adresse IP valide.',
     'json' => 'Le champ :attribute doit être une chaîne JSON valide.',
@@ -70,8 +59,8 @@ return [
     'required_unless' => 'Le champ :attribute est obligatoire sauf si :other est dans :values.',
     'required_with' => 'Le champ :attribute est obligatoire lorsque :values est présent.',
     'required_with_all' => 'Le champ :attribute est obligatoire lorsque :values est présent.',
-    'required_without' => "Le champ :attribute est obligatoire lorsque :values n'est pas présent.",
-    'required_without_all' => "Le champ :attribute est obligatoire lorsqu'aucun de :values n'est présent.",
+    'required_without' => 'Le champ :attribute est obligatoire lorsque :values n\'est pas présent.',
+    'required_without_all' => 'Le champ :attribute est obligatoire lorsqu\'aucun de :values n\'est présent.',
     'same' => 'Les champs :attribute et :other doivent correspondre.',
     'size' => [
         'numeric' => 'Le champ :attribute doit être égal à :size.',
@@ -82,25 +71,15 @@ return [
     'string' => 'Le champ :attribute doit être une chaîne de caractères.',
     'timezone' => 'Le champ :attribute doit être un fuseau horaire valide.',
     'unique' => 'La valeur du champ :attribute est déjà utilisée.',
-    'uploaded' => "Le téléversement du champ :attribute a échoué.",
+    'uploaded' => 'Le téléversement du champ :attribute a échoué.',
     'url' => 'Le format du champ :attribute est invalide.',
-
-    /*
-    |--------------------------------------------------------------------------
-    | Custom Validation Attributes
-    |--------------------------------------------------------------------------
-    |
-    | The following language lines are used to swap attribute place-holders
-    | with something more reader friendly such as E-Mail Address instead
-    | of "email". This simply helps us make messages a little cleaner.
-    |
-    */
-
-    'attributes' => [],
-
-    // Internal validation logic for Pterodactyl
+    'attributes' => [
+    ],
     'internal' => [
         'variable_value' => 'variable :env',
-        'invalid_password' => "Le mot de passe fourni n'est pas valide pour ce compte.",
+        'invalid_password' => 'Le mot de passe fourni n\'est pas valide pour ce compte.',
+    ],
+    'password' => [
+        'uncompromised' => 'Ce mot de passe est apparu dans une fuite de données. Veuillez en choisir un autre.',
     ],
 ];

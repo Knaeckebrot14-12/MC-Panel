@@ -14,7 +14,7 @@ import {
 import { theme } from 'twin.macro';
 import classNames from 'classnames';
 import { ServerContext } from '@/state/server';
-import { hexToRgba } from '@/lib/helpers';
+import { hexToRgba, resolveColor } from '@/lib/helpers';
 import { bytesToString } from '@/lib/formatters';
 import ChartBlock from '@/components/server/console/ChartBlock';
 import getServerStats, { ServerStats } from '@/api/server/stats';
@@ -84,15 +84,15 @@ export default () => {
                 x: {
                     type: 'category',
                     grid: { display: false, drawBorder: false },
-                    ticks: { color: theme('colors.gray.400'), maxTicksLimit: 6, maxRotation: 0, font: { size: 10 } },
+                    ticks: { color: resolveColor(theme('colors.gray.400')), maxTicksLimit: 6, maxRotation: 0, font: { size: 10 } },
                 },
                 y: {
                     min: 0,
                     // Player counts are whole numbers; an empty server still gets a readable 0-1 axis.
                     ...(metric === 'players' ? { suggestedMax: 1 } : {}),
-                    grid: { color: theme('colors.gray.700'), drawBorder: false },
+                    grid: { color: resolveColor(theme('colors.gray.700')), drawBorder: false },
                     ticks: {
-                        color: theme('colors.gray.200'),
+                        color: resolveColor(theme('colors.gray.200')),
                         ...(metric === 'players' ? { precision: 0, maxTicksLimit: 4 } : { count: 3 }),
                         font: { size: 11 },
                         callback: (value) => format(Number(value)),

@@ -74,10 +74,12 @@ return [
     'uploaded' => 'Het uploaden van het veld :attribute is mislukt.',
     'url' => 'Het formaat van het veld :attribute is ongeldig.',
     'attributes' => [
-
     ],
     'internal' => [
         'variable_value' => 'variabele :env',
         'invalid_password' => 'Het opgegeven wachtwoord is ongeldig voor dit account.',
+    ],
+    'password' => [
+        'uncompromised' => 'Dit wachtwoord is in een datalek opgedoken. Kies een ander wachtwoord.',
     ],
 ];

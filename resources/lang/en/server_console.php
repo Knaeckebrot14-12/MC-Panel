@@ -60,4 +60,9 @@ return [
         'memory' => 'Memory',
         'players' => 'Players',
     ],
+    'crash_push' => [
+        'title' => ':server crashed',
+        'out_of_memory' => 'The server ran out of memory and was restarted.',
+        'exit_code' => 'The server stopped unexpectedly (exit code :code) and was restarted.',
+    ],
 ];

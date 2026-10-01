@@ -85,4 +85,12 @@ return [
             'two_factor' => 'Esta cuenta usa autenticación en dos pasos. Inicia sesión con tu contraseña y tu código.',
         ],
     ],
+    'new_login' => [
+        'subject' => 'Nuevo inicio de sesión en tu cuenta',
+        'intro' => 'Tu cuenta (:username) se acaba de usar para iniciar sesión desde una dirección nueva.',
+        'details' => 'Hora: :time · Dirección IP: :ip',
+        'ok' => 'Si fuiste tú, no tienes que hacer nada.',
+        'button' => 'Abrir ajustes de la cuenta',
+        'not_you' => 'Si no fuiste tú, cambia tu contraseña de inmediato y activa la autenticación en dos pasos.',
+    ],
 ];

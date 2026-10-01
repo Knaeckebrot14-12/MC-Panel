@@ -84,4 +84,5 @@ return [
             'discord' => 'Discord ist nicht erreichbar. Bitte versuche es erneut.',
         ],
     ],
+    'app_title' => 'App & Darstellung',
 ];

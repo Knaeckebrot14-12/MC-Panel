@@ -49,5 +49,9 @@ return [
         'settings.login' => 'Cambió los ajustes de inicio de sesión y registro',
         'maintenance.updated' => 'Puso el modo mantenimiento en :subject',
         'user.email_verified' => 'Confirmó la dirección de correo de :subject',
+        'nodes.wings_update' => 'Actualizó Wings en el node :subject a :version',
+        'settings.monitoring' => 'Cambió los ajustes de monitorización',
+        'settings.design' => 'Cambió el diseño',
+        'settings.subdomains' => 'Cambió los ajustes de subdominios',
     ],
 ];

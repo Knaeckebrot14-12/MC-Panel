@@ -5,6 +5,7 @@ namespace Pterodactyl\Console\Commands\Coins;
 use Illuminate\Console\Command;
 use Pterodactyl\Models\Server;
 use Pterodactyl\Notifications\CoinServerRenewalReminder;
+use Pterodactyl\Services\Notifications\PushService;
 
 class RemindCoinFundedServersCommand extends Command
 {
@@ -46,6 +47,14 @@ class RemindCoinFundedServersCommand extends Command
                 report($exception);
                 continue;
             }
+
+            app(PushService::class)->sendToUsers(
+                $user->id,
+                trans('coins.push.reminder_title', ['server' => $server->name], $user->language ?: null),
+                trans('coins.push.reminder_body', ['price' => $price, 'have' => $user->coins, 'date' => $server->paid_with_coins_until->format('d.m.Y')], $user->language ?: null),
+                '/coins/earn',
+                'coins-' . $server->uuidShort
+            );
 
             $server->forceFill(['coin_reminder_for' => $server->paid_with_coins_until])->save();
             $this->info("Reminded {$user->username} about server #{$server->id}.");

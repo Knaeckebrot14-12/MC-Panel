@@ -40,4 +40,8 @@ return [
         'valid_until' => 'SSL-Zertifikat für :domain gültig bis :date (:days Tage), wird 30 Tage vor Ablauf automatisch erneuert.',
         'renew_failed' => 'Die letzte automatische Erneuerung ist fehlgeschlagen. Prüfe, ob die Domain noch auf diesen Server zeigt und Port 80 erreichbar ist.',
     ],
+    'security' => [
+        'no_2fa' => 'Dein Admin-Konto hat keine Zwei-Faktor-Authentifizierung. Schalte sie ein – ein Admin-Konto nur mit Passwort ist das attraktivste Ziel für Angreifer.',
+        'enable_2fa' => '2FA einschalten',
+    ],
 ];

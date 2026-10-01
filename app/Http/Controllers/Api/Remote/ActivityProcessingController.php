@@ -12,6 +12,7 @@ use Pterodactyl\Models\ActivityLog;
 use Pterodactyl\Models\ActivityLogSubject;
 use Pterodactyl\Http\Controllers\Controller;
 use Pterodactyl\Http\Requests\Api\Remote\ActivityEventRequest;
+use Pterodactyl\Services\Notifications\PushService;
 
 class ActivityProcessingController extends Controller
 {
@@ -85,6 +86,33 @@ class ActivityProcessingController extends Controller
             }
 
             ActivityLogSubject::insert($batch);
+        }
+
+        // Recoded Ptero Wings reports crashes; tell the people who look after the server.
+        foreach ($request->input('data') as $datum) {
+            if (($datum['event'] ?? '') === 'server:crashed' && ($server = $servers->get($datum['server']))) {
+                $this->notifyCrash($server, $datum['metadata'] ?? []);
+            }
+        }
+    }
+
+    private function notifyCrash(Server $server, array $metadata): void
+    {
+        try {
+            $users = $server->subusers()->pluck('user_id')->push($server->owner_id);
+            $reason = !empty($metadata['oom_killed'])
+                ? trans('server_console.crash_push.out_of_memory')
+                : trans('server_console.crash_push.exit_code', ['code' => (int) ($metadata['exit_code'] ?? 0)]);
+
+            app(PushService::class)->sendToUsers(
+                $users,
+                trans('server_console.crash_push.title', ['server' => $server->name]),
+                $reason,
+                '/server/' . $server->uuidShort,
+                'crash-' . $server->uuidShort
+            );
+        } catch (\Throwable $exception) {
+            report($exception);
         }
     }
 }

@@ -3,6 +3,7 @@
 namespace Pterodactyl\Listeners;
 
 use Pterodactyl\Facades\Activity;
+use Pterodactyl\Services\Users\LoginAlertService;
 use Illuminate\Auth\Events\Failed;
 use Pterodactyl\Events\Auth\DirectLogin;
 use Illuminate\Auth\Events\PasswordReset;
@@ -26,6 +27,11 @@ class AuthenticationListener implements SubscribesToEvents
             foreach ($event->credentials as $key => $value) {
                 $activity = $activity->property($key, $value);
             }
+        }
+
+        // Before this login is logged, so it isn't compared with itself.
+        if ($event instanceof DirectLogin && $event->user) {
+            app(LoginAlertService::class)->check($event->user, request());
         }
 
         $activity->event($event instanceof Failed ? 'auth:fail' : 'auth:success')->log();

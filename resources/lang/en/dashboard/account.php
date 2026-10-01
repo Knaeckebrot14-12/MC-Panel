@@ -84,4 +84,5 @@ return [
             'discord' => 'Discord could not be reached. Please try again.',
         ],
     ],
+    'app_title' => 'App & appearance',
 ];

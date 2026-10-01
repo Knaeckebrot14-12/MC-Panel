@@ -73,4 +73,12 @@ return [
     'throttle' => 'Te veel aanmeldpogingen. Probeer het over :seconds seconden opnieuw.',
     'password_requirements' => 'Het wachtwoord moet minstens 8 tekens lang zijn en uniek zijn voor deze site.',
     '2fa_must_be_enabled' => 'De beheerder heeft vereist dat tweestapsverificatie is ingeschakeld voor je account om het paneel te gebruiken.',
+    'new_login' => [
+        'subject' => 'Nieuwe aanmelding op je account',
+        'intro' => 'Er is zojuist vanaf een nieuw adres ingelogd met je account (:username).',
+        'details' => 'Tijd: :time · IP-adres: :ip',
+        'ok' => 'Was jij dit, dan hoef je niets te doen.',
+        'button' => 'Accountinstellingen openen',
+        'not_you' => 'Was jij dit niet, wijzig dan direct je wachtwoord en schakel tweestapsverificatie in.',
+    ],
 ];

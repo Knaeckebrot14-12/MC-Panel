@@ -141,4 +141,10 @@ return [
         'reminder_hint' => 'Zdobądź lub zrealizuj więcej monet do tego czasu, w przeciwnym razie serwer zostanie zawieszony.',
         'reminder_action' => 'Zdobywaj monety',
     ],
+    'push' => [
+        'reminder_title' => ':server wkrótce się odnowi',
+        'reminder_body' => 'Odnowienie kosztuje :price monet dnia :date, masz :have. Zdobądź monety, aby serwer nie został zawieszony.',
+        'suspended_title' => ':server został zawieszony',
+        'suspended_body' => 'Nie udało się zapłacić odnowienia za :price monet. Zdobądź monety w ciągu :days dni, inaczej serwer zostanie usunięty.',
+    ],
 ];

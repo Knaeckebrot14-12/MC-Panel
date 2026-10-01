@@ -184,6 +184,19 @@ EOF
     ok "RAM cache is emptied every hour"
 }
 
+# Security updates of the operating system install themselves every day (Debian/Ubuntu:
+# unattended-upgrades, which by default takes only the security repository). MC_AUTO_SECURITY_UPDATES=0 skips it.
+setup_security_updates() {
+    [ "${MC_AUTO_SECURITY_UPDATES:-1}" = "1" ] || return 0
+    [ "$PKG" = "apt" ] || return 0
+    run_step "Turning on automatic security updates" "Security updates install themselves daily" \
+        env DEBIAN_FRONTEND=noninteractive apt-get -o DPkg::Lock::Timeout=300 install -y unattended-upgrades || return 0
+    cat > /etc/apt/apt.conf.d/20auto-upgrades <<'EOF'
+APT::Periodic::Update-Package-Lists "1";
+APT::Periodic::Unattended-Upgrade "1";
+EOF
+}
+
 remove_cache_drop() {
     systemctl disable --now recoded-ptero-dropcache.timer >/dev/null 2>&1 || true
     rm -f /etc/systemd/system/recoded-ptero-dropcache.service /etc/systemd/system/recoded-ptero-dropcache.timer \
@@ -729,10 +742,21 @@ print_game_database_details() {
 
 install_wings_binary() {
     mkdir -p /etc/pterodactyl
+    local base="https://github.com/$GITHUB_REPO/releases/download/wings-v$WINGS_VERSION" tmp="/usr/local/bin/.wings.new" want have
     run_step "Downloading Wings v$WINGS_VERSION" "Wings v$WINGS_VERSION downloaded" \
-        curl -fsSL -o /usr/local/bin/wings "https://github.com/$GITHUB_REPO/releases/download/wings-v$WINGS_VERSION/wings_linux_$ARCH" \
+        sh -c "curl -fsSL -o '$tmp' '$base/wings_linux_$ARCH' && curl -fsSL -o /tmp/recoded-wings-checksums.txt '$base/checksums.txt'" \
         || die "Could not download Wings."
-    chmod u+x /usr/local/bin/wings
+    # Only a binary that matches the release's published checksum gets installed.
+    want="$(awk -v f="wings_linux_$ARCH" '$2 == f || $2 == "*" f { print $1 }' /tmp/recoded-wings-checksums.txt)"
+    have="$(sha256sum "$tmp" | awk '{print $1}')"
+    rm -f /tmp/recoded-wings-checksums.txt
+    if [ -z "$want" ] || [ "$want" != "$have" ]; then
+        rm -f "$tmp"
+        die "The downloaded Wings does not match its checksum; nothing was installed."
+    fi
+    chmod 755 "$tmp"
+    # Replacing by rename works while an older Wings is still running.
+    mv -f "$tmp" /usr/local/bin/wings
 
     cat > /etc/systemd/system/wings.service <<'EOF'
 [Unit]
@@ -1422,6 +1446,7 @@ main() {
     case "$action" in
         panel|wings|both|upgrade)
             setup_cache_drop
+            setup_security_updates
             if [ "${SYSTEM_UPGRADED:-0}" = "1" ]; then
                 upgrade_system "Installing the last system updates" "System is up to date"
                 reboot_notice

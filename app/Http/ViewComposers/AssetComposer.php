@@ -36,6 +36,12 @@ class AssetComposer
             ],
             'statusPage' => filter_var(config('mcpanel.status_page.enabled'), FILTER_VALIDATE_BOOLEAN),
             'verifyEmail' => filter_var(config('mcpanel.registration.verify_email'), FILTER_VALIDATE_BOOLEAN),
+            'branding' => [
+                'logo' => \Pterodactyl\Services\Branding\BrandingService::logoUrl(),
+                'background' => \Pterodactyl\Services\Branding\BrandingService::backgroundUrl(),
+                'defaultTheme' => \Pterodactyl\Services\Branding\BrandingService::defaultTheme(),
+            ],
+            'subdomains' => app(\Pterodactyl\Services\Subdomains\SubdomainService::class)->enabled(),
         ]);
     }
 }

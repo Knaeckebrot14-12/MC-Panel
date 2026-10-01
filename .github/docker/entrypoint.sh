@@ -48,6 +48,8 @@ if [ -f /etc/nginx/http.d/panel.conf ]; then
     echo "Adding the Let's Encrypt renewal path to the nginx config."
     php -r '$f = "/etc/nginx/http.d/panel.conf"; $c = file_get_contents($f); $c = preg_replace("/^(\s*)return 301 (https:\/\/[^;]+);/m", "\$1location ^~ /.well-known/acme-challenge/ { root /var/www/acme; }\n\$1location / { return 301 \$2; }", $c, 1); file_put_contents($f, $c);'
   fi
+  ## configs written by older versions: current TLS only, and the shared security headers
+  php /app/.github/docker/nginx-migrate.php /etc/nginx/http.d/panel.conf
   if [ $LE_EMAIL ]; then
     echo "Checking for cert update"
     ## a failed check (e.g. Let's Encrypt briefly unreachable) must not keep the panel from starting
@@ -80,6 +82,8 @@ fi
 
 ## shared folder for the updater service (update requests and progress)
 mkdir -p /app/updater && chown nginx: /app/updater
+## logo/favicon/background uploads (Settings -> Design), kept in the persistent var volume
+mkdir -p /app/var/branding && chown -R nginx: /app/var/branding
 
 ## check log folder permissions
 echo "Checking log folder permissions."

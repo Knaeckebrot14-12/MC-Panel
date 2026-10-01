@@ -30,5 +30,7 @@ return [
         'settings' => 'Einstellungen',
         'players' => 'Spieler',
         'properties' => 'Server-Einstellungen',
+        'software' => 'Version',
     ],
+    'theme_tooltip' => 'Hell / Dunkel',
 ];

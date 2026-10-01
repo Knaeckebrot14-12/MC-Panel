@@ -27,6 +27,15 @@ class AppServiceProvider extends ServiceProvider
 
         Paginator::useBootstrap();
 
+        // A deleted server's subdomain must not keep pointing at an address someone else gets next.
+        Models\Server::deleting(function (Models\Server $server) {
+            try {
+                app(\Pterodactyl\Services\Subdomains\SubdomainService::class)->remove($server);
+            } catch (\Throwable $exception) {
+                report($exception);
+            }
+        });
+
         // If the APP_URL value is set with https:// make sure we force it here. Theoretically
         // this should just work with the proxy logic, but there are a lot of cases where it
         // doesn't, and it triggers a lot of support requests, so lets just head it off here.
@@ -34,6 +43,10 @@ class AppServiceProvider extends ServiceProvider
         // @see https://github.com/pterodactyl/panel/issues/3623
         if (Str::startsWith(config('app.url') ?? '', 'https://')) {
             URL::forceScheme('https');
+            // The login cookie is then never sent over plain HTTP.
+            if (is_null(env('SESSION_SECURE_COOKIE'))) {
+                config(['session.secure' => true]);
+            }
         }
 
         Relation::enforceMorphMap([

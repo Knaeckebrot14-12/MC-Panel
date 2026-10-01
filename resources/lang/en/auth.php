@@ -85,4 +85,12 @@ return [
             'two_factor' => 'This account uses two-factor authentication. Please log in with your password and code.',
         ],
     ],
+    'new_login' => [
+        'subject' => 'New login to your account',
+        'intro' => 'Your account (:username) was just used to log in from a new address.',
+        'details' => 'Time: :time · IP address: :ip',
+        'ok' => 'If this was you, there is nothing to do.',
+        'button' => 'Open account settings',
+        'not_you' => 'If this was not you, change your password right away and turn on two-factor authentication.',
+    ],
 ];

@@ -43,7 +43,7 @@ return [
         'plan_summary' => ':memory MiB Arbeitsspeicher / :disk MiB Speicherplatz / :cpu% CPU / :backups Backup(s) — :price Coins pro Monat',
         'plan_required' => 'Bitte wähle ein Paket.',
         'buy_plan_button' => 'Kaufen (:price Coins / Monat)',
-        'no_nodes' =>'Aktuell sind keine Nodes oder Eggs zum Bereitstellen verfügbar.',
+        'no_nodes' => 'Aktuell sind keine Nodes oder Eggs zum Bereitstellen verfügbar.',
         'server_name_label' => 'Servername',
         'server_name_placeholder' => 'Mein Server',
         'server_name_required' => 'Bitte gib deinem Server einen Namen.',
@@ -140,5 +140,11 @@ return [
         'reminder_line' => 'Dein Server „:server“ wird am :date für :price Coins verlängert, dein Guthaben beträgt aber nur :balance Coins.',
         'reminder_hint' => 'Verdiene oder löse bis dahin mehr Coins ein, sonst wird der Server gesperrt.',
         'reminder_action' => 'Coins verdienen',
+    ],
+    'push' => [
+        'reminder_title' => ':server wird bald verlängert',
+        'reminder_body' => 'Die Verlängerung kostet am :date :price Coins, du hast :have. Verdiene Coins, damit der Server nicht gesperrt wird.',
+        'suspended_title' => ':server wurde gesperrt',
+        'suspended_body' => 'Die Verlängerung über :price Coins konnte nicht bezahlt werden. Verdiene innerhalb von :days Tagen Coins, sonst wird der Server gelöscht.',
     ],
 ];

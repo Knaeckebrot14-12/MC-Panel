@@ -74,10 +74,12 @@ return [
     'uploaded' => 'Falha ao enviar o campo :attribute.',
     'url' => 'O formato do campo :attribute é inválido.',
     'attributes' => [
-
     ],
     'internal' => [
         'variable_value' => 'variável :env',
         'invalid_password' => 'A senha fornecida é inválida para esta conta.',
+    ],
+    'password' => [
+        'uncompromised' => 'Esta senha apareceu em um vazamento de dados. Escolha outra senha.',
     ],
 ];

@@ -73,4 +73,12 @@ return [
     'throttle' => 'Zbyt wiele prób logowania. Spróbuj ponownie za :seconds s.',
     'password_requirements' => 'Hasło musi mieć co najmniej 8 znaków i być unikalne dla tej witryny.',
     '2fa_must_be_enabled' => 'Administrator wymaga włączenia uwierzytelniania dwuskładnikowego na Twoim koncie, aby korzystać z panelu.',
+    'new_login' => [
+        'subject' => 'Nowe logowanie na Twoje konto',
+        'intro' => 'Na Twoje konto (:username) właśnie zalogowano się z nowego adresu.',
+        'details' => 'Czas: :time · Adres IP: :ip',
+        'ok' => 'Jeśli to Ty, nic nie musisz robić.',
+        'button' => 'Otwórz ustawienia konta',
+        'not_you' => 'Jeśli to nie Ty, natychmiast zmień hasło i włącz uwierzytelnianie dwuskładnikowe.',
+    ],
 ];

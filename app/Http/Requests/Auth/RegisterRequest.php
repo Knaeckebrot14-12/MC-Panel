@@ -19,7 +19,7 @@ class RegisterRequest extends FormRequest
             'name_last' => 'required|string|between:1,191',
             'username' => ['required', 'between:1,191', 'unique:users,username', new Username()],
             'email' => 'required|email:strict|between:1,191|unique:users,email',
-            'password' => 'required|string|min:8|confirmed',
+            'password' => ['required', 'string', 'min:8', 'confirmed', \Illuminate\Validation\Rules\Password::min(8)->uncompromised()],
             'referral_code' => 'nullable|string|max:16',
         ];
     }

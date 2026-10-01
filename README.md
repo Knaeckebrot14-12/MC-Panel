@@ -10,6 +10,12 @@ A game server panel for Minecraft hosting, built on the open source [Pterodactyl
 - **Public registration** with e-mail confirmation and an accounts-per-IP limit against alt accounts, log in with Discord, forgot-password flow, announcements
 - **Admin statistics** (users, servers, tickets, coins, node usage), **maintenance mode** (banner or lock-out) and a public **status page** at /status
 - **Translations**: English, German, French, Spanish and more, selectable per user
+- **Version changer**: switch a Minecraft server between Paper, Purpur, Folia, Fabric, Vanilla and Velocity and any of their versions with one click; the matching Java image is chosen automatically
+- **Subdomains**: users give their servers an address like `name.play.example.com` (A + SRV records through the Cloudflare API, no port needed to join)
+- **Node monitoring**: CPU, memory and disk graphs per node, Discord alerts when a node goes offline or runs full, and one-click Wings updates for all nodes
+- **Design**: logo, icon, accent colour and background under Settings → Design; every user can switch between the dark and a light theme
+- **Installable app (PWA)** with push notifications for server crashes, ticket answers, coin reminders and node alerts
+- **Security**: security headers, TLS 1.2+ only, breached-password check, e-mail on logins from new addresses, confirmation link before a password reset, 2FA reminder for admins, verified Wings downloads
 - **One-click and automatic updates** from within the panel
 
 ## Install
@@ -91,9 +97,19 @@ recoded-ptero update
 
 Other helpers: `recoded-ptero status | logs | backup | restart | artisan <command>`. Backups of the last 7 updates are kept in `/opt/recoded-ptero/backups`.
 
+## Wings updates and monitoring
+
+Nodes run this repository's Wings build: the official [pterodactyl/wings](https://github.com/pterodactyl/wings) (MIT) plus a small patch ([`installer/wings/recoded-ptero.patch`](installer/wings/recoded-ptero.patch)) that adds a usage endpoint for the graphs, crash reports for push notifications and a self-update. The self-update only installs `wings_linux_<arch>` from this repository's `wings-v<version>` releases and only when it matches the release's `checksums.txt`.
+
+Under **Admin → Nodes** each node shows its usage; when a newer Wings release exists, **Update Wings** (per node) or **Update all** installs it. Game servers keep running while Wings restarts. Nodes that still run an older Wings get the patched one once by running the installer's Wings option on them.
+
+Alerts are configured under **Admin → Settings → Monitoring** (Discord webhook, disk and memory thresholds).
+
 ## Publishing updates (for maintainers)
 
 Every push to the `main` branch is an update. Bump the number in [`VERSION`](VERSION) for a readable version label, commit and push; installed panels show the new commit and its commit messages under **Settings → Updates**.
+
+A new Wings build: `installer/wings/build.sh <version>` builds both architectures from the patch, then upload `installer/wings/dist/*` as release `wings-v<version>` and set `wings_version` in [`config/mcpanel.php`](config/mcpanel.php).
 
 To make a fork update from its own repository, set `MC_PANEL_REPO=<owner>/<repo>` in `/opt/recoded-ptero/.env` (the installer honours `MC_PANEL_REPO` and `MC_PANEL_BRANCH` too).
 

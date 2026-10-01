@@ -49,5 +49,9 @@ return [
         'settings.login' => 'Changed the login & registration settings',
         'maintenance.updated' => 'Set maintenance mode to :subject',
         'user.email_verified' => 'Confirmed the e-mail address of :subject',
+        'nodes.wings_update' => 'Updated Wings on node :subject to :version',
+        'settings.monitoring' => 'Changed the monitoring settings',
+        'settings.design' => 'Changed the design',
+        'settings.subdomains' => 'Changed the subdomain settings',
     ],
 ];

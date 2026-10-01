@@ -141,4 +141,10 @@ return [
         'reminder_hint' => 'Verdien of wissel vóór die tijd meer coins in, anders wordt de server opgeschort.',
         'reminder_action' => 'Coins verdienen',
     ],
+    'push' => [
+        'reminder_title' => ':server wordt binnenkort verlengd',
+        'reminder_body' => 'De verlenging kost :price coins op :date, je hebt er :have. Verdien coins zodat de server niet wordt geschorst.',
+        'suspended_title' => ':server is geschorst',
+        'suspended_body' => 'De verlenging van :price coins kon niet worden betaald. Verdien binnen :days dagen coins, anders wordt de server verwijderd.',
+    ],
 ];

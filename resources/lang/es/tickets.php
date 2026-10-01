@@ -75,4 +75,7 @@ return [
         'reply_line' => ':user ha respondido al ticket #:id («:subject»).',
         'action' => 'Abrir ticket',
     ],
+    'push' => [
+        'reply_title' => 'Nueva respuesta en el ticket #:id',
+    ],
 ];

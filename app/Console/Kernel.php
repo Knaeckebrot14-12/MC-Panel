@@ -14,6 +14,7 @@ use Pterodactyl\Console\Commands\Update\CheckForUpdatesCommand;
 use Pterodactyl\Console\Commands\Server\AutoBackupCommand;
 use Pterodactyl\Console\Commands\Maintenance\RenewCertificateCommand;
 use Pterodactyl\Console\Commands\Server\CollectServerStatsCommand;
+use Pterodactyl\Console\Commands\Node\MonitorNodesCommand;
 use Pterodactyl\Console\Commands\Coins\ChargeCoinFundedServersCommand;
 use Pterodactyl\Console\Commands\Coins\RemindCoinFundedServersCommand;
 use Pterodactyl\Console\Commands\Maintenance\PruneOrphanedBackupsCommand;
@@ -44,6 +45,7 @@ class Kernel extends ConsoleKernel
         $schedule->command(RemindCoinFundedServersCommand::class)->daily();
         $schedule->command(CheckForUpdatesCommand::class)->everyFiveMinutes()->withoutOverlapping();
         $schedule->command(CollectServerStatsCommand::class)->everyFiveMinutes()->withoutOverlapping();
+        $schedule->command(MonitorNodesCommand::class)->everyMinute()->withoutOverlapping()->runInBackground();
         $schedule->command(AutoBackupCommand::class)->everyFiveMinutes()->withoutOverlapping();
         $schedule->command(RenewCertificateCommand::class)->twiceDaily(3, 15)->withoutOverlapping();
 

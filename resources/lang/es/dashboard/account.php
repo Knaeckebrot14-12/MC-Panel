@@ -84,4 +84,5 @@ return [
             'discord' => 'No se pudo contactar con Discord. Inténtalo de nuevo.',
         ],
     ],
+    'app_title' => 'App y apariencia',
 ];

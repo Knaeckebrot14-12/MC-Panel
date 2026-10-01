@@ -10,6 +10,7 @@ import FileManagerContainer from '@/components/server/files/FileManagerContainer
 import PluginsContainer from '@/components/server/plugins/PluginsContainer';
 import PlayersContainer from '@/components/server/players/PlayersContainer';
 import PropertiesContainer from '@/components/server/properties/PropertiesContainer';
+import SoftwareContainer from '@/components/server/software/SoftwareContainer';
 import SettingsContainer from '@/components/server/settings/SettingsContainer';
 import AccountOverviewContainer from '@/components/dashboard/AccountOverviewContainer';
 import EarnCoinsContainer from '@/components/dashboard/coins/EarnCoinsContainer';
@@ -180,6 +181,13 @@ export default {
             permission: 'file.*',
             name: 'tabs.properties',
             component: PropertiesContainer,
+            condition: isMinecraftServer,
+        },
+        {
+            path: '/version',
+            permission: 'startup.*',
+            name: 'tabs.software',
+            component: SoftwareContainer,
             condition: isMinecraftServer,
         },
         {

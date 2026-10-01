@@ -13,6 +13,7 @@ return [
         'sftp' => [
             'fail' => 'Falha no login SFTP',
         ],
+        'reset-password-requested' => 'Solicitou um link de redefinição de senha',
     ],
     'user' => [
         'user' => [
@@ -122,6 +123,14 @@ return [
             'create' => 'Adicionou :email como subusuário',
             'update' => 'Atualizou as permissões do subusuário :email',
             'delete' => 'Removeu :email como subusuário',
+        ],
+        'crashed' => 'O servidor travou',
+        'software' => [
+            'install' => 'Instalou :type :version',
+        ],
+        'subdomain' => [
+            'set' => 'Definiu o subdomínio :subdomain',
+            'delete' => 'Removeu o subdomínio',
         ],
     ],
     'meta' => [

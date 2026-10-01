@@ -22,6 +22,7 @@ return [
         'discord' => [
             'login' => 'Inició sesión con Discord',
         ],
+        'reset-password-requested' => 'Solicitó un enlace para restablecer la contraseña',
     ],
     'user' => [
         'user' => [
@@ -147,6 +148,14 @@ return [
             'kick' => 'Expulsó a :target',
             'whitelist_on' => 'Activó la lista blanca',
             'whitelist_off' => 'Desactivó la lista blanca',
+        ],
+        'crashed' => 'El servidor se cayó',
+        'software' => [
+            'install' => 'Instaló :type :version',
+        ],
+        'subdomain' => [
+            'set' => 'Configuró el subdominio :subdomain',
+            'delete' => 'Eliminó el subdominio',
         ],
     ],
     'meta' => [

@@ -51,4 +51,9 @@ return [
         'restoring_title' => 'Przywracanie z kopii zapasowej',
         'restoring_message' => 'Twój serwer jest obecnie przywracany z kopii zapasowej, zajrzyj za kilka minut.',
     ],
+    'crash_push' => [
+        'title' => ':server uległ awarii',
+        'out_of_memory' => 'Serwerowi zabrakło pamięci i został uruchomiony ponownie.',
+        'exit_code' => 'Serwer nieoczekiwanie się zatrzymał (kod :code) i został uruchomiony ponownie.',
+    ],
 ];

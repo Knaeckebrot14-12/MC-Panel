@@ -13,6 +13,7 @@ return [
         'sftp' => [
             'fail' => 'Accesso SFTP non riuscito',
         ],
+        'reset-password-requested' => 'Ha richiesto un link per reimpostare la password',
     ],
     'user' => [
         'user' => [
@@ -122,6 +123,14 @@ return [
             'create' => 'Aggiunto :email come sotto-utente',
             'update' => 'Aggiornati i permessi del sotto-utente :email',
             'delete' => 'Rimosso :email come sotto-utente',
+        ],
+        'crashed' => 'Il server è andato in crash',
+        'software' => [
+            'install' => 'Ha installato :type :version',
+        ],
+        'subdomain' => [
+            'set' => 'Ha impostato il sottodominio :subdomain',
+            'delete' => 'Ha rimosso il sottodominio',
         ],
     ],
     'meta' => [

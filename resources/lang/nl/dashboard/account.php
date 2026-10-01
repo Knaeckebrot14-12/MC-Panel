@@ -68,4 +68,5 @@ return [
             'done_button' => 'Klaar',
         ],
     ],
+    'app_title' => 'App en weergave',
 ];

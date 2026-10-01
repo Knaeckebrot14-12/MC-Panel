@@ -75,4 +75,7 @@ return [
         'reply_line' => ':user heeft gereageerd op ticket #:id (":subject").',
         'action' => 'Ticket openen',
     ],
+    'push' => [
+        'reply_title' => 'Nieuw antwoord op ticket #:id',
+    ],
 ];

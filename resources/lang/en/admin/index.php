@@ -40,4 +40,8 @@ return [
         'valid_until' => 'SSL certificate for :domain valid until :date (:days days), renewed automatically 30 days before it expires.',
         'renew_failed' => 'The last automatic renewal failed. Check that the domain still points at this server and port 80 is reachable.',
     ],
+    'security' => [
+        'no_2fa' => 'Your admin account has no two-factor authentication. Turn it on, an admin account with only a password is the most attractive target for attackers.',
+        'enable_2fa' => 'Turn on 2FA',
+    ],
 ];

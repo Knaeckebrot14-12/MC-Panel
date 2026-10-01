@@ -60,4 +60,9 @@ return [
         'memory' => 'Mémoire',
         'players' => 'Joueurs',
     ],
+    'crash_push' => [
+        'title' => ':server a planté',
+        'out_of_memory' => 'Le serveur a manqué de mémoire et a été redémarré.',
+        'exit_code' => 'Le serveur s\'est arrêté de manière inattendue (code :code) et a été redémarré.',
+    ],
 ];

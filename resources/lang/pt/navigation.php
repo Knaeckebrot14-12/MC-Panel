@@ -28,5 +28,7 @@ return [
         'network' => 'Rede',
         'startup' => 'Inicialização',
         'settings' => 'Configurações',
+        'software' => 'Versão',
     ],
+    'theme_tooltip' => 'Claro / escuro',
 ];

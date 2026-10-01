@@ -82,6 +82,8 @@ class Node extends Model implements Identifiable
         'public' => 'boolean',
         'maintenance_mode' => 'boolean',
         'maximum_servers' => 'integer',
+        'monitor_state' => 'array',
+        'last_seen_at' => 'datetime',
     ];
 
     /**

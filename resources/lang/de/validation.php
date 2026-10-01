@@ -1,17 +1,6 @@
 <?php
 
 return [
-    /*
-    |--------------------------------------------------------------------------
-    | Sprachzeilen für Validierung
-    |--------------------------------------------------------------------------
-    |
-    | Die folgenden Sprachzeilen enthalten die Standard-Fehlermeldungen der
-    | Validator-Klasse. Einige dieser Regeln haben mehrere Varianten, etwa
-    | die Größenregeln. Passe die Meldungen hier gerne nach Bedarf an.
-    |
-    */
-
     'accepted' => 'Das Feld :attribute muss akzeptiert werden.',
     'active_url' => 'Das Feld :attribute ist keine gültige URL.',
     'after' => 'Das Feld :attribute muss ein Datum nach dem :date sein.',
@@ -84,23 +73,13 @@ return [
     'unique' => 'Der Wert für :attribute wird bereits verwendet.',
     'uploaded' => 'Der Upload von :attribute ist fehlgeschlagen.',
     'url' => 'Das Format des Feldes :attribute ist ungültig.',
-
-    /*
-    |--------------------------------------------------------------------------
-    | Benutzerdefinierte Validierungs-Attribute
-    |--------------------------------------------------------------------------
-    |
-    | Die folgenden Sprachzeilen werden verwendet, um Platzhalter für Attribute
-    | durch etwas Verständlicheres zu ersetzen, z. B. "E-Mail-Adresse" statt
-    | "email". Das macht die Meldungen etwas übersichtlicher.
-    |
-    */
-
-    'attributes' => [],
-
-    // Interne Validierungslogik für Pterodactyl
+    'attributes' => [
+    ],
     'internal' => [
         'variable_value' => 'Variable :env',
         'invalid_password' => 'Das angegebene Passwort war für dieses Konto ungültig.',
+    ],
+    'password' => [
+        'uncompromised' => 'Dieses Passwort ist in einem Datenleck aufgetaucht. Bitte wähle ein anderes Passwort.',
     ],
 ];

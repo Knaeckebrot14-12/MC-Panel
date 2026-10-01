@@ -16,7 +16,7 @@ class ResetPasswordRequest extends FormRequest
         return [
             'token' => 'required|string',
             'email' => 'required|email',
-            'password' => 'required|string|confirmed|min:8',
+            'password' => ['required', 'string', 'confirmed', 'min:8', \Illuminate\Validation\Rules\Password::min(8)->uncompromised()],
         ];
     }
 }

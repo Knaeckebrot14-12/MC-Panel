@@ -73,4 +73,12 @@ return [
     'throttle' => 'Troppi tentativi di accesso. Riprova tra :seconds secondi.',
     'password_requirements' => 'La password deve contenere almeno 8 caratteri e dovrebbe essere unica per questo sito.',
     '2fa_must_be_enabled' => 'L\'amministratore ha reso obbligatoria l\'autenticazione a due fattori per il tuo account per usare il pannello.',
+    'new_login' => [
+        'subject' => 'Nuovo accesso al tuo account',
+        'intro' => 'Il tuo account (:username) è stato appena usato per accedere da un nuovo indirizzo.',
+        'details' => 'Ora: :time · Indirizzo IP: :ip',
+        'ok' => 'Se sei stato tu, non devi fare nulla.',
+        'button' => 'Apri le impostazioni dell\'account',
+        'not_you' => 'Se non sei stato tu, cambia subito la password e attiva l\'autenticazione a due fattori.',
+    ],
 ];

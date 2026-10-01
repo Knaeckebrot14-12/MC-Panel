@@ -14,4 +14,17 @@ function hexToRgba(hex: string, alpha = 1): string {
     return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 }
 
-export { hexToRgba };
+/**
+ * Replaces CSS variables in a colour (the gray scale and accent are variables, see tailwind.config.js)
+ * with their current values, for places like canvas charts that can't resolve variables themselves.
+ */
+function resolveColor(color: string): string {
+    if (typeof window === 'undefined' || !color.includes('var(')) {
+        return color;
+    }
+    const style = window.getComputedStyle(document.documentElement);
+
+    return color.replace(/var\((--[\w-]+)\)/g, (_, name: string) => style.getPropertyValue(name).trim());
+}
+
+export { hexToRgba, resolveColor };

@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, NavLink } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCogs, faCoins, faLayerGroup, faLifeRing, faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
+import { faCogs, faCoins, faLayerGroup, faLifeRing, faMoon, faSignOutAlt, faSun } from '@fortawesome/free-solid-svg-icons';
 import { Actions, useStoreActions, useStoreState } from 'easy-peasy';
 import { ApplicationStore } from '@/state';
 import SearchContainer from '@/components/dashboard/search/SearchContainer';
@@ -14,6 +14,7 @@ import SpinnerOverlay from '@/components/elements/SpinnerOverlay';
 import Tooltip from '@/components/elements/tooltip/Tooltip';
 import Avatar from '@/components/Avatar';
 import getCoinOptions from '@/api/coins/getCoinOptions';
+import { getTheme, setTheme, Theme } from '@/lib/pwa';
 
 const RightNavigation = styled.div`
     & > a,
@@ -37,10 +38,18 @@ const RightNavigation = styled.div`
 export default () => {
     const { t } = useTranslation('navigation');
     const name = useStoreState((state: ApplicationStore) => state.settings.data!.name);
+    const logo = useStoreState((state: ApplicationStore) => state.settings.data!.branding?.logo);
+    const [theme, setThemeState] = useState<Theme>(getTheme());
     const staff = useStoreState((state: ApplicationStore) => state.user.data!.staff);
     const balance = useStoreState((state: ApplicationStore) => state.coins.balance);
     const setBalance = useStoreActions((actions: Actions<ApplicationStore>) => actions.coins.setBalance);
     const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+    useEffect(() => {
+        const sync = () => setThemeState(getTheme());
+        window.addEventListener('rp-theme', sync);
+        return () => window.removeEventListener('rp-theme', sync);
+    }, []);
 
     useEffect(() => {
         getCoinOptions()
@@ -68,7 +77,7 @@ export default () => {
                             'text-2xl font-header font-medium px-4 no-underline text-neutral-200 hover:text-neutral-100 transition-colors duration-150'
                         }
                     >
-                        {name}
+                        {logo ? <img src={logo} alt={name} className={'h-9 max-w-[220px] object-contain inline-block'} /> : name}
                     </Link>
                 </div>
                 <RightNavigation className={'flex h-full items-center justify-center'}>
@@ -96,6 +105,11 @@ export default () => {
                             </a>
                         </Tooltip>
                     )}
+                    <Tooltip placement={'bottom'} content={t('theme_tooltip')}>
+                        <button onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}>
+                            <FontAwesomeIcon icon={theme === 'dark' ? faSun : faMoon} />
+                        </button>
+                    </Tooltip>
                     <Tooltip placement={'bottom'} content={t('account_settings')}>
                         <NavLink to={'/account'}>
                             <span className={'flex items-center w-5 h-5'}>

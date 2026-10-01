@@ -60,4 +60,9 @@ return [
         'memory' => 'Arbeitsspeicher',
         'players' => 'Spieler',
     ],
+    'crash_push' => [
+        'title' => ':server ist abgestürzt',
+        'out_of_memory' => 'Der Server hatte zu wenig Arbeitsspeicher und wurde neu gestartet.',
+        'exit_code' => 'Der Server wurde unerwartet beendet (Exit-Code :code) und neu gestartet.',
+    ],
 ];

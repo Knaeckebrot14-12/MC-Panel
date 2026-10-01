@@ -68,4 +68,5 @@ return [
             'done_button' => 'Gotowe',
         ],
     ],
+    'app_title' => 'Aplikacja i wygląd',
 ];

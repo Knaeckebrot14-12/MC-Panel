@@ -1,0 +1,282 @@
+diff --git a/router/router.go b/router/router.go
+index bdac760..3abb2d2 100644
+--- a/router/router.go
++++ b/router/router.go
+@@ -63,6 +63,8 @@ func Configure(m *wserver.Manager, client remote.Client) *gin.Engine {
+ 	protected := router.Use(middleware.RequireAuthorization())
+ 	protected.POST("/api/update", postUpdateConfiguration)
+ 	protected.GET("/api/system", getSystemInformation)
++	protected.GET("/api/system/utilization", getSystemUtilization)
++	protected.POST("/api/system/self-update", postSystemSelfUpdate)
+ 	protected.GET("/api/servers", getAllServers)
+ 	protected.POST("/api/servers", postCreateServer)
+ 	protected.DELETE("/api/transfers/:server", deleteTransfer)
+diff --git a/router/router_recoded.go b/router/router_recoded.go
+new file mode 100644
+index 0000000..6090408
+--- /dev/null
++++ b/router/router_recoded.go
+@@ -0,0 +1,240 @@
++package router
++
++// Additions for Recoded Ptero: machine utilization for the panel's node monitoring, and a
++// self-update that only installs Wings builds published as releases of the Recoded Ptero repository.
++
++import (
++	"bufio"
++	"bytes"
++	"crypto/sha256"
++	"encoding/hex"
++	"fmt"
++	"io"
++	"net/http"
++	"os"
++	"path/filepath"
++	"regexp"
++	"runtime"
++	"strconv"
++	"strings"
++	"syscall"
++	"time"
++
++	"github.com/apex/log"
++	"github.com/gin-gonic/gin"
++
++	"github.com/pterodactyl/wings/config"
++	"github.com/pterodactyl/wings/system"
++)
++
++// UpdateRepository is the GitHub repository whose "wings-v<version>" releases the self-update
++// downloads from. It is fixed at build time, so the panel can only choose a version, never a source.
++var UpdateRepository = "Knaeckebrot14-12/Recoded-Ptero"
++
++var updateVersionPattern = regexp.MustCompile(`^[0-9]+\.[0-9]+\.[0-9]+$`)
++
++type utilization struct {
++	Version       string     `json:"version"`
++	CPUPercent    float64    `json:"cpu_percent"`
++	CPUThreads    int        `json:"cpu_threads"`
++	MemoryTotal   uint64     `json:"memory_total"`
++	MemoryUsed    uint64     `json:"memory_used"`
++	SwapTotal     uint64     `json:"swap_total"`
++	SwapUsed      uint64     `json:"swap_used"`
++	DiskTotal     uint64     `json:"disk_total"`
++	DiskUsed      uint64     `json:"disk_used"`
++	Load          [3]float64 `json:"load"`
++	UptimeSeconds int64      `json:"uptime_seconds"`
++}
++
++// getSystemUtilization reports how busy the machine is: CPU, memory, swap, the disk holding the
++// server files, load and uptime. The panel collects this every few minutes for its graphs.
++func getSystemUtilization(c *gin.Context) {
++	u := utilization{Version: system.Version, CPUThreads: runtime.NumCPU()}
++
++	if a, err := readCPUTimes(); err == nil {
++		time.Sleep(500 * time.Millisecond)
++		if b, err := readCPUTimes(); err == nil && b[1] > a[1] {
++			busy := float64((b[1] - b[0]) - (a[1] - a[0]))
++			u.CPUPercent = roundTo(busy/float64(b[1]-a[1])*100, 1)
++		}
++	}
++
++	if mem, err := readMeminfo(); err == nil {
++		u.MemoryTotal = mem["MemTotal"]
++		u.MemoryUsed = mem["MemTotal"] - mem["MemAvailable"]
++		u.SwapTotal = mem["SwapTotal"]
++		u.SwapUsed = mem["SwapTotal"] - mem["SwapFree"]
++	}
++
++	var fs syscall.Statfs_t
++	if err := syscall.Statfs(config.Get().System.Data, &fs); err == nil {
++		u.DiskTotal = fs.Blocks * uint64(fs.Bsize)
++		u.DiskUsed = (fs.Blocks - fs.Bfree) * uint64(fs.Bsize)
++	}
++
++	if b, err := os.ReadFile("/proc/loadavg"); err == nil {
++		f := strings.Fields(string(b))
++		for i := 0; i < 3 && i < len(f); i++ {
++			u.Load[i], _ = strconv.ParseFloat(f[i], 64)
++		}
++	}
++
++	if b, err := os.ReadFile("/proc/uptime"); err == nil {
++		if f := strings.Fields(string(b)); len(f) > 0 {
++			up, _ := strconv.ParseFloat(f[0], 64)
++			u.UptimeSeconds = int64(up)
++		}
++	}
++
++	c.JSON(http.StatusOK, u)
++}
++
++// postSystemSelfUpdate installs another Wings version from the releases of UpdateRepository.
++// The binary must match the SHA-256 listed in the release's checksums.txt. Afterwards Wings exits
++// with a non-zero code so systemd (Restart=on-failure) starts the new binary; game servers keep
++// running in their containers meanwhile.
++func postSystemSelfUpdate(c *gin.Context) {
++	var data struct {
++		Version string `json:"version"`
++	}
++	if err := c.BindJSON(&data); err != nil {
++		return
++	}
++	if !updateVersionPattern.MatchString(data.Version) {
++		c.AbortWithStatusJSON(http.StatusUnprocessableEntity, gin.H{"error": "The version must look like 1.2.3."})
++		return
++	}
++	if runtime.GOOS != "linux" {
++		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Self-update is only supported on Linux."})
++		return
++	}
++
++	asset := "wings_linux_" + runtime.GOARCH
++	base := fmt.Sprintf("https://github.com/%s/releases/download/wings-v%s/", UpdateRepository, data.Version)
++	client := &http.Client{Timeout: 5 * time.Minute}
++
++	sums, err := download(client, base+"checksums.txt", 1<<20)
++	if err != nil {
++		c.AbortWithStatusJSON(http.StatusBadGateway, gin.H{"error": "Could not download checksums.txt: " + err.Error()})
++		return
++	}
++	want := ""
++	scanner := bufio.NewScanner(bytes.NewReader(sums))
++	for scanner.Scan() {
++		f := strings.Fields(scanner.Text())
++		if len(f) == 2 && strings.TrimPrefix(f[1], "*") == asset {
++			want = strings.ToLower(f[0])
++		}
++	}
++	if want == "" {
++		c.AbortWithStatusJSON(http.StatusBadGateway, gin.H{"error": "The release has no checksum for " + asset + "."})
++		return
++	}
++
++	binary, err := download(client, base+asset, 256<<20)
++	if err != nil {
++		c.AbortWithStatusJSON(http.StatusBadGateway, gin.H{"error": "Could not download " + asset + ": " + err.Error()})
++		return
++	}
++	sum := sha256.Sum256(binary)
++	if hex.EncodeToString(sum[:]) != want {
++		c.AbortWithStatusJSON(http.StatusBadGateway, gin.H{"error": "The downloaded binary does not match its checksum, nothing was changed."})
++		return
++	}
++
++	exe, err := os.Executable()
++	if err == nil {
++		exe, err = filepath.EvalSymlinks(exe)
++	}
++	if err != nil {
++		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "Could not find the Wings binary: " + err.Error()})
++		return
++	}
++
++	tmp := exe + ".new"
++	if err := os.WriteFile(tmp, binary, 0o755); err != nil {
++		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "Could not write the new binary: " + err.Error()})
++		return
++	}
++	if err := os.Rename(tmp, exe); err != nil {
++		_ = os.Remove(tmp)
++		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "Could not replace the Wings binary: " + err.Error()})
++		return
++	}
++
++	log.WithField("version", data.Version).Info("wings was updated, restarting to load the new version")
++	c.JSON(http.StatusAccepted, gin.H{"status": "restarting", "version": data.Version})
++
++	go func() {
++		time.Sleep(2 * time.Second)
++		os.Exit(1)
++	}()
++}
++
++func download(client *http.Client, url string, limit int64) ([]byte, error) {
++	res, err := client.Get(url)
++	if err != nil {
++		return nil, err
++	}
++	defer res.Body.Close()
++	if res.StatusCode != http.StatusOK {
++		return nil, fmt.Errorf("HTTP %d", res.StatusCode)
++	}
++	b, err := io.ReadAll(io.LimitReader(res.Body, limit+1))
++	if err != nil {
++		return nil, err
++	}
++	if int64(len(b)) > limit {
++		return nil, fmt.Errorf("file is larger than expected")
++	}
++	return b, nil
++}
++
++// readCPUTimes returns idle (idle + iowait) and total jiffies from the first line of /proc/stat.
++func readCPUTimes() ([2]uint64, error) {
++	var out [2]uint64
++	b, err := os.ReadFile("/proc/stat")
++	if err != nil {
++		return out, err
++	}
++	line := strings.SplitN(string(b), "\n", 2)[0]
++	f := strings.Fields(line)
++	if len(f) < 5 || f[0] != "cpu" {
++		return out, fmt.Errorf("unexpected /proc/stat format")
++	}
++	for i, v := range f[1:] {
++		n, _ := strconv.ParseUint(v, 10, 64)
++		out[1] += n
++		if i == 3 || i == 4 {
++			out[0] += n
++		}
++	}
++	return out, nil
++}
++
++// readMeminfo returns /proc/meminfo in bytes.
++func readMeminfo() (map[string]uint64, error) {
++	b, err := os.ReadFile("/proc/meminfo")
++	if err != nil {
++		return nil, err
++	}
++	out := map[string]uint64{}
++	for _, line := range strings.Split(string(b), "\n") {
++		f := strings.Fields(line)
++		if len(f) < 2 {
++			continue
++		}
++		n, _ := strconv.ParseUint(f[1], 10, 64)
++		out[strings.TrimSuffix(f[0], ":")] = n * 1024
++	}
++	return out, nil
++}
++
++func roundTo(v float64, places int) float64 {
++	p := 1.0
++	for i := 0; i < places; i++ {
++		p *= 10
++	}
++	return float64(int64(v*p+0.5)) / p
++}
+diff --git a/server/crash.go b/server/crash.go
+index 3439c4a..35b62df 100644
+--- a/server/crash.go
++++ b/server/crash.go
+@@ -10,6 +10,7 @@ import (
+ 
+ 	"github.com/pterodactyl/wings/config"
+ 	"github.com/pterodactyl/wings/environment"
++	"github.com/pterodactyl/wings/internal/models"
+ )
+ 
+ type CrashHandler struct {
+@@ -73,6 +74,10 @@ func (s *Server) handleServerCrash() error {
+ 	s.PublishConsoleOutputFromDaemon(fmt.Sprintf("Exit code: %d", exitCode))
+ 	s.PublishConsoleOutputFromDaemon(fmt.Sprintf("Out of memory: %t", oomKilled))
+ 
++	// Recoded Ptero: lets the panel notify the owner (sent with the regular activity batch, which
++	// drops entries without a valid IP, hence the loopback address for this system event).
++	s.SaveActivity(s.NewRequestActivity("", "127.0.0.1"), models.Event("server:crashed"), models.ActivityMeta{"exit_code": exitCode, "oom_killed": oomKilled})
++
+ 	c := s.crasher.LastCrashTime()
+ 	timeout := config.Get().System.CrashDetection.Timeout
+ 

@@ -51,4 +51,9 @@ return [
         'restoring_title' => 'Ripristino da backup',
         'restoring_message' => 'Il tuo server è attualmente in fase di ripristino da un backup, riprova tra qualche minuto.',
     ],
+    'crash_push' => [
+        'title' => ':server è andato in crash',
+        'out_of_memory' => 'Il server ha esaurito la memoria ed è stato riavviato.',
+        'exit_code' => 'Il server si è fermato inaspettatamente (codice :code) ed è stato riavviato.',
+    ],
 ];

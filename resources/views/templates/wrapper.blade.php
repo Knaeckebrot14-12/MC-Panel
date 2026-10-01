@@ -9,14 +9,34 @@
             <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
             <meta name="csrf-token" content="{{ csrf_token() }}">
             <meta name="robots" content="noindex">
-            <link rel="apple-touch-icon" sizes="180x180" href="/favicons/apple-touch-icon.png">
-            <link rel="icon" type="image/png" href="/favicons/favicon-32x32.png" sizes="32x32">
-            <link rel="icon" type="image/png" href="/favicons/favicon-16x16.png" sizes="16x16">
-            <link rel="manifest" href="/favicons/manifest.json">
-            <link rel="mask-icon" href="/favicons/safari-pinned-tab.svg" color="#bc6e3c">
-            <link rel="shortcut icon" href="/favicons/favicon.ico">
-            <meta name="msapplication-config" content="/favicons/browserconfig.xml">
-            <meta name="theme-color" content="#0e4688">
+            @include('partials.branding')
+            <style>
+                /* Gray scale of the panel; the light theme simply turns it around. */
+                :root {
+                    --rp-gray-50: 216 33% 97%; --rp-gray-100: 214 15% 91%; --rp-gray-200: 210 16% 82%;
+                    --rp-gray-300: 211 13% 65%; --rp-gray-400: 211 10% 53%; --rp-gray-500: 211 12% 43%;
+                    --rp-gray-600: 209 14% 37%; --rp-gray-700: 209 18% 30%; --rp-gray-800: 209 20% 25%;
+                    --rp-gray-900: 210 24% 16%; --rp-black: 208 25% 10%;
+                }
+                html[data-theme="light"] {
+                    --rp-gray-50: 210 24% 16%; --rp-gray-100: 209 20% 22%; --rp-gray-200: 209 18% 30%;
+                    --rp-gray-300: 209 14% 37%; --rp-gray-400: 211 12% 43%; --rp-gray-500: 211 10% 60%;
+                    --rp-gray-600: 213 18% 87%; --rp-gray-700: 0 0% 100%; --rp-gray-800: 210 20% 96%;
+                    --rp-gray-900: 214 25% 92%; --rp-black: 216 33% 97%;
+                    color-scheme: light;
+                }
+                @if(\Pterodactyl\Services\Branding\BrandingService::backgroundUrl())
+                body { background-image: url('{{ \Pterodactyl\Services\Branding\BrandingService::backgroundUrl() }}'); background-size: cover; background-position: center; background-attachment: fixed; }
+                @endif
+            </style>
+            <script>
+                // Before anything renders, so the page never flashes in the wrong theme.
+                (function () {
+                    var theme = '{{ \Pterodactyl\Services\Branding\BrandingService::defaultTheme() }}';
+                    try { theme = localStorage.getItem('rp-theme') || theme; } catch (e) {}
+                    document.documentElement.setAttribute('data-theme', theme === 'light' ? 'light' : 'dark');
+                })();
+            </script>
         @show
 
         @section('user-data')

@@ -74,10 +74,12 @@ return [
     'uploaded' => 'Caricamento del campo :attribute non riuscito.',
     'url' => 'Il formato del campo :attribute non è valido.',
     'attributes' => [
-
     ],
     'internal' => [
         'variable_value' => 'variabile :env',
         'invalid_password' => 'La password fornita non è valida per questo account.',
+    ],
+    'password' => [
+        'uncompromised' => 'Questa password è comparsa in una fuga di dati. Scegline un\'altra.',
     ],
 ];

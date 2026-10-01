@@ -37,3 +37,4 @@ resources/lang/locales.js
 /public/build
 /public/hot
 result
+installer/wings/dist/

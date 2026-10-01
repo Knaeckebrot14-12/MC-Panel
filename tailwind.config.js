@@ -1,17 +1,11 @@
 const colors = require('tailwindcss/colors');
 
-const gray = {
-    50: 'hsl(216, 33%, 97%)',
-    100: 'hsl(214, 15%, 91%)',
-    200: 'hsl(210, 16%, 82%)',
-    300: 'hsl(211, 13%, 65%)',
-    400: 'hsl(211, 10%, 53%)',
-    500: 'hsl(211, 12%, 43%)',
-    600: 'hsl(209, 14%, 37%)',
-    700: 'hsl(209, 18%, 30%)',
-    800: 'hsl(209, 20%, 25%)',
-    900: 'hsl(210, 24%, 16%)',
-};
+// Gray scale and accent come from CSS variables (set in templates/wrapper.blade.php and
+// partials/branding.blade.php), so Settings -> Design can change the accent colour and users can
+// switch between the dark and the light theme without rebuilding anything.
+const shades = [50, 100, 200, 300, 400, 500, 600, 700, 800, 900];
+const gray = Object.fromEntries(shades.map((shade) => [shade, `hsl(var(--rp-gray-${shade}) / <alpha-value>)`]));
+const accent = Object.fromEntries(shades.map((shade) => [shade, `rgb(var(--rp-primary-${shade}) / <alpha-value>)`]));
 
 module.exports = {
     content: [
@@ -23,10 +17,11 @@ module.exports = {
                 header: ['"IBM Plex Sans"', '"Roboto"', 'system-ui', 'sans-serif'],
             },
             colors: {
-                black: '#131a20',
+                black: 'hsl(var(--rp-black) / <alpha-value>)',
                 // "primary" and "neutral" are deprecated, prefer the use of "blue" and "gray"
                 // in new code.
-                primary: colors.blue,
+                primary: accent,
+                blue: accent,
                 gray: gray,
                 neutral: gray,
                 cyan: colors.cyan,

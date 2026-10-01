@@ -16,6 +16,12 @@ export interface SiteSettings {
     };
     statusPage?: boolean;
     verifyEmail?: boolean;
+    branding?: {
+        logo: string | null;
+        background: string | null;
+        defaultTheme: 'dark' | 'light';
+    };
+    subdomains?: boolean;
 }
 
 export interface SettingsStore {

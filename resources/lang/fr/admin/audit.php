@@ -49,5 +49,9 @@ return [
         'settings.login' => 'Paramètres de connexion et d\'inscription modifiés',
         'maintenance.updated' => 'Mode maintenance réglé sur :subject',
         'user.email_verified' => 'Adresse e-mail de :subject confirmée',
+        'nodes.wings_update' => 'A mis à jour Wings sur le node :subject vers :version',
+        'settings.monitoring' => 'A modifié les paramètres de surveillance',
+        'settings.design' => 'A modifié le design',
+        'settings.subdomains' => 'A modifié les paramètres des sous-domaines',
     ],
 ];

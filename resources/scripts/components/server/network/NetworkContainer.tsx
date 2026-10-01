@@ -13,9 +13,12 @@ import SpinnerOverlay from '@/components/elements/SpinnerOverlay';
 import getServerAllocations from '@/api/swr/getServerAllocations';
 import isEqual from 'react-fast-compare';
 import { useDeepCompareEffect } from '@/plugins/useDeepCompareEffect';
+import { useStoreState } from 'easy-peasy';
+import SubdomainBox from '@/components/server/network/SubdomainBox';
 
 const NetworkContainer = () => {
     const { t } = useTranslation('server_network');
+    const subdomains = useStoreState((state) => !!state.settings.data?.subdomains);
     const [loading, setLoading] = useState(false);
     const uuid = ServerContext.useStoreState((state) => state.server.data!.uuid);
     const allocationLimit = ServerContext.useStoreState((state) => state.server.data!.featureLimits.allocations);
@@ -58,6 +61,7 @@ const NetworkContainer = () => {
                 <Spinner size={'large'} centered />
             ) : (
                 <>
+                    {subdomains && <SubdomainBox />}
                     {data.map((allocation) => (
                         <AllocationRow key={`${allocation.ip}:${allocation.port}`} allocation={allocation} />
                     ))}

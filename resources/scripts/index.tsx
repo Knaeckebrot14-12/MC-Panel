@@ -5,6 +5,7 @@ import { setConfig } from 'react-hot-loader';
 
 // Enable language support.
 import './i18n';
+import { setupPwa } from '@/lib/pwa';
 
 // Prevents page reloads while making component changes which
 // also avoids triggering constant loading indicators all over
@@ -12,5 +13,8 @@ import './i18n';
 //
 // @see https://github.com/gaearon/react-hot-loader#hook-support
 setConfig({ reloadHooks: false });
+
+// Installable app + push notifications.
+setupPwa();
 
 ReactDOM.render(<App />, document.getElementById('app'));

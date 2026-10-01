@@ -13,6 +13,16 @@
 @endsection
 
 @section('content')
+@if(!Auth::user()->use_totp)
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="alert alert-danger">
+                <i class="fa fa-shield"></i> @lang('admin/index.security.no_2fa')
+                <a href="/account" class="btn btn-xs btn-default pull-right">@lang('admin/index.security.enable_2fa')</a>
+            </div>
+        </div>
+    </div>
+@endif
 <div class="row">
     <div class="col-xs-12">
         @php

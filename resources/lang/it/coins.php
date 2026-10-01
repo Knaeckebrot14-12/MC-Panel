@@ -141,4 +141,10 @@ return [
         'reminder_hint' => 'Guadagna o riscatta altri coin entro quella data, altrimenti il server verrà sospeso.',
         'reminder_action' => 'Guadagna coin',
     ],
+    'push' => [
+        'reminder_title' => ':server si rinnova presto',
+        'reminder_body' => 'Il rinnovo costa :price coin il :date, ne hai :have. Guadagna coin perché il server non venga sospeso.',
+        'suspended_title' => ':server è stato sospeso',
+        'suspended_body' => 'Non è stato possibile pagare il rinnovo di :price coin. Guadagna coin entro :days giorni o il server verrà eliminato.',
+    ],
 ];

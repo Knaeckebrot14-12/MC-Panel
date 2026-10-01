@@ -141,4 +141,10 @@ return [
         'reminder_hint' => 'Gana o canjea más coins antes de esa fecha; de lo contrario, el servidor se suspenderá.',
         'reminder_action' => 'Ganar coins',
     ],
+    'push' => [
+        'reminder_title' => ':server se renueva pronto',
+        'reminder_body' => 'La renovación cuesta :price monedas el :date y tienes :have. Gana monedas para que el servidor no se suspenda.',
+        'suspended_title' => ':server fue suspendido',
+        'suspended_body' => 'No se pudo pagar la renovación de :price monedas. Gana monedas en :days días o el servidor se eliminará.',
+    ],
 ];

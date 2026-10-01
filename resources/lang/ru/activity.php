@@ -13,6 +13,7 @@ return [
         'sftp' => [
             'fail' => 'Неудачная попытка входа по SFTP',
         ],
+        'reset-password-requested' => 'Запрошена ссылка для сброса пароля',
     ],
     'user' => [
         'user' => [
@@ -122,6 +123,14 @@ return [
             'create' => 'Добавлен :email как субпользователь',
             'update' => 'Обновлены права субпользователя :email',
             'delete' => 'Удалён :email из субпользователей',
+        ],
+        'crashed' => 'Сервер упал',
+        'software' => [
+            'install' => 'Установлено :type :version',
+        ],
+        'subdomain' => [
+            'set' => 'Настроен поддомен :subdomain',
+            'delete' => 'Поддомен удалён',
         ],
     ],
     'meta' => [

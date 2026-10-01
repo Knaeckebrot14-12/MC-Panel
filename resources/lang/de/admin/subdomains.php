@@ -1,0 +1,22 @@
+<?php
+
+return [
+    'title' => 'Subdomains',
+    'subheading' => 'Nutzer können ihren Servern eine Adresse wie name.play.example.com geben.',
+    'settings_heading' => 'Cloudflare',
+    'enabled_label' => 'Nutzer können Subdomains für ihre Server erstellen',
+    'token_label' => 'Cloudflare-API-Token',
+    'token_saved' => 'Gespeichert (versteckt). Neuen eingeben, um ihn zu ersetzen.',
+    'token_description' => 'Cloudflare: Mein Profil → API-Token → Token erstellen → Vorlage „Zonen-DNS bearbeiten“, beschränkt auf die Zone(n) der Domains unten.',
+    'domains_label' => 'Domains',
+    'domains_description' => 'Eine pro Zeile, z. B. play.example.com. Die Domain (oder ihre übergeordnete Domain) muss eine Zone in deinem Cloudflare-Konto sein.',
+    'save' => 'Speichern',
+    'saved' => 'Subdomain-Einstellungen gespeichert.',
+    'invalid_domains' => 'Keine gültige Domain: :domains',
+    'status_heading' => 'Prüfung',
+    'zone_ok' => 'Zone gefunden, der Token funktioniert',
+    'zone_missing' => 'Zone nicht gefunden oder kein Zugriff mit diesem Token',
+    'no_check' => 'Speichere einen Token und mindestens eine Domain, um sie zu prüfen.',
+    'count' => ':count Subdomain(s) in Benutzung.',
+    'how_text' => 'Jede Subdomain bekommt einen A-Eintrag auf den Node des Servers und bei Minecraft zusätzlich einen SRV-Eintrag mit dem Port, damit Spieler ohne Port joinen können. Die Einträge werden gelöscht, wenn die Subdomain oder der Server gelöscht wird.',
+];

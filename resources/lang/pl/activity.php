@@ -13,6 +13,7 @@ return [
         'sftp' => [
             'fail' => 'Nieudane logowanie SFTP',
         ],
+        'reset-password-requested' => 'Poproszono o link do resetu hasła',
     ],
     'user' => [
         'user' => [
@@ -122,6 +123,14 @@ return [
             'create' => 'Dodano :email jako podużytkownika',
             'update' => 'Zaktualizowano uprawnienia podużytkownika :email',
             'delete' => 'Usunięto :email z podużytkowników',
+        ],
+        'crashed' => 'Serwer uległ awarii',
+        'software' => [
+            'install' => 'Zainstalowano :type :version',
+        ],
+        'subdomain' => [
+            'set' => 'Ustawiono subdomenę :subdomain',
+            'delete' => 'Usunięto subdomenę',
         ],
     ],
     'meta' => [

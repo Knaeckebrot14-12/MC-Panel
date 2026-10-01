@@ -28,5 +28,7 @@ return [
         'network' => 'Сеть',
         'startup' => 'Запуск',
         'settings' => 'Настройки',
+        'software' => 'Версия',
     ],
+    'theme_tooltip' => 'Светлая / тёмная',
 ];

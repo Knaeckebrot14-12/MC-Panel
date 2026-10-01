@@ -30,5 +30,7 @@ return [
         'settings' => 'Paramètres',
         'players' => 'Joueurs',
         'properties' => 'Paramètres du serveur',
+        'software' => 'Version',
     ],
+    'theme_tooltip' => 'Clair / sombre',
 ];

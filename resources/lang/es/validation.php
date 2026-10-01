@@ -1,17 +1,6 @@
 <?php
 
 return [
-    /*
-    |--------------------------------------------------------------------------
-    | Validation Language Lines
-    |--------------------------------------------------------------------------
-    |
-    | The following language lines contain the default error messages used by
-    | the validator class. Some of these rules have multiple versions such
-    | as the size rules. Feel free to tweak each of these messages here.
-    |
-    */
-
     'accepted' => 'El campo :attribute debe ser aceptado.',
     'active_url' => 'El campo :attribute no es una URL válida.',
     'after' => 'El campo :attribute debe ser una fecha posterior a :date.',
@@ -84,23 +73,13 @@ return [
     'unique' => 'El :attribute ya está en uso.',
     'uploaded' => 'No se pudo subir el campo :attribute.',
     'url' => 'El formato del campo :attribute no es válido.',
-
-    /*
-    |--------------------------------------------------------------------------
-    | Custom Validation Attributes
-    |--------------------------------------------------------------------------
-    |
-    | The following language lines are used to swap attribute place-holders
-    | with something more reader friendly such as E-Mail Address instead
-    | of "email". This simply helps us make messages a little cleaner.
-    |
-    */
-
-    'attributes' => [],
-
-    // Internal validation logic for Pterodactyl
+    'attributes' => [
+    ],
     'internal' => [
         'variable_value' => 'variable :env',
         'invalid_password' => 'La contraseña proporcionada no es válida para esta cuenta.',
+    ],
+    'password' => [
+        'uncompromised' => 'Esta contraseña apareció en una filtración de datos. Elige otra contraseña.',
     ],
 ];

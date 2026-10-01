@@ -73,4 +73,12 @@ return [
     'throttle' => 'Muitas tentativas de login. Tente novamente em :seconds segundos.',
     'password_requirements' => 'A senha deve ter pelo menos 8 caracteres e ser única para este site.',
     '2fa_must_be_enabled' => 'O administrador exigiu que a autenticação em duas etapas esteja ativada na sua conta para usar o painel.',
+    'new_login' => [
+        'subject' => 'Novo login na sua conta',
+        'intro' => 'Sua conta (:username) acabou de ser usada para entrar a partir de um novo endereço.',
+        'details' => 'Hora: :time · Endereço IP: :ip',
+        'ok' => 'Se foi você, não é preciso fazer nada.',
+        'button' => 'Abrir configurações da conta',
+        'not_you' => 'Se não foi você, troque sua senha imediatamente e ative a autenticação em dois fatores.',
+    ],
 ];

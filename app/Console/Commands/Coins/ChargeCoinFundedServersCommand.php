@@ -7,6 +7,7 @@ use Pterodactyl\Models\Server;
 use Pterodactyl\Services\Coins\CoinService;
 use Pterodactyl\Services\Servers\SuspensionService;
 use Pterodactyl\Services\Servers\ServerDeletionService;
+use Pterodactyl\Services\Notifications\PushService;
 
 class ChargeCoinFundedServersCommand extends Command
 {
@@ -66,6 +67,13 @@ class ChargeCoinFundedServersCommand extends Command
 
                 if (!$server->coin_suspended_at) {
                     $server->update(['coin_suspended_at' => now()]);
+                    app(PushService::class)->sendToUsers(
+                        $user->id,
+                        trans('coins.push.suspended_title', ['server' => $server->name], $user->language ?: null),
+                        trans('coins.push.suspended_body', ['price' => $price, 'days' => $graceDays], $user->language ?: null),
+                        '/coins/shop',
+                        'coins-' . $server->uuidShort
+                    );
                 }
 
                 $this->warn("Suspended server #{$server->id} ({$server->name}) — owner could not afford the {$price} coin renewal.");

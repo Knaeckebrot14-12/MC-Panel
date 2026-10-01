@@ -85,4 +85,12 @@ return [
             'two_factor' => 'Ce compte utilise l\'authentification à deux facteurs. Connectez-vous avec votre mot de passe et votre code.',
         ],
     ],
+    'new_login' => [
+        'subject' => 'Nouvelle connexion à votre compte',
+        'intro' => 'Votre compte (:username) vient d\'être utilisé pour se connecter depuis une nouvelle adresse.',
+        'details' => 'Heure : :time · Adresse IP : :ip',
+        'ok' => 'Si c\'était vous, il n\'y a rien à faire.',
+        'button' => 'Ouvrir les paramètres du compte',
+        'not_you' => 'Si ce n\'était pas vous, changez immédiatement votre mot de passe et activez l\'authentification à deux facteurs.',
+    ],
 ];

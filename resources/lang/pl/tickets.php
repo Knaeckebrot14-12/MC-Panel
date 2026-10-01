@@ -75,4 +75,7 @@ return [
         'reply_line' => ':user odpowiedział(a) w zgłoszeniu #:id („:subject”).',
         'action' => 'Otwórz zgłoszenie',
     ],
+    'push' => [
+        'reply_title' => 'Nowa odpowiedź w tickecie #:id',
+    ],
 ];

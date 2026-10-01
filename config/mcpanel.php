@@ -40,6 +40,39 @@ return [
         'enabled' => env('MC_PANEL_STATUS_PAGE', true),
     ],
 
+    // Admin -> Settings -> Monitoring. Wings reports CPU, memory and disk every minute; alerts go to a
+    // Discord webhook when a node goes offline or crosses a threshold.
+    'monitoring' => [
+        'discord_webhook' => env('MC_PANEL_MONITORING_WEBHOOK'),
+        'notify_offline' => env('MC_PANEL_MONITORING_OFFLINE', true),
+        'disk_percent' => (int) env('MC_PANEL_MONITORING_DISK', 90),
+        'memory_percent' => (int) env('MC_PANEL_MONITORING_MEMORY', 95),
+    ],
+
+    // Admin -> Settings -> Design. Logo/favicon files live in /app/var/branding (kept across updates).
+    'branding' => [
+        'accent' => env('MC_PANEL_ACCENT', ''),
+        'background' => env('MC_PANEL_BACKGROUND', ''),
+        'logo' => env('MC_PANEL_LOGO', ''),
+        'favicon' => env('MC_PANEL_FAVICON', ''),
+        'default_theme' => env('MC_PANEL_DEFAULT_THEME', 'dark'),
+    ],
+
+    // Admin -> Settings -> Subdomains. Users pick name.<domain> for a server; the panel creates the
+    // DNS records through the Cloudflare API (token with "Zone.DNS: Edit" for these zones).
+    'subdomains' => [
+        'enabled' => env('MC_PANEL_SUBDOMAINS', false),
+        'cloudflare_token' => env('MC_PANEL_CLOUDFLARE_TOKEN'),
+        // Comma separated, e.g. "play.example.com,mc.example.net".
+        'domains' => env('MC_PANEL_SUBDOMAIN_DOMAINS', ''),
+    ],
+
+    // Browser push for the installable app. The keys are created automatically on first use.
+    'push' => [
+        'public_key' => env('MC_PANEL_VAPID_PUBLIC'),
+        'private_key' => env('MC_PANEL_VAPID_PRIVATE'),
+    ],
+
     // Admin -> Maintenance. "banner" shows the message to everybody, "lock" also keeps
     // everybody except the team out of the panel (game servers keep running).
     'maintenance' => [

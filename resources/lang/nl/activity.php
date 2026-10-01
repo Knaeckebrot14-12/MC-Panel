@@ -13,6 +13,7 @@ return [
         'sftp' => [
             'fail' => 'Mislukte SFTP-aanmelding',
         ],
+        'reset-password-requested' => 'Link voor wachtwoordherstel aangevraagd',
     ],
     'user' => [
         'user' => [
@@ -122,6 +123,14 @@ return [
             'create' => ':email toegevoegd als subgebruiker',
             'update' => 'Rechten van subgebruiker :email bijgewerkt',
             'delete' => ':email verwijderd als subgebruiker',
+        ],
+        'crashed' => 'De server is gecrasht',
+        'software' => [
+            'install' => ':type :version geïnstalleerd',
+        ],
+        'subdomain' => [
+            'set' => 'Subdomein :subdomain ingesteld',
+            'delete' => 'Subdomein verwijderd',
         ],
     ],
     'meta' => [

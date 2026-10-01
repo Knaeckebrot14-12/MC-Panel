@@ -107,6 +107,13 @@ class TicketController extends Controller
         if (!$internal) {
             try {
                 $ticket->user->notify((new TicketStaffReplied($ticket))->locale($ticket->user->language ?: config('app.default_locale', config('app.locale'))));
+                app(\Pterodactyl\Services\Notifications\PushService::class)->sendToUsers(
+                    $ticket->user_id,
+                    trans('tickets.push.reply_title', ['id' => $ticket->id], $ticket->user->language ?: null),
+                    mb_substr($ticket->subject, 0, 100),
+                    '/tickets/' . $ticket->id,
+                    'ticket-' . $ticket->id
+                );
             } catch (\Throwable $exception) {
                 report($exception);
             }

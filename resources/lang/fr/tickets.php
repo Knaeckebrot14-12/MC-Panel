@@ -22,7 +22,7 @@ return [
     'list' => [
         'title' => 'Tickets de support',
         'new_ticket' => 'Nouveau ticket',
-        'empty' => "Vous n'avez encore ouvert aucun ticket.",
+        'empty' => 'Vous n\'avez encore ouvert aucun ticket.',
         'previous' => 'Précédent',
         'next' => 'Suivant',
         'page_of' => 'Page :current sur :last',
@@ -43,7 +43,7 @@ return [
         'submit' => 'Envoyer le ticket',
     ],
     'view' => [
-        'rate_question' => "L'aide reçue vous a-t-elle été utile ?",
+        'rate_question' => 'L\'aide reçue vous a-t-elle été utile ?',
         'rate_up' => 'Oui',
         'rate_down' => 'Non',
         'rated_thanks' => 'Merci pour votre retour ! Vous pouvez encore modifier votre évaluation.',
@@ -58,8 +58,8 @@ return [
         'closed_notice' => 'Ce ticket est fermé.',
     ],
     'errors' => [
-        'rate_open' => "Vous ne pouvez évaluer un ticket qu'une fois celui-ci fermé.",
-        'too_many_open' => "Vous avez déjà :max tickets ouverts. Veuillez attendre que l'un d'eux soit résolu ou fermez-en un d'abord.",
+        'rate_open' => 'Vous ne pouvez évaluer un ticket qu\'une fois celui-ci fermé.',
+        'too_many_open' => 'Vous avez déjà :max tickets ouverts. Veuillez attendre que l\'un d\'eux soit résolu ou fermez-en un d\'abord.',
         'closed' => 'Ce ticket est fermé. Rouvrez-le pour répondre.',
     ],
     'mail' => [
@@ -74,5 +74,8 @@ return [
         'reply_subject' => 'Réponse du client au ticket #:id : :subject',
         'reply_line' => ':user a répondu au ticket #:id (« :subject »).',
         'action' => 'Ouvrir le ticket',
+    ],
+    'push' => [
+        'reply_title' => 'Nouvelle réponse au ticket #:id',
     ],
 ];

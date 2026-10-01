@@ -141,4 +141,10 @@ return [
         'reminder_hint' => 'Ganhe ou resgate mais moedas até lá, caso contrário o servidor será suspenso.',
         'reminder_action' => 'Ganhar moedas',
     ],
+    'push' => [
+        'reminder_title' => ':server será renovado em breve',
+        'reminder_body' => 'A renovação custa :price moedas em :date e você tem :have. Ganhe moedas para que o servidor não seja suspenso.',
+        'suspended_title' => ':server foi suspenso',
+        'suspended_body' => 'Não foi possível pagar a renovação de :price moedas. Ganhe moedas em :days dias ou o servidor será excluído.',
+    ],
 ];

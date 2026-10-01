@@ -115,6 +115,7 @@ class DiscordAuthController extends Controller
 
         $user->forceFill(['discord_username' => $profile['username']])->save();
 
+        app(\Pterodactyl\Services\Users\LoginAlertService::class)->check($user, $request);
         Auth::login($user, true);
         $request->session()->regenerate();
 

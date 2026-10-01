@@ -40,4 +40,8 @@ return [
         'valid_until' => 'Certificat SSL de :domain valable jusqu\'au :date (:days jours), renouvelé automatiquement 30 jours avant expiration.',
         'renew_failed' => 'Le dernier renouvellement automatique a échoué. Vérifiez que le domaine pointe toujours vers ce serveur et que le port 80 est accessible.',
     ],
+    'security' => [
+        'no_2fa' => 'Votre compte admin n\'a pas d\'authentification à deux facteurs. Activez-la : un compte admin protégé par un simple mot de passe est la cible la plus attrayante.',
+        'enable_2fa' => 'Activer la 2FA',
+    ],
 ];

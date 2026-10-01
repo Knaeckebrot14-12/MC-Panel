@@ -74,10 +74,12 @@ return [
     'uploaded' => 'Nie udało się przesłać pola :attribute.',
     'url' => 'Format pola :attribute jest nieprawidłowy.',
     'attributes' => [
-
     ],
     'internal' => [
         'variable_value' => 'zmienna :env',
         'invalid_password' => 'Podane hasło jest nieprawidłowe dla tego konta.',
+    ],
+    'password' => [
+        'uncompromised' => 'To hasło pojawiło się w wycieku danych. Wybierz inne hasło.',
     ],
 ];

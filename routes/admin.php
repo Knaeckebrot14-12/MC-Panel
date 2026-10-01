@@ -101,6 +101,16 @@ Route::group(['prefix' => 'settings', 'middleware' => ['owner.only']], function 
 
     Route::post('/mail/test', [Admin\Settings\MailController::class, 'test'])->name('admin.settings.mail.test');
 
+    Route::get('/monitoring', [Admin\Settings\MonitoringController::class, 'index'])->name('admin.settings.monitoring');
+    Route::patch('/monitoring', [Admin\Settings\MonitoringController::class, 'update']);
+    Route::post('/monitoring/test', [Admin\Settings\MonitoringController::class, 'test'])->name('admin.settings.monitoring.test');
+
+    Route::get('/design', [Admin\Settings\DesignController::class, 'index'])->name('admin.settings.design');
+    Route::post('/design', [Admin\Settings\DesignController::class, 'update']);
+
+    Route::get('/subdomains', [Admin\Settings\SubdomainSettingsController::class, 'index'])->name('admin.settings.subdomains');
+    Route::patch('/subdomains', [Admin\Settings\SubdomainSettingsController::class, 'update']);
+
     Route::patch('/', [Admin\Settings\IndexController::class, 'update']);
     Route::patch('/mail', [Admin\Settings\MailController::class, 'update']);
     Route::patch('/advanced', [Admin\Settings\AdvancedController::class, 'update']);
@@ -192,6 +202,10 @@ Route::group(['prefix' => 'nodes', 'middleware' => ['owner.only']], function () 
     Route::get('/view/{node:id}/allocation', [Admin\Nodes\NodeViewController::class, 'allocations'])->name('admin.nodes.view.allocation');
     Route::get('/view/{node:id}/servers', [Admin\Nodes\NodeViewController::class, 'servers'])->name('admin.nodes.view.servers');
     Route::get('/view/{node:id}/system-information', Admin\Nodes\SystemInformationController::class);
+    Route::get('/view/{node:id}/monitoring', [Admin\Nodes\NodeMonitorController::class, 'stats'])->name('admin.nodes.view.monitoring');
+    Route::get('/monitoring', [Admin\Nodes\NodeMonitorController::class, 'overview'])->name('admin.nodes.monitoring');
+    Route::post('/view/{node:id}/wings-update', [Admin\Nodes\NodeMonitorController::class, 'updateWings'])->name('admin.nodes.view.wings-update');
+    Route::post('/wings-update', [Admin\Nodes\NodeMonitorController::class, 'updateAllWings'])->name('admin.nodes.wings-update');
 
     Route::post('/new', [Admin\NodesController::class, 'store']);
     Route::post('/view/{node:id}/allocation', [Admin\NodesController::class, 'createAllocation']);

@@ -51,4 +51,9 @@ return [
         'restoring_title' => 'Restaurando de um backup',
         'restoring_message' => 'Seu servidor está sendo restaurado de um backup, volte em alguns minutos.',
     ],
+    'crash_push' => [
+        'title' => ':server travou',
+        'out_of_memory' => 'O servidor ficou sem memória e foi reiniciado.',
+        'exit_code' => 'O servidor parou inesperadamente (código :code) e foi reiniciado.',
+    ],
 ];

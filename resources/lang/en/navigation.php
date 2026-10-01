@@ -30,5 +30,7 @@ return [
         'settings' => 'Settings',
         'players' => 'Players',
         'properties' => 'Server settings',
+        'software' => 'Version',
     ],
+    'theme_tooltip' => 'Light / dark',
 ];

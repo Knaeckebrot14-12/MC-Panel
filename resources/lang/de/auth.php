@@ -85,4 +85,12 @@ return [
             'two_factor' => 'Dieses Konto nutzt Zwei-Faktor-Authentifizierung. Bitte melde dich mit Passwort und Code an.',
         ],
     ],
+    'new_login' => [
+        'subject' => 'Neuer Login in deinem Konto',
+        'intro' => 'Mit deinem Konto (:username) hat sich gerade jemand von einer neuen Adresse aus angemeldet.',
+        'details' => 'Zeit: :time · IP-Adresse: :ip',
+        'ok' => 'Warst du das, musst du nichts tun.',
+        'button' => 'Kontoeinstellungen öffnen',
+        'not_you' => 'Warst du das nicht, ändere sofort dein Passwort und schalte die Zwei-Faktor-Authentifizierung ein.',
+    ],
 ];

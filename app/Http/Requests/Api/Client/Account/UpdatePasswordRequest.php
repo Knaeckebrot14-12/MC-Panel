@@ -31,7 +31,7 @@ class UpdatePasswordRequest extends ClientApiRequest
     public function rules(): array
     {
         return [
-            'password' => ['required', 'string', 'confirmed', 'min:8'],
+            'password' => ['required', 'string', 'confirmed', 'min:8', \Illuminate\Validation\Rules\Password::min(8)->uncompromised()],
         ];
     }
 }

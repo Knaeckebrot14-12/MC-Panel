@@ -53,6 +53,11 @@ Route::prefix('/account')->middleware(AccountSubject::class)->group(function () 
 
     Route::post('/verify-email', [Client\EmailVerificationController::class, 'resend'])
         ->name('api:client.account.verify-email');
+
+    Route::get('/push', [Client\PushController::class, 'index']);
+    Route::post('/push', [Client\PushController::class, 'store'])->middleware('throttle:20,1,push');
+    Route::delete('/push', [Client\PushController::class, 'delete']);
+    Route::post('/push/test', [Client\PushController::class, 'test'])->middleware('throttle:5,1,push-test');
     Route::delete('/discord', [Client\AccountController::class, 'unlinkDiscord'])
         ->name('api:client.account.discord.unlink');
 
@@ -166,8 +171,16 @@ Route::group([
     });
 
     Route::get('/players', [Client\Servers\PlayerController::class, 'index']);
-    Route::post('/players', [Client\Servers\PlayerController::class, 'action'])->middleware('throttle:30,1');
+    Route::post('/players', [Client\Servers\PlayerController::class, 'action'])->middleware('throttle:30,1,players');
     Route::get('/stats', [Client\Servers\StatsController::class, 'index']);
+
+    Route::get('/software', [Client\Servers\SoftwareController::class, 'index']);
+    Route::get('/software/{type}', [Client\Servers\SoftwareController::class, 'versions'])->where('type', '[a-z]+')->middleware('throttle:30,1,software');
+    Route::post('/software', [Client\Servers\SoftwareController::class, 'install'])->middleware('throttle:5,1,software-install');
+
+    Route::get('/subdomain', [Client\Servers\SubdomainController::class, 'index']);
+    Route::put('/subdomain', [Client\Servers\SubdomainController::class, 'store'])->middleware('throttle:10,1,subdomain');
+    Route::delete('/subdomain', [Client\Servers\SubdomainController::class, 'delete'])->middleware('throttle:10,1,subdomain');
 
     Route::group(['prefix' => '/backups'], function () {
         // Must come before the /{backup} routes, which would otherwise try to bind "auto" as a backup.

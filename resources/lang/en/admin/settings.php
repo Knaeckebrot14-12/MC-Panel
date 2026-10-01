@@ -8,6 +8,9 @@ return [
         'advanced' => 'Advanced',
         'updates' => 'Updates',
         'login' => 'Login & Registration',
+        'design' => 'Design',
+        'monitoring' => 'Monitoring',
+        'subdomains' => 'Subdomains',
     ],
     'notice' => [
         'env_only' => 'Your Panel is currently configured to read settings from the environment only. You will need to set :env_var in your environment file in order to load settings dynamically.',

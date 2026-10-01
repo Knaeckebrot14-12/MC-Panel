@@ -84,4 +84,5 @@ return [
             'discord' => 'Discord est injoignable. Veuillez réessayer.',
         ],
     ],
+    'app_title' => 'Application et apparence',
 ];

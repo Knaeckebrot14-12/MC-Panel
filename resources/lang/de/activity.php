@@ -22,6 +22,7 @@ return [
         'discord' => [
             'login' => 'Mit Discord angemeldet',
         ],
+        'reset-password-requested' => 'Link zum Zurücksetzen des Passworts angefordert',
     ],
     'user' => [
         'user' => [
@@ -147,6 +148,14 @@ return [
             'kick' => ':target gekickt',
             'whitelist_on' => 'Whitelist eingeschaltet',
             'whitelist_off' => 'Whitelist ausgeschaltet',
+        ],
+        'crashed' => 'Der Server ist abgestürzt',
+        'software' => [
+            'install' => ':type :version installiert',
+        ],
+        'subdomain' => [
+            'set' => 'Subdomain :subdomain eingerichtet',
+            'delete' => 'Subdomain entfernt',
         ],
     ],
     'meta' => [

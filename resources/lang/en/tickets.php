@@ -22,7 +22,7 @@ return [
     'list' => [
         'title' => 'Support Tickets',
         'new_ticket' => 'New Ticket',
-        'empty' => "You haven't opened any tickets yet.",
+        'empty' => 'You haven\'t opened any tickets yet.',
         'previous' => 'Previous',
         'next' => 'Next',
         'page_of' => 'Page :current of :last',
@@ -74,5 +74,8 @@ return [
         'reply_subject' => 'Customer reply on ticket #:id: :subject',
         'reply_line' => ':user replied to ticket #:id (":subject").',
         'action' => 'Open Ticket',
+    ],
+    'push' => [
+        'reply_title' => 'New answer to ticket #:id',
     ],
 ];

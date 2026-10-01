@@ -60,4 +60,9 @@ return [
         'memory' => 'Memoria',
         'players' => 'Jugadores',
     ],
+    'crash_push' => [
+        'title' => ':server se ha caído',
+        'out_of_memory' => 'El servidor se quedó sin memoria y se reinició.',
+        'exit_code' => 'El servidor se detuvo inesperadamente (código :code) y se reinició.',
+    ],
 ];
