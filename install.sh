@@ -89,6 +89,46 @@ ask_secret() {
     printf -v "$var" '%s' "$answer"
 }
 
+# True when a question really waits for somebody to type (not answered by MC_<VAR> or a non-interactive run).
+can_retry() {
+    local preset="MC_$1"
+    [ -z "${!preset:-}" ] && [ "${MC_NONINTERACTIVE:-0}" != "1" ]
+}
+
+# Asks for the owner's e-mail until it looks valid (an unattended install has no one to ask and stops).
+ask_admin_email() {
+    while true; do
+        ask ADMIN_EMAIL "E-mail" ""
+        [[ "$ADMIN_EMAIL" == *@*.* ]] && return 0
+        can_retry ADMIN_EMAIL || die "Please enter a valid e-mail address."
+        warn "That does not look like an e-mail address. Please try again."
+    done
+}
+
+# Asks for the owner's password until it is long enough and was typed the same twice; empty
+# generates one. An unattended install (MC_ADMIN_PASS, MC_NONINTERACTIVE) can't be asked again and stops.
+ask_admin_password() {
+    local repeat=""
+    GENERATED_PASS=0
+    while true; do
+        ask_secret ADMIN_PASS "Password (leave empty to generate one)"
+        if [ -z "$ADMIN_PASS" ]; then
+            ADMIN_PASS="$(random_string 20)"; GENERATED_PASS=1
+            return 0
+        fi
+        if [ "${#ADMIN_PASS}" -lt 8 ]; then
+            can_retry ADMIN_PASS || die "The password needs at least 8 characters."
+            warn "The password needs at least 8 characters. Please try again."
+            continue
+        fi
+        can_retry ADMIN_PASS || return 0
+        ask_secret ADMIN_PASS_REPEAT "Repeat the password"
+        repeat="$ADMIN_PASS_REPEAT"
+        [ "$repeat" = "$ADMIN_PASS" ] && return 0
+        warn "The two passwords are not the same. Please try again."
+    done
+}
+
 # confirm "Question" y|n  — returns success for yes. Non-interactive runs take the default.
 confirm() {
     local question="$1" default="${2:-n}" answer="" hint="y/N"
@@ -400,15 +440,11 @@ install_panel() {
 
     echo
     printf '%s%s%s\n' "$C_BOLD" "Owner account (full access)" "$C_RESET"
-    ask ADMIN_EMAIL "E-mail" ""
-    [[ "$ADMIN_EMAIL" == *@*.* ]] || die "Please enter a valid e-mail address."
+    ask_admin_email
     ask ADMIN_USER "Username" "admin"
     ask ADMIN_FIRST "First name" "Admin"
     ask ADMIN_LAST "Last name" "User"
-    ask_secret ADMIN_PASS "Password (leave empty to generate one)"
-    GENERATED_PASS=0
-    if [ -z "$ADMIN_PASS" ]; then ADMIN_PASS="$(random_string 20)"; GENERATED_PASS=1; fi
-    [ "${#ADMIN_PASS}" -ge 8 ] || die "The password needs at least 8 characters."
+    ask_admin_password
 
     echo
     AUTO_UPDATE=0
