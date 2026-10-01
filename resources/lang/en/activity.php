@@ -75,6 +75,7 @@ return [
             'create' => 'Created new database :name',
             'rotate-password' => 'Password rotated for database :name',
             'delete' => 'Deleted database :name',
+            'open-manager' => 'Opened database :name in phpMyAdmin',
         ],
         'file' => [
             'compress_one' => 'Compressed :directory:files.0',

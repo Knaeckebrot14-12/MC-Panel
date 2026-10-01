@@ -15,6 +15,7 @@ return [
         'voucher' => 'Vouchers',
         'plan' => 'Server Plans',
         'coins' => 'Coin Settings',
+        'database' => 'Databases',
     ],
     'table' => [
         'server' => 'Server',
@@ -54,5 +55,8 @@ return [
         'settings.design' => 'Changed the design',
         'settings.subdomains' => 'Changed the subdomain settings',
         'settings.roles' => 'Changed the role permissions',
+        'database.manager_opened' => 'Opened phpMyAdmin with the account of database host :subject (:host)',
+        'settings.phpmyadmin_on' => 'Turned phpMyAdmin on',
+        'settings.phpmyadmin_off' => 'Turned phpMyAdmin off',
     ],
 ];

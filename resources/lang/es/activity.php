@@ -75,6 +75,7 @@ return [
             'create' => 'Creó la nueva base de datos :name',
             'rotate-password' => 'Rotó la contraseña de la base de datos :name',
             'delete' => 'Eliminó la base de datos :name',
+            'open-manager' => 'Abrió la base de datos :name en phpMyAdmin',
         ],
         'file' => [
             'compress_one' => 'Comprimió :directory:files.0',

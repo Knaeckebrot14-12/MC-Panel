@@ -11,6 +11,7 @@ A game server panel for Minecraft hosting, built on the open source [Pterodactyl
 - **Admin statistics** (users, servers, tickets, coins, node usage), **maintenance mode** (banner or lock-out) and a public **status page** at /status
 - **Translations**: English, German, French, Spanish and more, selectable per user
 - **Version changer**: switch a Minecraft server between Paper, Purpur, Folia, Fabric, Vanilla and Velocity and any of their versions with one click; the matching Java image is chosen automatically, and a backup can be made first (on by default, never by deleting another backup)
+- **phpMyAdmin** at `<panel>/phpmyadmin/`: admins open it with a database host's account, users open their own server databases with one click, without any extra login
 - **Subdomains**: users give their servers an address like `name.play.example.com` (A + SRV records through the Cloudflare API, no port needed to join)
 - **Node monitoring**: CPU, memory and disk graphs per node, Discord alerts when a node goes offline or runs full, and one-click Wings updates for all nodes
 - **Design**: logo, icon, accent colour and background under Settings → Design; every user can switch between the dark and a light theme
@@ -104,6 +105,15 @@ Nodes run this repository's Wings build: the official [pterodactyl/wings](https:
 Under **Admin → Nodes** each node shows its usage; when a newer Wings release exists, **Update Wings** (per node) or **Update all** installs it. Game servers keep running while Wings restarts. Nodes that still run an older Wings get the patched one once by running the installer's Wings option on them.
 
 Alerts are configured under **Admin → Settings → Monitoring** (Discord webhook, disk and memory thresholds). The same Discord channel can also get a message for every new support ticket and new registration.
+
+## phpMyAdmin
+
+[phpMyAdmin](https://www.phpmyadmin.net) (GPL-2.0) is part of the panel image and runs at `https://<your panel>/phpmyadmin/` (no extra container, port or certificate). The image downloads the official release at build time and checks it against the SHA-256 pinned in the [`Dockerfile`](Dockerfile); the panel's configuration for it is in [`.github/docker/phpmyadmin`](.github/docker/phpmyadmin).
+
+- **Admins** (and the owner) see the address and an **Open phpMyAdmin** button per host under **Admin → Databases**. It signs in with the host's own account, so databases, tables and users can be created and dropped and SQL can be run. Supporters, moderators and admins without the *Databases* permission (Settings → Roles) don't see it. Every opening is written to the audit log.
+- **Users** get a button per database in their server's **Databases** tab (and the address in the connection details). It signs in as that database's own user, so only that database is reachable. It needs the permission to see the database password.
+- There is **no login form**: every sign-in starts in the panel, which checks the permissions and hands the browser a one-time ticket (60 seconds, usable once, only in that browser session). Requests without it go back to the panel. A phpMyAdmin session ends after 30 minutes without activity.
+- The owner turns it on or off under **Admin → Settings → Advanced**; turning it off also signs everybody out of phpMyAdmin.
 
 ## Publishing updates (for maintainers)
 

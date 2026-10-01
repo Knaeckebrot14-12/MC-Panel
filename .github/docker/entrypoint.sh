@@ -84,6 +84,8 @@ fi
 mkdir -p /app/updater && chown nginx: /app/updater
 ## logo/favicon/background uploads (Settings -> Design), kept in the persistent var volume
 mkdir -p /app/var/branding && chown -R nginx: /app/var/branding
+## phpMyAdmin sessions and temporary files, only readable by php-fpm (see .github/docker/phpmyadmin)
+mkdir -p /tmp/phpmyadmin/sessions /tmp/phpmyadmin/tmp && chown -R nginx: /tmp/phpmyadmin && chmod 700 /tmp/phpmyadmin /tmp/phpmyadmin/sessions /tmp/phpmyadmin/tmp
 
 ## check log folder permissions
 echo "Checking log folder permissions."

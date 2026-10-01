@@ -3,11 +3,13 @@
 namespace Pterodactyl\Http\Controllers\Admin\Settings;
 
 use Illuminate\View\View;
+use Pterodactyl\Services\StaffAudit;
 use Illuminate\Http\RedirectResponse;
 use Prologue\Alerts\AlertsMessageBag;
 use Illuminate\Contracts\Console\Kernel;
 use Pterodactyl\Http\Controllers\Controller;
 use Illuminate\Contracts\Config\Repository as ConfigRepository;
+use Pterodactyl\Services\Databases\PhpMyAdminService;
 use Pterodactyl\Contracts\Repository\SettingsRepositoryInterface;
 use Pterodactyl\Http\Requests\Admin\Settings\AdvancedSettingsFormRequest;
 
@@ -46,10 +48,21 @@ class AdvancedController extends Controller
      * @throws \Pterodactyl\Exceptions\Model\DataValidationException
      * @throws \Pterodactyl\Exceptions\Repository\RecordNotFoundException
      */
-    public function update(AdvancedSettingsFormRequest $request): RedirectResponse
+    public function update(AdvancedSettingsFormRequest $request, PhpMyAdminService $phpMyAdmin): RedirectResponse
     {
+        $phpMyAdminWasEnabled = PhpMyAdminService::enabled();
+
         foreach ($request->normalize() as $key => $value) {
             $this->settings->set('settings::' . $key, $value);
+        }
+
+        $phpMyAdminEnabled = $request->input('mcpanel:phpmyadmin:enabled') === 'true';
+        if ($phpMyAdminEnabled !== $phpMyAdminWasEnabled) {
+            // Turning it off also signs everybody out of phpMyAdmin right away.
+            if (!$phpMyAdminEnabled) {
+                $phpMyAdmin->endAllSessions();
+            }
+            StaffAudit::record($phpMyAdminEnabled ? 'settings.phpmyadmin_on' : 'settings.phpmyadmin_off');
         }
 
         $this->kernel->call('queue:restart');

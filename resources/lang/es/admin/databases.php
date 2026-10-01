@@ -74,4 +74,12 @@ return [
             'manage_button' => 'Gestionar',
         ],
     ],
+    'phpmyadmin' => [
+        'heading' => 'phpMyAdmin',
+        'column' => 'phpMyAdmin',
+        'open_button' => 'Abrir phpMyAdmin',
+        'url_label' => 'Dirección',
+        'description' => 'Abre phpMyAdmin en una pestaña nueva con la cuenta de este host: crear y eliminar bases de datos, tablas y usuarios, o ejecutar SQL. Solo lo ven los administradores; cada apertura queda en el registro de auditoría.',
+        'hint' => 'phpMyAdmin está en :url. «Abrir phpMyAdmin» inicia sesión con la cuenta del host en una pestaña nueva (solo administradores, queda en el registro de auditoría).',
+    ],
 ];

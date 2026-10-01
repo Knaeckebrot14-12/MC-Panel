@@ -25,4 +25,7 @@ return [
     'starting_port_description' => 'Der Startport des Bereichs, der automatisch zugewiesen werden kann.',
     'ending_port_label' => 'Endport',
     'ending_port_description' => 'Der Endport des Bereichs, der automatisch zugewiesen werden kann.',
+    'phpmyadmin_heading' => 'phpMyAdmin',
+    'phpmyadmin_url_label' => 'Adresse',
+    'phpmyadmin_description' => 'Admins öffnen phpMyAdmin unter Datenbanken mit dem Konto eines Hosts; Benutzer öffnen die Datenbanken ihres Servers im Datenbanken-Tab (dafür brauchen sie die Berechtigung, das Datenbank-Passwort zu sehen). Es gibt keine Login-Seite: phpMyAdmin akzeptiert nur Anmeldungen über das Panel. Beim Ausschalten werden auch alle sofort aus phpMyAdmin abgemeldet.',
 ];

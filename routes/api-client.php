@@ -118,6 +118,8 @@ Route::group([
         Route::middleware([ResourceLimit::Database->middleware()])
             ->post('/', [Client\Servers\DatabaseController::class, 'store']);
         Route::post('/{database}/rotate-password', [Client\Servers\DatabaseController::class, 'rotatePassword']);
+        Route::post('/{database}/manager', [Client\Servers\DatabaseController::class, 'manager'])
+            ->middleware('throttle:20,1,phpmyadmin');
         Route::delete('/{database}', [Client\Servers\DatabaseController::class, 'delete']);
     });
 

@@ -74,4 +74,12 @@ return [
             'manage_button' => 'Verwalten',
         ],
     ],
+    'phpmyadmin' => [
+        'heading' => 'phpMyAdmin',
+        'column' => 'phpMyAdmin',
+        'open_button' => 'phpMyAdmin öffnen',
+        'url_label' => 'Adresse',
+        'description' => 'Öffnet phpMyAdmin in einem neuen Tab, angemeldet mit dem Konto dieses Hosts: Datenbanken, Tabellen und Benutzer anlegen und löschen oder SQL ausführen. Nur Admins sehen das; jedes Öffnen wird im Audit-Log festgehalten.',
+        'hint' => 'phpMyAdmin läuft unter :url. „phpMyAdmin öffnen“ meldet sich in einem neuen Tab mit dem Konto des Hosts an (nur Admins, wird im Audit-Log festgehalten).',
+    ],
 ];

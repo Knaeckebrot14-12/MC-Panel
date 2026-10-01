@@ -7,12 +7,15 @@ use Pterodactyl\Models\Server;
 use Pterodactyl\Models\Database;
 use Pterodactyl\Facades\Activity;
 use Pterodactyl\Exceptions\DisplayException;
+use Pterodactyl\Services\Databases\PhpMyAdminService;
 use Pterodactyl\Services\Databases\DatabasePasswordService;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Pterodactyl\Transformers\Api\Client\DatabaseTransformer;
 use Pterodactyl\Services\Databases\DatabaseManagementService;
 use Pterodactyl\Services\Databases\DeployServerDatabaseService;
 use Pterodactyl\Http\Controllers\Api\Client\ClientApiController;
 use Pterodactyl\Http\Requests\Api\Client\Servers\Databases\GetDatabasesRequest;
+use Pterodactyl\Http\Requests\Api\Client\Servers\Databases\OpenManagerRequest;
 use Pterodactyl\Http\Requests\Api\Client\Servers\Databases\StoreDatabaseRequest;
 use Pterodactyl\Http\Requests\Api\Client\Servers\Databases\DeleteDatabaseRequest;
 use Pterodactyl\Http\Requests\Api\Client\Servers\Databases\RotatePasswordRequest;
@@ -84,6 +87,25 @@ class DatabaseController extends ClientApiController
             ->parseIncludes(['password'])
             ->transformWith($this->getTransformer(DatabaseTransformer::class))
             ->toArray();
+    }
+
+    /**
+     * Returns a one-time URL that opens phpMyAdmin signed in as this database's own user.
+     */
+    public function manager(OpenManagerRequest $request, Server $server, Database $database, PhpMyAdminService $phpMyAdmin): array
+    {
+        if (!PhpMyAdminService::enabled()) {
+            throw new NotFoundHttpException();
+        }
+
+        $url = $phpMyAdmin->launchForDatabase($database, $request);
+
+        Activity::event('server:database.open-manager')
+            ->subject($database)
+            ->property('name', $database->database)
+            ->log();
+
+        return ['url' => $url];
     }
 
     /**

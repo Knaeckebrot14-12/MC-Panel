@@ -15,6 +15,7 @@ return [
         'voucher' => 'Gutscheine',
         'plan' => 'Server-Pakete',
         'coins' => 'Coin-Einstellungen',
+        'database' => 'Datenbanken',
     ],
     'table' => [
         'server' => 'Server',
@@ -54,5 +55,8 @@ return [
         'settings.design' => 'Design geändert',
         'settings.subdomains' => 'Subdomain-Einstellungen geändert',
         'settings.roles' => 'Rollenrechte geändert',
+        'database.manager_opened' => 'phpMyAdmin mit dem Konto des Datenbank-Hosts :subject (:host) geöffnet',
+        'settings.phpmyadmin_on' => 'phpMyAdmin eingeschaltet',
+        'settings.phpmyadmin_off' => 'phpMyAdmin ausgeschaltet',
     ],
 ];

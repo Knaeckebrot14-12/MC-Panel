@@ -33,6 +33,9 @@
                             <th>@lang('admin/databases.index.table.username')</th>
                             <th class="text-center">@lang('admin/databases.index.table.databases')</th>
                             <th class="text-center">@lang('admin/databases.index.table.node')</th>
+                            @if($canOpenManager)
+                                <th class="text-center">@lang('admin/databases.phpmyadmin.column')</th>
+                            @endif
                         </tr>
                         @foreach ($hosts as $host)
                             <tr>
@@ -49,11 +52,24 @@
                                         <span class="label label-default">@lang('admin/databases.index.table.none')</span>
                                     @endif
                                 </td>
+                                @if($canOpenManager)
+                                    <td class="text-center">
+                                        <form action="{{ route('admin.databases.manager', $host->id) }}" method="POST" target="_blank" rel="noopener" class="no-margin">
+                                            {!! csrf_field() !!}
+                                            <button type="submit" class="btn btn-xs btn-primary"><i class="fa fa-external-link"></i> @lang('admin/databases.phpmyadmin.open_button')</button>
+                                        </form>
+                                    </td>
+                                @endif
                             </tr>
                         @endforeach
                     </tbody>
                 </table>
             </div>
+            @if($canOpenManager)
+                <div class="box-footer">
+                    <p class="text-muted small no-margin">{!! trans('admin/databases.phpmyadmin.hint', ['url' => '<code>' . e($managerUrl) . '</code>']) !!}</p>
+                </div>
+            @endif
         </div>
     </div>
 </div>

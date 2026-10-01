@@ -63,6 +63,7 @@ return [
             'create' => 'Nieuwe database :name aangemaakt',
             'rotate-password' => 'Wachtwoord van database :name geroteerd',
             'delete' => 'Database :name verwijderd',
+            'open-manager' => 'Database :name geopend in phpMyAdmin',
         ],
         'file' => [
             'compress_one' => ':directory:files.0 gecomprimeerd',

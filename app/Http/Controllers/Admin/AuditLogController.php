@@ -31,7 +31,7 @@ class AuditLogController extends Controller
         return view('admin.audit.index', [
             'logs' => $query->paginate(50)->appends($request->query()),
             'filters' => ['group' => $group, 'search' => $search],
-            'groups' => ['user', 'server', 'ticket', 'voucher', 'plan', 'coins'],
+            'groups' => ['user', 'server', 'database', 'ticket', 'voucher', 'plan', 'coins'],
         ]);
     }
 }

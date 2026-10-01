@@ -3,10 +3,14 @@
 namespace Pterodactyl\Http\Controllers\Admin;
 
 use Illuminate\View\View;
+use Illuminate\Http\Request;
 use Pterodactyl\Models\DatabaseHost;
+use Pterodactyl\Services\StaffAudit;
 use Illuminate\Http\RedirectResponse;
 use Prologue\Alerts\AlertsMessageBag;
 use Pterodactyl\Http\Controllers\Controller;
+use Pterodactyl\Services\Databases\PhpMyAdminService;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Pterodactyl\Services\Databases\Hosts\HostUpdateService;
 use Pterodactyl\Http\Requests\Admin\DatabaseHostFormRequest;
 use Pterodactyl\Services\Databases\Hosts\HostCreationService;
@@ -39,6 +43,8 @@ class DatabaseController extends Controller
         return view('admin.databases.index', [
             'locations' => $this->locationRepository->getAllWithNodes(),
             'hosts' => $this->repository->getWithViewDetails(),
+            'canOpenManager' => PhpMyAdminService::adminMayOpen(auth()->user()),
+            'managerUrl' => PhpMyAdminService::url(),
         ]);
     }
 
@@ -53,6 +59,8 @@ class DatabaseController extends Controller
             'locations' => $this->locationRepository->getAllWithNodes(),
             'host' => $this->repository->find($host),
             'databases' => $this->databaseRepository->getDatabasesForHost($host),
+            'canOpenManager' => PhpMyAdminService::adminMayOpen(auth()->user()),
+            'managerUrl' => PhpMyAdminService::url(),
         ]);
     }
 
@@ -109,6 +117,21 @@ class DatabaseController extends Controller
         }
 
         return $redirect;
+    }
+
+    /**
+     * Opens phpMyAdmin with the host's own account (the form opens it in a new tab).
+     */
+    public function manager(Request $request, DatabaseHost $host, PhpMyAdminService $phpMyAdmin): RedirectResponse
+    {
+        if (!PhpMyAdminService::adminMayOpen($request->user())) {
+            throw new NotFoundHttpException();
+        }
+
+        $url = $phpMyAdmin->launchForHost($host, $request);
+        StaffAudit::record('database.manager_opened', $host->name, ['host' => $host->host . ':' . $host->port]);
+
+        return redirect()->away($url, 303);
     }
 
     /**

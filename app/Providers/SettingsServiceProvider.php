@@ -83,6 +83,7 @@ class SettingsServiceProvider extends ServiceProvider
         'mcpanel:push:public_key',
         'mcpanel:push:private_key',
         'mcpanel:roles:permissions',
+        'mcpanel:phpmyadmin:enabled',
     ];
 
     /**

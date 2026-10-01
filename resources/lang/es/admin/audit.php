@@ -15,6 +15,7 @@ return [
         'voucher' => 'Cupones',
         'plan' => 'Planes de servidor',
         'coins' => 'Ajustes de coins',
+        'database' => 'Bases de datos',
     ],
     'table' => [
         'server' => 'Servidor',
@@ -54,5 +55,8 @@ return [
         'settings.design' => 'Cambió el diseño',
         'settings.subdomains' => 'Cambió los ajustes de subdominios',
         'settings.roles' => 'Cambió los permisos de los roles',
+        'database.manager_opened' => 'Abrió phpMyAdmin con la cuenta del host de base de datos :subject (:host)',
+        'settings.phpmyadmin_on' => 'Activó phpMyAdmin',
+        'settings.phpmyadmin_off' => 'Desactivó phpMyAdmin',
     ],
 ];

@@ -44,4 +44,12 @@ return [
         'password_label' => 'Senha',
         'close_button' => 'Fechar',
     ],
+    'manager' => [
+        'open' => 'Abrir phpMyAdmin',
+        'url_label' => 'phpMyAdmin',
+        'url_description' => 'Abre o phpMyAdmin em uma nova aba, já conectado como o usuário deste banco de dados.',
+        'expired' => 'Este link do phpMyAdmin expirou ou já foi usado. Abra o phpMyAdmin novamente pelo painel.',
+        'failed' => 'O phpMyAdmin não conseguiu entrar no banco de dados:',
+        'back' => 'Voltar ao painel',
+    ],
 ];

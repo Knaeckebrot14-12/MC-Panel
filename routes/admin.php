@@ -73,6 +73,10 @@ Route::group(['prefix' => 'databases', 'middleware' => ['staff:databases']], fun
     Route::get('/view/{host:id}', [Admin\DatabaseController::class, 'view'])->name('admin.databases.view');
 
     Route::post('/', [Admin\DatabaseController::class, 'create']);
+    // phpMyAdmin with the host's account: admins (and the owner) only, see PhpMyAdminService.
+    Route::post('/view/{host:id}/manager', [Admin\DatabaseController::class, 'manager'])
+        ->name('admin.databases.manager')
+        ->middleware(['admin.only', 'throttle:20,1,phpmyadmin']);
     Route::patch('/view/{host:id}', [Admin\DatabaseController::class, 'update']);
     Route::delete('/view/{host:id}', [Admin\DatabaseController::class, 'delete']);
 });

@@ -26,6 +26,29 @@ RUN apk add --no-cache --update ca-certificates dcron curl git supervisor tar un
     && docker-php-ext-install bcmath gd pdo_mysql zip \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
+# phpMyAdmin at <panel>/phpmyadmin/ (signed in by the panel, see .github/docker/phpmyadmin). The
+# official release is checked against the pinned SHA-256, which was compared with the release's
+# GPG signature when the version was pinned. Its own layer, so the extension layer above stays
+# cached on existing installations. Only the panel's languages are kept; documentation, setup
+# and build files are removed, as is the "LOAD DATA LOCAL" import (it could read panel files).
+ARG PHPMYADMIN_VERSION=5.2.3
+ARG PHPMYADMIN_SHA256=12ba1c425fa4071abbd4e7668c9ebdeac0b0755a467a6d6d5026122bb47c102b
+RUN docker-php-ext-install mysqli \
+    && curl -fsSL -o /tmp/phpmyadmin.tar.gz "https://files.phpmyadmin.net/phpMyAdmin/${PHPMYADMIN_VERSION}/phpMyAdmin-${PHPMYADMIN_VERSION}-all-languages.tar.gz" \
+    && echo "${PHPMYADMIN_SHA256}  /tmp/phpmyadmin.tar.gz" | sha256sum -c - \
+    && mkdir -p /app/public/phpmyadmin \
+    && tar -xzf /tmp/phpmyadmin.tar.gz -C /app/public/phpmyadmin --strip-components=1 --no-same-owner \
+    && rm /tmp/phpmyadmin.tar.gz \
+    && cd /app/public/phpmyadmin \
+    && rm -rf setup doc examples test composer.json composer.lock package.json yarn.lock babel.config.json \
+        CONTRIBUTING.md ChangeLog README RELEASE-DATE-* config.sample.inc.php show_config_errors.php .rtlcssrc.json robots.txt \
+        libraries/classes/Plugins/Import/ImportLdi.php \
+    && find locale -mindepth 1 -maxdepth 1 -type d ! -name de ! -name fr ! -name es ! -name it ! -name nl ! -name pl ! -name pt ! -name pt_BR ! -name ru -exec rm -rf {} + \
+    && find . -name '*.map' -type f -delete \
+    && mkdir -p /tmp/phpmyadmin/sessions /tmp/phpmyadmin/tmp \
+    && chown -R nginx:nginx /tmp/phpmyadmin \
+    && chmod -R 700 /tmp/phpmyadmin
+
 RUN rm /usr/local/etc/php-fpm.conf \
     && echo "* * * * * /usr/local/bin/php /app/artisan schedule:run >> /dev/null 2>&1" >> /var/spool/cron/crontabs/root \
     && sed -i s/ssl_session_cache/#ssl_session_cache/g /etc/nginx/nginx.conf \
@@ -38,6 +61,8 @@ COPY .github/docker/supervisord.conf /etc/supervisord.conf
 
 COPY . ./
 COPY --from=0 /app/public/assets ./public/assets
+# phpMyAdmin stays owned by root (read-only for php-fpm), so it is left out of the chown below.
+COPY .github/docker/phpmyadmin/config.inc.php .github/docker/phpmyadmin/signon.php ./public/phpmyadmin/
 # A throwaway key lets composer's artisan hooks run cleanly during the build; the .env with it is
 # deleted right after, and the real key is created on first start (see entrypoint.sh).
 RUN cp .env.example .env \
@@ -47,7 +72,7 @@ RUN cp .env.example .env \
     && composer install --no-dev --optimize-autoloader \
     && rm -rf .env bootstrap/cache/*.php \
     && mkdir -p /app/storage/logs/ \
-    && chown -R nginx:nginx .
+    && find . -path ./public/phpmyadmin -prune -o -exec chown nginx:nginx {} +
 
 # Which commit this image was built from; shown in Settings -> Updates and used to detect new versions.
 ARG MC_COMMIT=unknown

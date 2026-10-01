@@ -25,4 +25,7 @@ return [
     'starting_port_description' => 'The starting port in the range that can be automatically allocated.',
     'ending_port_label' => 'Ending Port',
     'ending_port_description' => 'The ending port in the range that can be automatically allocated.',
+    'phpmyadmin_heading' => 'phpMyAdmin',
+    'phpmyadmin_url_label' => 'Address',
+    'phpmyadmin_description' => 'Admins open phpMyAdmin under Databases with a host\'s account; users open their server\'s databases from the Databases tab (they need the permission to see the database password). There is no login page: phpMyAdmin only accepts sign-ins from the panel. Turning it off also signs everybody out of phpMyAdmin.',
 ];

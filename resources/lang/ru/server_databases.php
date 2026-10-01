@@ -44,4 +44,12 @@ return [
         'password_label' => 'Пароль',
         'close_button' => 'Закрыть',
     ],
+    'manager' => [
+        'open' => 'Открыть phpMyAdmin',
+        'url_label' => 'phpMyAdmin',
+        'url_description' => 'Открывает phpMyAdmin в новой вкладке с входом под пользователем этой базы данных.',
+        'expired' => 'Срок действия этой ссылки phpMyAdmin истёк, или она уже была использована. Откройте phpMyAdmin снова из панели.',
+        'failed' => 'phpMyAdmin не удалось войти в базу данных:',
+        'back' => 'Назад в панель',
+    ],
 ];

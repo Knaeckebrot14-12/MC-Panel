@@ -75,6 +75,7 @@ return [
             'create' => 'Neue Datenbank :name erstellt',
             'rotate-password' => 'Passwort für Datenbank :name erneuert',
             'delete' => 'Datenbank :name gelöscht',
+            'open-manager' => 'Datenbank :name in phpMyAdmin geöffnet',
         ],
         'file' => [
             'compress_one' => ':directory:files.0 komprimiert',

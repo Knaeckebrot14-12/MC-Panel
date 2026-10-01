@@ -10,3 +10,4 @@ installer
 install.sh
 docker-compose*.yml
 .github/workflows
+public/phpmyadmin

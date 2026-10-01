@@ -88,6 +88,33 @@
         </div>
     </div>
 </form>
+@if($canOpenManager)
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box box-success">
+                <div class="box-header with-border">
+                    <h3 class="box-title">@lang('admin/databases.phpmyadmin.heading')</h3>
+                </div>
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <label for="pManagerUrl" class="form-label">@lang('admin/databases.phpmyadmin.url_label')</label>
+                            <input type="text" id="pManagerUrl" class="form-control" readonly value="{{ $managerUrl }}" />
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label hidden-xs hidden-sm">&nbsp;</label>
+                            <form action="{{ route('admin.databases.manager', $host->id) }}" method="POST" target="_blank" rel="noopener" class="no-margin">
+                                {!! csrf_field() !!}
+                                <button type="submit" class="btn btn-primary btn-block"><i class="fa fa-external-link"></i> @lang('admin/databases.phpmyadmin.open_button')</button>
+                            </form>
+                        </div>
+                    </div>
+                    <p class="text-muted small no-margin" style="margin-top: 10px;">@lang('admin/databases.phpmyadmin.description')</p>
+                </div>
+            </div>
+        </div>
+    </div>
+@endif
 <div class="row">
     <div class="col-xs-12">
         <div class="box">

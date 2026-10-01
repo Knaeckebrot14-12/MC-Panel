@@ -88,4 +88,10 @@ return [
         'mode' => env('MC_PANEL_MAINTENANCE_MODE', 'off'),
         'message' => env('MC_PANEL_MAINTENANCE_MESSAGE', ''),
     ],
+
+    // phpMyAdmin at <panel>/phpmyadmin/, opened from Admin -> Databases and the servers' Databases
+    // tab. Turned on and off by the owner under Admin -> Settings -> Advanced.
+    'phpmyadmin' => [
+        'enabled' => env('MC_PANEL_PHPMYADMIN', true),
+    ],
 ];

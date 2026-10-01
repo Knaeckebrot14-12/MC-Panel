@@ -44,4 +44,12 @@ return [
         'password_label' => 'Password',
         'close_button' => 'Close',
     ],
+    'manager' => [
+        'open' => 'Open phpMyAdmin',
+        'url_label' => 'phpMyAdmin',
+        'url_description' => 'Opens phpMyAdmin in a new tab, signed in as this database\'s user.',
+        'expired' => 'This phpMyAdmin link has expired or was already used. Open phpMyAdmin again from the panel.',
+        'failed' => 'phpMyAdmin could not sign in to the database:',
+        'back' => 'Back to the panel',
+    ],
 ];

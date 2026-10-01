@@ -44,4 +44,12 @@ return [
         'password_label' => 'Wachtwoord',
         'close_button' => 'Sluiten',
     ],
+    'manager' => [
+        'open' => 'phpMyAdmin openen',
+        'url_label' => 'phpMyAdmin',
+        'url_description' => 'Opent phpMyAdmin in een nieuw tabblad, ingelogd als de gebruiker van deze database.',
+        'expired' => 'Deze phpMyAdmin-link is verlopen of al gebruikt. Open phpMyAdmin opnieuw vanuit het panel.',
+        'failed' => 'phpMyAdmin kon niet inloggen bij de database:',
+        'back' => 'Terug naar het panel',
+    ],
 ];

@@ -38,3 +38,6 @@ resources/lang/locales.js
 /public/hot
 result
 installer/wings/dist/
+
+# Downloaded into the image at build time (see Dockerfile)
+/public/phpmyadmin

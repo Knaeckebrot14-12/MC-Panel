@@ -25,4 +25,7 @@ return [
     'starting_port_description' => 'El puerto inicial del rango que se puede asignar automáticamente.',
     'ending_port_label' => 'Puerto final',
     'ending_port_description' => 'El puerto final del rango que se puede asignar automáticamente.',
+    'phpmyadmin_heading' => 'phpMyAdmin',
+    'phpmyadmin_url_label' => 'Dirección',
+    'phpmyadmin_description' => 'Los administradores abren phpMyAdmin en Bases de datos con la cuenta de un host; los usuarios abren las bases de datos de su servidor desde la pestaña Bases de datos (necesitan el permiso para ver la contraseña de la base de datos). No hay página de inicio de sesión: phpMyAdmin solo acepta inicios de sesión desde el panel. Al desactivarlo también se cierra la sesión de todos en phpMyAdmin.',
 ];

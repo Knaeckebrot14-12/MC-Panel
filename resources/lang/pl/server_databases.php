@@ -44,4 +44,12 @@ return [
         'password_label' => 'Hasło',
         'close_button' => 'Zamknij',
     ],
+    'manager' => [
+        'open' => 'Otwórz phpMyAdmin',
+        'url_label' => 'phpMyAdmin',
+        'url_description' => 'Otwiera phpMyAdmin w nowej karcie, zalogowany jako użytkownik tej bazy danych.',
+        'expired' => 'Ten link do phpMyAdmin wygasł lub został już użyty. Otwórz phpMyAdmin ponownie z panelu.',
+        'failed' => 'phpMyAdmin nie mógł zalogować się do bazy danych:',
+        'back' => 'Powrót do panelu',
+    ],
 ];

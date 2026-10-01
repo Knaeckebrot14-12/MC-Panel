@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faDatabase, faEye, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
+import { faDatabase, faExternalLinkAlt, faEye, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
+import { useStoreState } from 'easy-peasy';
+import openDatabaseManager from '@/api/server/databases/openDatabaseManager';
 import Modal from '@/components/elements/Modal';
 import { Form, Formik, FormikHelpers } from 'formik';
 import Field from '@/components/elements/Field';
@@ -32,6 +34,8 @@ export default ({ database, className }: Props) => {
     const { addError, clearFlashes } = useFlash();
     const [visible, setVisible] = useState(false);
     const [connectionVisible, setConnectionVisible] = useState(false);
+    const [openingManager, setOpeningManager] = useState(false);
+    const phpMyAdminUrl = useStoreState((state) => state.settings.data?.phpMyAdmin);
 
     const appendDatabase = ServerContext.useStoreActions((actions) => actions.databases.appendDatabase);
     const removeDatabase = ServerContext.useStoreActions((actions) => actions.databases.removeDatabase);
@@ -58,6 +62,32 @@ export default ({ database, className }: Props) => {
                 setSubmitting(false);
                 addError({ key: 'database:delete', message: httpErrorToHuman(error) });
             });
+    };
+
+    // The tab is opened right away, inside the click, so popup blockers allow it; the one-time
+    // sign-in URL is filled in once the panel has issued it.
+    const openManager = (flashKey: string) => {
+        clearFlashes(flashKey);
+        const tab = window.open('', '_blank');
+        if (tab) {
+            tab.opener = null;
+        }
+        setOpeningManager(true);
+
+        openDatabaseManager(uuid, database.id)
+            .then((url) => {
+                if (tab && !tab.closed) {
+                    tab.location.href = url;
+                } else {
+                    window.location.href = url;
+                }
+            })
+            .catch((error) => {
+                console.error(error);
+                tab?.close();
+                addError({ key: flashKey, message: httpErrorToHuman(error) });
+            })
+            .then(() => setOpeningManager(false));
     };
 
     return (
@@ -133,6 +163,30 @@ export default ({ database, className }: Props) => {
                         <Input type={'text'} readOnly value={jdbcConnectionString} />
                     </CopyOnClick>
                 </div>
+                {phpMyAdminUrl && (
+                    <Can action={'database.view_password'}>
+                        <div css={tw`mt-6`}>
+                            <Label>{t('manager.url_label')}</Label>
+                            <div css={tw`flex items-center`}>
+                                <div css={tw`flex-1 min-w-0`}>
+                                    <CopyOnClick text={phpMyAdminUrl}>
+                                        <Input type={'text'} readOnly value={phpMyAdminUrl} />
+                                    </CopyOnClick>
+                                </div>
+                                <Button
+                                    type={'button'}
+                                    css={tw`ml-2`}
+                                    isLoading={openingManager}
+                                    onClick={() => openManager('database-connection-modal')}
+                                >
+                                    <FontAwesomeIcon icon={faExternalLinkAlt} fixedWidth css={tw`mr-1`} />
+                                    {t('manager.open')}
+                                </Button>
+                            </div>
+                            <p css={tw`mt-1 text-xs text-neutral-400`}>{t('manager.url_description')}</p>
+                        </div>
+                    </Can>
+                )}
                 <div css={tw`mt-6 text-right`}>
                     <Can action={'database.update'}>
                         <RotatePasswordButton databaseId={database.id} onUpdate={appendDatabase} />
@@ -170,6 +224,20 @@ export default ({ database, className }: Props) => {
                     <p css={tw`mt-1 text-2xs text-neutral-500 uppercase select-none`}>{t('labels.username')}</p>
                 </div>
                 <div css={tw`ml-8`}>
+                    {phpMyAdminUrl && (
+                        <Can action={'database.view_password'}>
+                            <Button
+                                isSecondary
+                                css={tw`mr-2`}
+                                title={t('manager.open')}
+                                aria-label={t('manager.open')}
+                                disabled={openingManager}
+                                onClick={() => openManager('databases')}
+                            >
+                                <FontAwesomeIcon icon={faExternalLinkAlt} fixedWidth />
+                            </Button>
+                        </Can>
+                    )}
                     <Button isSecondary css={tw`mr-2`} onClick={() => setConnectionVisible(true)}>
                         <FontAwesomeIcon icon={faEye} fixedWidth />
                     </Button>

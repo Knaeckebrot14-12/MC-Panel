@@ -44,4 +44,12 @@ return [
         'password_label' => 'Contraseña',
         'close_button' => 'Cerrar',
     ],
+    'manager' => [
+        'open' => 'Abrir phpMyAdmin',
+        'url_label' => 'phpMyAdmin',
+        'url_description' => 'Abre phpMyAdmin en una pestaña nueva, con la sesión iniciada como el usuario de esta base de datos.',
+        'expired' => 'Este enlace de phpMyAdmin ha caducado o ya se ha utilizado. Vuelve a abrir phpMyAdmin desde el panel.',
+        'failed' => 'phpMyAdmin no pudo iniciar sesión en la base de datos:',
+        'back' => 'Volver al panel',
+    ],
 ];

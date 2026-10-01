@@ -22,6 +22,8 @@ export interface SiteSettings {
         defaultTheme: 'dark' | 'light';
     };
     subdomains?: boolean;
+    // Address of phpMyAdmin (<panel>/phpmyadmin/), null while the owner has it turned off.
+    phpMyAdmin?: string | null;
 }
 
 export interface SettingsStore {

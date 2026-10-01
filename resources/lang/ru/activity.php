@@ -63,6 +63,7 @@ return [
             'create' => 'Создана новая база данных :name',
             'rotate-password' => 'Пароль базы данных :name сменён',
             'delete' => 'Удалена база данных :name',
+            'open-manager' => 'Открыта база данных :name в phpMyAdmin',
         ],
         'file' => [
             'compress_one' => 'Сжато :directory:files.0',

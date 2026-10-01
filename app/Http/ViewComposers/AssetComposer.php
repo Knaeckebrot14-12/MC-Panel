@@ -42,6 +42,8 @@ class AssetComposer
                 'defaultTheme' => \Pterodactyl\Services\Branding\BrandingService::defaultTheme(),
             ],
             'subdomains' => app(\Pterodactyl\Services\Subdomains\SubdomainService::class)->enabled(),
+            // phpMyAdmin address shown in the servers' Databases tab; null while it is turned off.
+            'phpMyAdmin' => \Pterodactyl\Services\Databases\PhpMyAdminService::enabled() ? \Pterodactyl\Services\Databases\PhpMyAdminService::url() : null,
         ]);
     }
 }

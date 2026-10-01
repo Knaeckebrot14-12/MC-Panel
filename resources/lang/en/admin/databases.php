@@ -74,4 +74,12 @@ return [
             'manage_button' => 'Manage',
         ],
     ],
+    'phpmyadmin' => [
+        'heading' => 'phpMyAdmin',
+        'column' => 'phpMyAdmin',
+        'open_button' => 'Open phpMyAdmin',
+        'url_label' => 'Address',
+        'description' => 'Opens phpMyAdmin in a new tab, signed in with this host\'s account: create and drop databases, tables and users, or run SQL. Only admins see this; every opening is written to the audit log.',
+        'hint' => 'phpMyAdmin runs at :url. "Open phpMyAdmin" signs in with the host\'s account in a new tab (admins only, written to the audit log).',
+    ],
 ];

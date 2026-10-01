@@ -15,6 +15,7 @@ return [
         'voucher' => 'Bons de réduction',
         'plan' => 'Offres de serveurs',
         'coins' => 'Paramètres des coins',
+        'database' => 'Bases de données',
     ],
     'table' => [
         'server' => 'Serveur',
@@ -54,5 +55,8 @@ return [
         'settings.design' => 'A modifié le design',
         'settings.subdomains' => 'A modifié les paramètres des sous-domaines',
         'settings.roles' => 'A modifié les permissions des rôles',
+        'database.manager_opened' => 'A ouvert phpMyAdmin avec le compte de l\'hôte de base de données :subject (:host)',
+        'settings.phpmyadmin_on' => 'A activé phpMyAdmin',
+        'settings.phpmyadmin_off' => 'A désactivé phpMyAdmin',
     ],
 ];

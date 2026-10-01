@@ -63,6 +63,7 @@ return [
             'create' => 'Criou o novo banco de dados :name',
             'rotate-password' => 'Rotacionou a senha do banco de dados :name',
             'delete' => 'Excluiu o banco de dados :name',
+            'open-manager' => 'Abriu o banco de dados :name no phpMyAdmin',
         ],
         'file' => [
             'compress_one' => 'Compactou :directory:files.0',

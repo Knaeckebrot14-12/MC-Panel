@@ -117,6 +117,31 @@
                         </div>
                     </div>
                 </div>
+                <div class="box">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">@lang('admin/settings_advanced.phpmyadmin_heading')</h3>
+                    </div>
+                    <div class="box-body">
+                        <div class="row">
+                            <div class="form-group col-md-4">
+                                <label class="control-label">@lang('admin/settings_advanced.status_label')</label>
+                                <div>
+                                    <select class="form-control" name="mcpanel:phpmyadmin:enabled">
+                                        <option value="true">@lang('admin/settings_advanced.enabled')</option>
+                                        <option value="false" @if(!filter_var(old('mcpanel:phpmyadmin:enabled', config('mcpanel.phpmyadmin.enabled')), FILTER_VALIDATE_BOOLEAN)) selected @endif>@lang('admin/settings_advanced.disabled')</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group col-md-8">
+                                <label class="control-label">@lang('admin/settings_advanced.phpmyadmin_url_label')</label>
+                                <div>
+                                    <input type="text" readonly class="form-control" value="{{ \Pterodactyl\Services\Databases\PhpMyAdminService::url() }}">
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-muted small no-margin">@lang('admin/settings_advanced.phpmyadmin_description')</p>
+                    </div>
+                </div>
                 <div class="box box-primary">
                     <div class="box-footer">
                         {{ csrf_field() }}
