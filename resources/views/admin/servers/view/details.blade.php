@@ -37,7 +37,7 @@
                     <div class="form-group">
                         <label for="pUserId" class="control-label">@lang('admin/servers_view.details.owner_label') <span class="field-required"></span></label>
                         <select name="owner_id" class="form-control" id="pUserId">
-                            <option value="{{ $server->owner_id }}" selected>{{ $server->user->email }}</option>
+                            <option value="{{ $server->owner_id }}" selected>{{ Auth::user()->visibleEmail($server->user) }}</option>
                         </select>
                         <p class="text-muted small">@lang('admin/servers_view.details.owner_description')</p>
                     </div>
@@ -99,10 +99,10 @@
         templateSelection: function (data) {
             if (typeof data.name_first === 'undefined') {
                 data = {
-                    md5: '{{ md5(strtolower($server->user->email)) }}',
+                    md5: '{{ md5(strtolower(Auth::user()->canSeeEmailOf($server->user) ? $server->user->email : $server->user->username)) }}',
                     name_first: '{{ $server->user->name_first }}',
                     name_last: '{{ $server->user->name_last }}',
-                    email: '{{ $server->user->email }}',
+                    email: '{{ Auth::user()->visibleEmail($server->user) }}',
                     id: {{ $server->owner_id }}
                 };
             }

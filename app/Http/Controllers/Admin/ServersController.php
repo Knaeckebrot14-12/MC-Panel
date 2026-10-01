@@ -127,7 +127,7 @@ class ServersController extends Controller
     public function manageSuspension(Request $request, Server $server): RedirectResponse
     {
         $owner = $server->user;
-        if ($owner && !$request->user()->root_admin && !$request->user()->outranks($owner)) {
+        if ($owner && !$request->user()->isOwner() && !$request->user()->outranks($owner)) {
             throw new DisplayException(trans('admin/users.view.roles.rank_too_low'));
         }
 
@@ -137,7 +137,7 @@ class ServersController extends Controller
             'status' => $request->input('action') . 'ed',
         ]))->flash();
 
-        return redirect()->route($request->user()->root_admin ? 'admin.servers.view.manage' : 'admin.servers.view', $server->id);
+        return redirect()->route($request->user()->hasStaffPermission('servers.manage') ? 'admin.servers.view.manage' : 'admin.servers.view', $server->id);
     }
 
     /**

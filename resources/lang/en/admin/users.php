@@ -102,6 +102,7 @@ return [
         'registration_ip' => 'Registered from',
         'same_ip' => 'Same IP',
         'verify_button' => 'Mark e-mail as confirmed',
+        'password_save_button' => 'Change password',
     ],
     'notices' => [
         'suspend_self' => 'You cannot suspend your own account.',
@@ -110,4 +111,5 @@ return [
         'coins_updated' => 'Coin balance updated.',
         'email_verified' => 'The e-mail address is now marked as confirmed.',
     ],
+    'email_hidden' => 'hidden',
 ];

@@ -65,10 +65,17 @@ class UserController extends Controller
             $base->where('users.role', $role);
         }
 
+        // Without users.email, searching or sorting by e-mail would reveal the addresses too, so the
+        // search box looks at usernames instead.
+        $seesEmails = $request->user()->hasStaffPermission('users.email');
+        if (!$seesEmails && $request->has('filter.email')) {
+            $request->merge(['filter' => ['username' => $request->input('filter.email')]]);
+        }
+
         $users = QueryBuilder::for($base)
-            ->allowedFilters(['username', 'email', 'uuid'])
+            ->allowedFilters($seesEmails ? ['username', 'email', 'uuid'] : ['username', 'uuid'])
             ->defaultSort('-root_admin')
-            ->allowedSorts(['id', 'uuid', 'username', 'email', 'coins', 'created_at', 'root_admin'])
+            ->allowedSorts($seesEmails ? ['id', 'uuid', 'username', 'email', 'coins', 'created_at', 'root_admin'] : ['id', 'uuid', 'username', 'coins', 'created_at', 'root_admin'])
             ->paginate(50)
             ->appends($request->query());
 
@@ -309,22 +316,29 @@ class UserController extends Controller
      */
     public function json(Request $request): Model|Collection
     {
-        $users = QueryBuilder::for(User::query())->allowedFilters(['email'])->paginate(25);
+        $actor = $request->user();
+        $seesEmails = $actor->hasStaffPermission('users.email');
+        if (!$seesEmails && $request->has('filter.email')) {
+            $request->merge(['filter' => ['username' => $request->input('filter.email')]]);
+        }
+
+        $users = QueryBuilder::for(User::query())->allowedFilters($seesEmails ? ['email', 'username'] : ['username'])->paginate(25);
+
+        // The server owner pickers show these; the e-mail only for team members allowed to see it.
+        $present = function (User $user) use ($actor) {
+            $visible = $actor->canSeeEmailOf($user);
+            // @phpstan-ignore-next-line property.notFound
+            $user->md5 = md5(strtolower($visible ? $user->email : $user->username));
+            $user->email = $actor->visibleEmail($user);
+
+            return $user;
+        };
 
         // Handle single user requests.
         if ($request->query('user_id')) {
-            $user = User::query()->findOrFail($request->input('user_id'));
-            // @phpstan-ignore-next-line property.notFound
-            $user->md5 = md5(strtolower($user->email));
-
-            return $user;
+            return $present(User::query()->findOrFail($request->input('user_id')));
         }
 
-        return $users->map(function ($item) {
-            // @phpstan-ignore-next-line property.notFound
-            $item->md5 = md5(strtolower($item->email));
-
-            return $item;
-        });
+        return $users->map($present);
     }
 }

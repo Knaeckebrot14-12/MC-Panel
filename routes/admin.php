@@ -31,7 +31,7 @@ Route::group(['prefix' => 'api', 'middleware' => ['owner.only']], function () {
 | Endpoint: /admin/announcements
 |
 */
-Route::group(['prefix' => 'maintenance', 'middleware' => ['admin.only']], function () {
+Route::group(['prefix' => 'maintenance', 'middleware' => ['staff:maintenance']], function () {
     Route::get('/', [Admin\MaintenanceController::class, 'index'])->name('admin.maintenance');
     Route::patch('/', [Admin\MaintenanceController::class, 'update']);
 });
@@ -52,7 +52,7 @@ Route::group(['prefix' => 'announcements', 'middleware' => ['staff:announcements
 | Endpoint: /admin/locations
 |
 */
-Route::group(['prefix' => 'locations', 'middleware' => ['owner.only']], function () {
+Route::group(['prefix' => 'locations', 'middleware' => ['staff:locations']], function () {
     Route::get('/', [Admin\LocationController::class, 'index'])->name('admin.locations');
     Route::get('/view/{location:id}', [Admin\LocationController::class, 'view'])->name('admin.locations.view');
 
@@ -68,7 +68,7 @@ Route::group(['prefix' => 'locations', 'middleware' => ['owner.only']], function
 | Endpoint: /admin/databases
 |
 */
-Route::group(['prefix' => 'databases', 'middleware' => ['admin.only']], function () {
+Route::group(['prefix' => 'databases', 'middleware' => ['staff:databases']], function () {
     Route::get('/', [Admin\DatabaseController::class, 'index'])->name('admin.databases');
     Route::get('/view/{host:id}', [Admin\DatabaseController::class, 'view'])->name('admin.databases.view');
 
@@ -105,6 +105,9 @@ Route::group(['prefix' => 'settings', 'middleware' => ['owner.only']], function 
     Route::patch('/monitoring', [Admin\Settings\MonitoringController::class, 'update']);
     Route::post('/monitoring/test', [Admin\Settings\MonitoringController::class, 'test'])->name('admin.settings.monitoring.test');
 
+    Route::get('/roles', [Admin\Settings\RolesController::class, 'index'])->name('admin.settings.roles');
+    Route::patch('/roles', [Admin\Settings\RolesController::class, 'update']);
+
     Route::get('/design', [Admin\Settings\DesignController::class, 'index'])->name('admin.settings.design');
     Route::post('/design', [Admin\Settings\DesignController::class, 'update']);
 
@@ -126,20 +129,20 @@ Route::group(['prefix' => 'settings', 'middleware' => ['owner.only']], function 
 */
 Route::group(['prefix' => 'users'], function () {
     Route::get('/', [Admin\UserController::class, 'index'])->name('admin.users')->middleware('staff:users.view');
-    Route::get('/accounts.json', [Admin\UserController::class, 'json'])->name('admin.users.json')->middleware('admin.only');
-    Route::get('/new', [Admin\UserController::class, 'create'])->name('admin.users.new')->middleware('admin.only');
+    Route::get('/accounts.json', [Admin\UserController::class, 'json'])->name('admin.users.json')->middleware('staff:users.view,servers.create,servers.manage');
+    Route::get('/new', [Admin\UserController::class, 'create'])->name('admin.users.new')->middleware('staff:users.edit');
     Route::get('/view/{user:id}', [Admin\UserController::class, 'view'])->name('admin.users.view')->middleware('staff:users.view');
 
-    Route::post('/new', [Admin\UserController::class, 'store'])->middleware('admin.only');
+    Route::post('/new', [Admin\UserController::class, 'store'])->middleware('staff:users.edit');
 
-    Route::patch('/view/{user:id}', [Admin\UserController::class, 'update'])->middleware('admin.only');
-    Route::delete('/view/{user:id}', [Admin\UserController::class, 'delete'])->name('admin.users.delete')->middleware('admin.only');
-    Route::post('/view/{user:id}/role', [Admin\UserController::class, 'updateRole'])->name('admin.users.role')->middleware('admin.only');
+    Route::patch('/view/{user:id}', [Admin\UserController::class, 'update'])->middleware('staff:users.edit,users.password');
+    Route::delete('/view/{user:id}', [Admin\UserController::class, 'delete'])->name('admin.users.delete')->middleware('staff:users.delete');
+    Route::post('/view/{user:id}/role', [Admin\UserController::class, 'updateRole'])->name('admin.users.role')->middleware('staff:users.roles');
 
     Route::post('/view/{user:id}/verify-email', [Admin\UserController::class, 'verifyEmail'])->name('admin.users.verify-email')->middleware('staff:users.moderate');
     Route::post('/view/{user:id}/suspend',[Admin\UserController::class, 'suspend'])->name('admin.users.suspend')->middleware('staff:users.moderate');
     Route::post('/view/{user:id}/unsuspend', [Admin\UserController::class, 'unsuspend'])->name('admin.users.unsuspend')->middleware('staff:users.moderate');
-    Route::post('/view/{user:id}/coins', [Admin\UserController::class, 'adjustCoins'])->name('admin.users.coins')->middleware('admin.only');
+    Route::post('/view/{user:id}/coins', [Admin\UserController::class, 'adjustCoins'])->name('admin.users.coins')->middleware('staff:users.coins');
 });
 
 /*
@@ -152,37 +155,37 @@ Route::group(['prefix' => 'users'], function () {
 */
 Route::group(['prefix' => 'servers'], function () {
     Route::get('/', [Admin\Servers\ServerController::class, 'index'])->name('admin.servers')->middleware('staff:servers.view');
-    Route::get('/new', [Admin\Servers\CreateServerController::class, 'index'])->name('admin.servers.new')->middleware('admin.only');
+    Route::get('/new', [Admin\Servers\CreateServerController::class, 'index'])->name('admin.servers.new')->middleware('staff:servers.create');
     Route::get('/view/{server:id}', [Admin\Servers\ServerViewController::class, 'index'])->name('admin.servers.view')->middleware('staff:servers.view');
 
     Route::group(['middleware' => [ServerInstalled::class]], function () {
-        Route::get('/view/{server:id}/details', [Admin\Servers\ServerViewController::class, 'details'])->name('admin.servers.view.details')->middleware('admin.only');
-        Route::get('/view/{server:id}/build', [Admin\Servers\ServerViewController::class, 'build'])->name('admin.servers.view.build')->middleware('admin.only');
-        Route::get('/view/{server:id}/startup', [Admin\Servers\ServerViewController::class, 'startup'])->name('admin.servers.view.startup')->middleware('admin.only');
-        Route::get('/view/{server:id}/database', [Admin\Servers\ServerViewController::class, 'database'])->name('admin.servers.view.database')->middleware('admin.only');
-        Route::get('/view/{server:id}/mounts', [Admin\Servers\ServerViewController::class, 'mounts'])->name('admin.servers.view.mounts')->middleware('admin.only');
+        Route::get('/view/{server:id}/details', [Admin\Servers\ServerViewController::class, 'details'])->name('admin.servers.view.details')->middleware('staff:servers.manage');
+        Route::get('/view/{server:id}/build', [Admin\Servers\ServerViewController::class, 'build'])->name('admin.servers.view.build')->middleware('staff:servers.manage');
+        Route::get('/view/{server:id}/startup', [Admin\Servers\ServerViewController::class, 'startup'])->name('admin.servers.view.startup')->middleware('staff:servers.manage');
+        Route::get('/view/{server:id}/database', [Admin\Servers\ServerViewController::class, 'database'])->name('admin.servers.view.database')->middleware('staff:servers.manage');
+        Route::get('/view/{server:id}/mounts', [Admin\Servers\ServerViewController::class, 'mounts'])->name('admin.servers.view.mounts')->middleware('staff:servers.manage');
     });
 
-    Route::get('/view/{server:id}/manage', [Admin\Servers\ServerViewController::class, 'manage'])->name('admin.servers.view.manage')->middleware('admin.only');
-    Route::get('/view/{server:id}/delete', [Admin\Servers\ServerViewController::class, 'delete'])->name('admin.servers.view.delete')->middleware('admin.only');
+    Route::get('/view/{server:id}/manage', [Admin\Servers\ServerViewController::class, 'manage'])->name('admin.servers.view.manage')->middleware('staff:servers.manage');
+    Route::get('/view/{server:id}/delete', [Admin\Servers\ServerViewController::class, 'delete'])->name('admin.servers.view.delete')->middleware('staff:servers.delete');
 
-    Route::post('/new', [Admin\Servers\CreateServerController::class, 'store'])->middleware('admin.only');
-    Route::post('/view/{server:id}/build', [Admin\ServersController::class, 'updateBuild'])->middleware('admin.only');
-    Route::post('/view/{server:id}/startup', [Admin\ServersController::class, 'saveStartup'])->middleware('admin.only');
-    Route::post('/view/{server:id}/database', [Admin\ServersController::class, 'newDatabase'])->middleware('admin.only');
-    Route::post('/view/{server:id}/mounts', [Admin\ServersController::class, 'addMount'])->name('admin.servers.view.mounts.store')->middleware('admin.only');
-    Route::post('/view/{server:id}/manage/toggle', [Admin\ServersController::class, 'toggleInstall'])->name('admin.servers.view.manage.toggle')->middleware('admin.only');
+    Route::post('/new', [Admin\Servers\CreateServerController::class, 'store'])->middleware('staff:servers.create');
+    Route::post('/view/{server:id}/build', [Admin\ServersController::class, 'updateBuild'])->middleware('staff:servers.manage');
+    Route::post('/view/{server:id}/startup', [Admin\ServersController::class, 'saveStartup'])->middleware('staff:servers.manage');
+    Route::post('/view/{server:id}/database', [Admin\ServersController::class, 'newDatabase'])->middleware('staff:servers.manage');
+    Route::post('/view/{server:id}/mounts', [Admin\ServersController::class, 'addMount'])->name('admin.servers.view.mounts.store')->middleware('staff:servers.manage');
+    Route::post('/view/{server:id}/manage/toggle', [Admin\ServersController::class, 'toggleInstall'])->name('admin.servers.view.manage.toggle')->middleware('staff:servers.manage');
     Route::post('/view/{server:id}/manage/suspension', [Admin\ServersController::class, 'manageSuspension'])->name('admin.servers.view.manage.suspension')->middleware('staff:servers.moderate');
-    Route::post('/view/{server:id}/manage/reinstall', [Admin\ServersController::class, 'reinstallServer'])->name('admin.servers.view.manage.reinstall')->middleware('admin.only');
-    Route::post('/view/{server:id}/manage/transfer', [Admin\Servers\ServerTransferController::class, 'transfer'])->name('admin.servers.view.manage.transfer')->middleware('admin.only');
-    Route::post('/view/{server:id}/delete', [Admin\ServersController::class, 'delete'])->middleware('admin.only');
+    Route::post('/view/{server:id}/manage/reinstall', [Admin\ServersController::class, 'reinstallServer'])->name('admin.servers.view.manage.reinstall')->middleware('staff:servers.manage');
+    Route::post('/view/{server:id}/manage/transfer', [Admin\Servers\ServerTransferController::class, 'transfer'])->name('admin.servers.view.manage.transfer')->middleware('staff:servers.manage');
+    Route::post('/view/{server:id}/delete', [Admin\ServersController::class, 'delete'])->middleware('staff:servers.delete');
 
-    Route::patch('/view/{server:id}/details', [Admin\ServersController::class, 'setDetails'])->middleware('admin.only');
-    Route::patch('/view/{server:id}/database', [Admin\ServersController::class, 'resetDatabasePassword'])->middleware('admin.only');
+    Route::patch('/view/{server:id}/details', [Admin\ServersController::class, 'setDetails'])->middleware('staff:servers.manage');
+    Route::patch('/view/{server:id}/database', [Admin\ServersController::class, 'resetDatabasePassword'])->middleware('staff:servers.manage');
 
-    Route::delete('/view/{server:id}/database/{database:id}/delete', [Admin\ServersController::class, 'deleteDatabase'])->name('admin.servers.view.database.delete')->middleware('admin.only');
+    Route::delete('/view/{server:id}/database/{database:id}/delete', [Admin\ServersController::class, 'deleteDatabase'])->name('admin.servers.view.database.delete')->middleware('staff:servers.manage');
     Route::delete('/view/{server:id}/mounts/{mount:id}', [Admin\ServersController::class, 'deleteMount'])
-        ->name('admin.servers.view.mounts.delete')->middleware('admin.only');
+        ->name('admin.servers.view.mounts.delete')->middleware('staff:servers.manage');
 });
 
 /*
@@ -193,7 +196,7 @@ Route::group(['prefix' => 'servers'], function () {
 | Endpoint: /admin/nodes
 |
 */
-Route::group(['prefix' => 'nodes', 'middleware' => ['owner.only']], function () {
+Route::group(['prefix' => 'nodes', 'middleware' => ['staff:nodes']], function () {
     Route::get('/', [Admin\Nodes\NodeController::class, 'index'])->name('admin.nodes');
     Route::get('/new', [Admin\NodesController::class, 'create'])->name('admin.nodes.new');
     Route::get('/view/{node:id}', [Admin\Nodes\NodeViewController::class, 'index'])->name('admin.nodes.view');
@@ -228,7 +231,7 @@ Route::group(['prefix' => 'nodes', 'middleware' => ['owner.only']], function () 
 | Endpoint: /admin/mounts
 |
 */
-Route::group(['prefix' => 'mounts', 'middleware' => ['owner.only']], function () {
+Route::group(['prefix' => 'mounts', 'middleware' => ['staff:mounts']], function () {
     Route::get('/', [Admin\MountController::class, 'index'])->name('admin.mounts');
     Route::get('/view/{mount:id}', [Admin\MountController::class, 'view'])->name('admin.mounts.view');
 
@@ -250,7 +253,7 @@ Route::group(['prefix' => 'mounts', 'middleware' => ['owner.only']], function ()
 | Endpoint: /admin/nests
 |
 */
-Route::group(['prefix' => 'nests', 'middleware' => ['owner.only']], function () {
+Route::group(['prefix' => 'nests', 'middleware' => ['staff:nests']], function () {
     Route::get('/', [Admin\Nests\NestController::class, 'index'])->name('admin.nests');
     Route::get('/new', [Admin\Nests\NestController::class, 'create'])->name('admin.nests.new');
     Route::get('/view/{nest:id}', [Admin\Nests\NestController::class, 'view'])->name('admin.nests.view');
@@ -301,7 +304,7 @@ Route::group(['prefix' => 'tickets', 'middleware' => ['staff:tickets']], functio
 | Endpoint: /admin/vouchers, /admin/plans
 |
 */
-Route::group(['prefix' => 'vouchers', 'middleware' => ['admin.only']], function () {
+Route::group(['prefix' => 'vouchers', 'middleware' => ['staff:coins.vouchers']], function () {
     Route::get('/', [Admin\VoucherController::class, 'index'])->name('admin.vouchers');
     Route::post('/', [Admin\VoucherController::class, 'store']);
     Route::get('/{voucher:id}', [Admin\VoucherController::class, 'view'])->name('admin.vouchers.view');
@@ -309,7 +312,7 @@ Route::group(['prefix' => 'vouchers', 'middleware' => ['admin.only']], function 
     Route::delete('/{voucher:id}', [Admin\VoucherController::class, 'delete'])->name('admin.vouchers.delete');
 });
 
-Route::group(['prefix' => 'plans', 'middleware' => ['admin.only']], function () {
+Route::group(['prefix' => 'plans', 'middleware' => ['staff:coins.plans']], function () {
     Route::get('/', [Admin\PlanController::class, 'index'])->name('admin.plans');
     Route::get('/{plan:id}', [Admin\PlanController::class, 'edit'])->name('admin.plans.edit');
     Route::post('/', [Admin\PlanController::class, 'store']);
@@ -325,7 +328,7 @@ Route::group(['prefix' => 'plans', 'middleware' => ['admin.only']], function () 
 | Endpoint: /admin/settings/coins (admins may manage the coin economy)
 |
 */
-Route::group(['prefix' => 'settings/coins', 'middleware' => ['admin.only']], function () {
+Route::group(['prefix' => 'settings/coins', 'middleware' => ['staff:coins.settings']], function () {
     Route::get('/', [Admin\Settings\CoinsController::class, 'index'])->name('admin.settings.coins');
     Route::patch('/', [Admin\Settings\CoinsController::class, 'update']);
 });
@@ -338,4 +341,4 @@ Route::group(['prefix' => 'settings/coins', 'middleware' => ['admin.only']], fun
 | Endpoint: /admin/audit
 |
 */
-Route::get('/audit', [Admin\AuditLogController::class, 'index'])->name('admin.audit')->middleware('admin.only');
+Route::get('/audit', [Admin\AuditLogController::class, 'index'])->name('admin.audit')->middleware('staff:audit');

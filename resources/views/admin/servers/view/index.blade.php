@@ -44,7 +44,7 @@
                             <tr>
                                 <td>@lang('admin/servers_view.about.current_egg_label')</td>
                                 <td>
-                                    @if(Auth::user()->isOwner())
+                                    @if(Auth::user()->hasStaffPermission('nests'))
                                     <a href="{{ route('admin.nests.view', $server->nest_id) }}">{{ $server->nest->name }}</a> ::
                                     <a href="{{ route('admin.nests.egg.view', $server->egg_id) }}">{{ $server->egg->name }}</a>
                                     @else{{ $server->nest->name }} :: {{ $server->egg->name }}@endif
@@ -139,7 +139,7 @@
                             </div>
                         </div>
                     @endif
-                    @if(!Auth::user()->root_admin && Auth::user()->hasStaffPermission('servers.moderate'))
+                    @if(!Auth::user()->hasStaffPermission('servers.manage') && Auth::user()->hasStaffPermission('servers.moderate'))
                         <div class="col-sm-12">
                             <form action="{{ route('admin.servers.view.manage.suspension', $server->id) }}" method="POST" style="margin-bottom: 20px;">
                                 {!! csrf_field() !!}
@@ -176,7 +176,7 @@
                                 <p>@lang('admin/servers_view.about.server_node_label')</p>
                             </div>
                             <div class="icon"><i class="fa fa-codepen"></i></div>
-                            @if(Auth::user()->isOwner())
+                            @if(Auth::user()->hasStaffPermission('nodes'))
                             <a href="{{ route('admin.nodes.view', $server->node->id) }}" class="small-box-footer">
                                 @lang('admin/servers_view.about.more_info') <i class="fa fa-arrow-circle-right"></i>
                             </a>

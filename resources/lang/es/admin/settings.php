@@ -11,6 +11,7 @@ return [
         'design' => 'Diseño',
         'monitoring' => 'Monitorización',
         'subdomains' => 'Subdominios',
+        'roles' => 'Roles',
     ],
     'notice' => [
         'env_only' => 'Tu panel está configurado actualmente para leer los ajustes únicamente del entorno. Tendrás que definir :env_var en tu archivo de entorno para cargar los ajustes dinámicamente.',

@@ -8,7 +8,7 @@
             <ul class="nav nav-tabs">
                 <li class="{{ $router->currentRouteNamed('admin.servers.view') ? 'active' : '' }}">
                     <a href="{{ route('admin.servers.view', $server->id) }}">@lang('admin/servers_view.nav.about')</a></li>
-                @if(Auth::user()->root_admin)
+                @if(Auth::user()->hasStaffPermission('servers.manage'))
                 @if($server->isInstalled())
                     <li class="{{ $router->currentRouteNamed('admin.servers.view.details') ? 'active' : '' }}">
                         <a href="{{ route('admin.servers.view.details', $server->id) }}">@lang('admin/servers_view.nav.details')</a>
@@ -29,6 +29,8 @@
                 <li class="{{ $router->currentRouteNamed('admin.servers.view.manage') ? 'active' : '' }}">
                     <a href="{{ route('admin.servers.view.manage', $server->id) }}">@lang('admin/servers_view.nav.manage')</a>
                 </li>
+                @endif
+                @if(Auth::user()->hasStaffPermission('servers.delete'))
                 <li class="tab-danger {{ $router->currentRouteNamed('admin.servers.view.delete') ? 'active' : '' }}">
                     <a href="{{ route('admin.servers.view.delete', $server->id) }}">@lang('admin/servers_view.nav.delete')</a>
                 </li>

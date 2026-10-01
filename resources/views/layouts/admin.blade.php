@@ -82,14 +82,16 @@
             <aside class="main-sidebar">
                 <section class="sidebar">
                     <ul class="sidebar-menu">
+@php $me = Auth::user(); @endphp
                         <li class="header">@lang('admin/layout.nav.basic_administration')</li>
-@if(Auth::user()->root_admin)
+@if($me->hasStaffPermission('overview'))
                         <li class="{{ Route::currentRouteName() !== 'admin.index' ?: 'active' }}">
                             <a href="{{ route('admin.index') }}">
                                 <i class="fa fa-home"></i> <span>@lang('admin/layout.nav.overview')</span>
                             </a>
                         </li>
-@if(Auth::user()->isOwner())
+@endif
+@if($me->isOwner())
                         <li class="{{ (! starts_with(Route::currentRouteName(), 'admin.settings') || Route::currentRouteName() === 'admin.settings.coins') ? '' : 'active' }}">
                             <a href="{{ route('admin.settings')}}">
                                 <i class="fa fa-wrench"></i> <span>@lang('admin/layout.nav.settings')</span>
@@ -101,20 +103,21 @@
                             </a>
                         </li>
 @endif
-@endif
-@if(Auth::user()->root_admin)
+@if($me->hasStaffPermission('audit'))
                         <li class="{{ ! starts_with(Route::currentRouteName(), 'admin.audit') ?: 'active' }}">
                             <a href="{{ route('admin.audit') }}">
                                 <i class="fa fa-history"></i> <span>@lang('admin/layout.nav.audit')</span>
                             </a>
                         </li>
-@if(Auth::user()->isOwner())
+@endif
+@if($me->isOwner())
                         <li class="{{ Route::currentRouteName() !== 'admin.settings.login' ?: 'active' }}">
                             <a href="{{ route('admin.settings.login') }}">
                                 <i class="fa fa-comments"></i> <span>@lang('admin/layout.nav.discord_login')</span>
                             </a>
                         </li>
 @endif
+@if($me->hasStaffPermission('maintenance'))
                         <li class="{{ ! starts_with(Route::currentRouteName(), 'admin.maintenance') ?: 'active' }}">
                             <a href="{{ route('admin.maintenance') }}">
                                 <i class="fa fa-wrench"></i> <span>@lang('admin/layout.nav.maintenance')</span>
@@ -124,14 +127,14 @@
                             </a>
                         </li>
 @endif
-@if(Auth::user()->hasStaffPermission('announcements'))
+@if($me->hasStaffPermission('announcements'))
                         <li class="{{ ! starts_with(Route::currentRouteName(), 'admin.announcements') ?: 'active' }}">
-                            <a href="{{ route('admin.announcements')}}">
+                            <a href="{{ route('admin.announcements') }}">
                                 <i class="fa fa-bullhorn"></i> <span>@lang('admin/layout.nav.announcements')</span>
                             </a>
                         </li>
 @endif
-@if(Auth::user()->hasStaffPermission('tickets'))
+@if($me->hasStaffPermission('tickets'))
                         <li class="{{ ! starts_with(Route::currentRouteName(), 'admin.tickets') ?: 'active' }}">
                             <a href="{{ route('admin.tickets') }}">
                                 <i class="fa fa-life-ring"></i> <span>@lang('admin/layout.nav.tickets')</span>
@@ -140,67 +143,79 @@
                             </a>
                         </li>
 @endif
-@if(Auth::user()->hasStaffPermission('users.view') || Auth::user()->hasStaffPermission('servers.view') || Auth::user()->root_admin)
+@if(collect(['databases', 'locations', 'nodes', 'servers.view', 'users.view'])->contains(fn ($p) => $me->hasStaffPermission($p)))
                         <li class="header">@lang('admin/layout.nav.management')</li>
-@if(Auth::user()->root_admin)
+@endif
+@if($me->hasStaffPermission('databases'))
                         <li class="{{ ! starts_with(Route::currentRouteName(), 'admin.databases') ?: 'active' }}">
                             <a href="{{ route('admin.databases') }}">
                                 <i class="fa fa-database"></i> <span>@lang('admin/layout.nav.databases')</span>
                             </a>
                         </li>
-@if(Auth::user()->isOwner())
+@endif
+@if($me->hasStaffPermission('locations'))
                         <li class="{{ ! starts_with(Route::currentRouteName(), 'admin.locations') ?: 'active' }}">
                             <a href="{{ route('admin.locations') }}">
                                 <i class="fa fa-globe"></i> <span>@lang('admin/layout.nav.locations')</span>
                             </a>
                         </li>
+@endif
+@if($me->hasStaffPermission('nodes'))
                         <li class="{{ ! starts_with(Route::currentRouteName(), 'admin.nodes') ?: 'active' }}">
                             <a href="{{ route('admin.nodes') }}">
                                 <i class="fa fa-sitemap"></i> <span>@lang('admin/layout.nav.nodes')</span>
                             </a>
                         </li>
 @endif
-@endif
-@if(Auth::user()->hasStaffPermission('servers.view'))
+@if($me->hasStaffPermission('servers.view'))
                         <li class="{{ ! starts_with(Route::currentRouteName(), 'admin.servers') ?: 'active' }}">
                             <a href="{{ route('admin.servers') }}">
                                 <i class="fa fa-server"></i> <span>@lang('admin/layout.nav.servers')</span>
                             </a>
                         </li>
 @endif
-@if(Auth::user()->hasStaffPermission('users.view'))
+@if($me->hasStaffPermission('users.view'))
                         <li class="{{ ! starts_with(Route::currentRouteName(), 'admin.users') ?: 'active' }}">
                             <a href="{{ route('admin.users') }}">
                                 <i class="fa fa-users"></i> <span>@lang('admin/layout.nav.users')</span>
                             </a>
                         </li>
 @endif
-@endif
-@if(Auth::user()->root_admin)
+@if(collect(['coins.vouchers', 'coins.plans', 'coins.settings'])->contains(fn ($p) => $me->hasStaffPermission($p)))
                         <li class="header">@lang('admin/layout.nav.coins_section')</li>
+@endif
+@if($me->hasStaffPermission('coins.vouchers'))
                         <li class="{{ ! starts_with(Route::currentRouteName(), 'admin.vouchers') ?: 'active' }}">
                             <a href="{{ route('admin.vouchers') }}">
                                 <i class="fa fa-ticket"></i> <span>@lang('admin/layout.nav.vouchers')</span>
                             </a>
                         </li>
+@endif
+@if($me->hasStaffPermission('coins.plans'))
                         <li class="{{ ! starts_with(Route::currentRouteName(), 'admin.plans') ?: 'active' }}">
                             <a href="{{ route('admin.plans') }}">
                                 <i class="fa fa-cubes"></i> <span>@lang('admin/layout.nav.plans')</span>
                             </a>
                         </li>
+@endif
+@if($me->hasStaffPermission('coins.settings'))
                         <li class="{{ ! starts_with(Route::currentRouteName(), 'admin.settings.coins') ?: 'active' }}">
                             <a href="{{ route('admin.settings.coins') }}">
                                 <i class="fa fa-money"></i> <span>@lang('admin/layout.nav.coins_settings')</span>
                             </a>
                         </li>
 @endif
-@if(Auth::user()->isOwner())
+@if($me->hasStaffPermission('mounts') || $me->hasStaffPermission('nests'))
                         <li class="header">@lang('admin/layout.nav.service_management')</li>
+@endif
+@if($me->hasStaffPermission('mounts'))
                         <li class="{{ ! starts_with(Route::currentRouteName(), 'admin.mounts') ?: 'active' }}">
                             <a href="{{ route('admin.mounts') }}">
                                 <i class="fa fa-magic"></i> <span>@lang('admin/layout.nav.mounts')</span>
                             </a>
                         </li>
+@endif
+@if($me->hasStaffPermission('nests'))
                         <li class="{{ ! starts_with(Route::currentRouteName(), 'admin.nests') ?: 'active' }}">
                             <a href="{{ route('admin.nests') }}">
                                 <i class="fa fa-th-large"></i> <span>@lang('admin/layout.nav.nests')</span>

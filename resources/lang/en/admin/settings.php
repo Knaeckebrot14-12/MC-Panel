@@ -11,6 +11,7 @@ return [
         'design' => 'Design',
         'monitoring' => 'Monitoring',
         'subdomains' => 'Subdomains',
+        'roles' => 'Roles',
     ],
     'notice' => [
         'env_only' => 'Your Panel is currently configured to read settings from the environment only. You will need to set :env_var in your environment file in order to load settings dynamically.',

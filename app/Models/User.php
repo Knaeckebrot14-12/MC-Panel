@@ -215,18 +215,6 @@ class User extends Model implements
     ];
 
     /**
-     * Minimum role needed for each staff permission. Admins and owners hold every permission.
-     */
-    public const STAFF_PERMISSIONS = [
-        'tickets' => self::ROLE_SUPPORTER,
-        'announcements' => self::ROLE_MODERATOR,
-        'users.view' => self::ROLE_MODERATOR,
-        'users.moderate' => self::ROLE_MODERATOR,
-        'servers.view' => self::ROLE_MODERATOR,
-        'servers.moderate' => self::ROLE_MODERATOR,
-    ];
-
-    /**
      * These listeners are registered before the base model's boot() on purpose: its validating
      * "saving" listener returns true, which stops Laravel from calling any listener added after it.
      */
@@ -298,15 +286,38 @@ class User extends Model implements
         return $this->effectiveRole() === self::ROLE_OWNER;
     }
 
+    /**
+     * Whether this team member may use a part of the admin area. The owner may do everything;
+     * the other roles get what the owner set under Admin -> Settings -> Roles.
+     */
     public function hasStaffPermission(string $permission): bool
     {
-        if ($this->root_admin) {
-            return true;
+        $role = $this->effectiveRole();
+        if ($role === self::ROLE_USER) {
+            return false;
         }
 
-        $required = self::STAFF_PERMISSIONS[$permission] ?? null;
+        return \Pterodactyl\Services\Users\RolePermissions::grants($role, $permission);
+    }
 
-        return $required !== null && $this->roleRank() >= self::ROLES[$required];
+    /**
+     * Whether this user may see the e-mail address of $other (always their own).
+     */
+    public function canSeeEmailOf(?User $other): bool
+    {
+        return $other === null || $this->is($other) || $this->hasStaffPermission('users.email');
+    }
+
+    /**
+     * The e-mail address of $other as this user may see it.
+     */
+    public function visibleEmail(?User $other): string
+    {
+        if (!$other) {
+            return '';
+        }
+
+        return $this->canSeeEmailOf($other) ? $other->email : trans('admin/users.email_hidden');
     }
 
     /**
@@ -322,11 +333,15 @@ class User extends Model implements
      */
     public function assignableRoles(): array
     {
-        return match ($this->effectiveRole()) {
-            self::ROLE_OWNER => array_keys(self::ROLES),
-            self::ROLE_ADMIN => [self::ROLE_USER, self::ROLE_SUPPORTER, self::ROLE_MODERATOR],
-            default => [],
-        };
+        if ($this->isOwner()) {
+            return array_keys(self::ROLES);
+        }
+        if (!$this->hasStaffPermission('users.roles')) {
+            return [];
+        }
+
+        // Only roles below one's own, so nobody can promote others to their level or above.
+        return array_keys(array_filter(self::ROLES, fn (int $rank) => $rank < $this->roleRank()));
     }
 
     /**

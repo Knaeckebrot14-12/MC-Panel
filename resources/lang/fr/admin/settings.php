@@ -11,6 +11,7 @@ return [
         'design' => 'Design',
         'monitoring' => 'Surveillance',
         'subdomains' => 'Sous-domaines',
+        'roles' => 'Rôles',
     ],
     'notice' => [
         'env_only' => 'Votre panel est actuellement configuré pour lire les paramètres uniquement depuis l\'environnement. Vous devrez définir :env_var dans votre fichier d\'environnement pour charger les paramètres dynamiquement.',

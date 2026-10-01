@@ -61,7 +61,7 @@
                         @foreach ($users as $user)
                             <tr class="align-middle">
                                 <td><code>{{ $user->id }}</code></td>
-                                <td><a href="{{ route('admin.users.view', $user->id) }}">{{ $user->email }}</a> @if($user->isStaff())<span class="label label-{{ $user->isOwner() ? 'danger' : ($user->root_admin ? 'warning' : 'info') }}">@lang('admin/users.roles.' . $user->effectiveRole())</span>@endif</td>
+                                <td><a href="{{ route('admin.users.view', $user->id) }}">{{ Auth::user()->visibleEmail($user) }}</a> @if($user->isStaff())<span class="label label-{{ $user->isOwner() ? 'danger' : ($user->root_admin ? 'warning' : 'info') }}">@lang('admin/users.roles.' . $user->effectiveRole())</span>@endif</td>
                                 <td>{{ $user->name_last }}, {{ $user->name_first }}</td>
                                 <td>{{ $user->username }}</td>
                                 <td class="text-center">
@@ -75,7 +75,7 @@
                                     <a href="{{ route('admin.servers', ['filter[owner_id]' => $user->id]) }}">{{ $user->servers_count }}</a>
                                 </td>
                                 <td class="text-center">{{ $user->subuser_of_count }}</td>
-                                <td class="text-center"><img src="https://www.gravatar.com/avatar/{{ md5(strtolower($user->email)) }}?s=100" style="height:20px;" class="img-circle" /></td>
+                                <td class="text-center"><img src="https://www.gravatar.com/avatar/{{ md5(strtolower(Auth::user()->canSeeEmailOf($user) ? $user->email : $user->username)) }}?s=100" style="height:20px;" class="img-circle" /></td>
                             </tr>
                         @endforeach
                     </tbody>

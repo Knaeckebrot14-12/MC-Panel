@@ -62,7 +62,7 @@
                 <div class="box-body">
                     <p><strong>@lang('admin/tickets.table.user'):</strong>
                         @if(Auth::user()->hasStaffPermission('users.view'))<a href="{{ route('admin.users.view', $ticket->user->id) }}">{{ $ticket->user->username }}</a>@else{{ $ticket->user->username }}@endif
-                        <small class="text-muted">({{ $ticket->user->email }})</small></p>
+                        <small class="text-muted">({{ Auth::user()->visibleEmail($ticket->user) }})</small></p>
                     <p><strong>@lang('admin/tickets.table.category'):</strong> @lang('tickets.categories.' . $ticket->category)</p>
                     @if($ticket->server)
                         <p><strong>@lang('admin/tickets.view.server'):</strong>

@@ -113,7 +113,7 @@
                     @foreach($stats['nodes'] as $node)
                         <tr>
                             <td>
-                                @if(Auth::user()->isOwner())<a href="{{ route('admin.nodes.view', $node['id']) }}">{{ $node['name'] }}</a>@else{{ $node['name'] }}@endif
+                                @if(Auth::user()->hasStaffPermission('nodes'))<a href="{{ route('admin.nodes.view', $node['id']) }}">{{ $node['name'] }}</a>@else{{ $node['name'] }}@endif
                                 @if($node['maintenance'])<span class="label label-warning">@lang('admin/index.stats.node_maintenance')</span>@endif
                             </td>
                             <td class="text-center">{{ $node['servers'] }}</td>

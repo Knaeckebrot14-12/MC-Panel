@@ -38,7 +38,7 @@
                         @foreach ($mounts as $mount)
                             <tr>
                                 <td class="col-sm-1 middle"><code>{{ $mount->id }}</code></td>
-                                <td class="middle">@if(Auth::user()->isOwner())<a href="{{ route('admin.mounts.view', $mount->id) }}">{{ $mount->name }}</a>@else{{ $mount->name }}@endif</td>
+                                <td class="middle">@if(Auth::user()->hasStaffPermission('mounts'))<a href="{{ route('admin.mounts.view', $mount->id) }}">{{ $mount->name }}</a>@else{{ $mount->name }}@endif</td>
                                 <td class="middle"><code>{{ $mount->source }}</code></td>
                                 <td class="col-sm-2 middle"><code>{{ $mount->target }}</code></td>
 

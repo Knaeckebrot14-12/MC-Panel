@@ -5,7 +5,7 @@ A game server panel for Minecraft hosting, built on the open source [Pterodactyl
 - **Coin economy**: earn coins via Linkvertise, an AFK page, daily rewards with streaks, vouchers and referrals; spend them in a shop on resources, backups or whole server plans
 - **Self-service servers** for normal users, with per-user resource pools and cooldowns
 - **Support tickets** with notifications and ratings
-- **Roles**: user, supporter, moderator, admin, owner, with an audit log of staff actions
+- **Roles**: user, supporter, moderator, admin, owner, with an audit log of staff actions. The owner decides under **Settings → Roles** what each role may do (users, servers, nodes, coins, …), including hiding other users' e-mail addresses and IPs and forbidding password changes
 - **Minecraft tools** per server: Modrinth plugin installer, player manager (online players, whitelist, operators, bans), server.properties as a form, CPU/RAM/player history graphs, automatic backups with rotation
 - **Public registration** with e-mail confirmation and an accounts-per-IP limit against alt accounts, log in with Discord, forgot-password flow, announcements
 - **Admin statistics** (users, servers, tickets, coins, node usage), **maintenance mode** (banner or lock-out) and a public **status page** at /status

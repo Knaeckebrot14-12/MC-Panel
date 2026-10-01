@@ -102,6 +102,7 @@ return [
         'registration_ip' => 'Registrado desde',
         'same_ip' => 'Misma IP',
         'verify_button' => 'Marcar correo como confirmado',
+        'password_save_button' => 'Cambiar contraseña',
     ],
     'notices' => [
         'suspend_self' => 'No puedes suspender tu propia cuenta.',
@@ -110,4 +111,5 @@ return [
         'coins_updated' => 'Saldo de coins actualizado.',
         'email_verified' => 'La dirección de correo ya está marcada como confirmada.',
     ],
+    'email_hidden' => 'oculto',
 ];

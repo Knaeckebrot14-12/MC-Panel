@@ -21,7 +21,9 @@ abstract class AdminFormRequest extends FormRequest
             return false;
         }
 
-        return (bool) $this->user()->root_admin;
+        // Which team members may use which form is decided per route (staff:<permission> and
+        // owner.only middleware in routes/admin.php, editable under Settings -> Roles).
+        return $this->user()->isStaff();
     }
 
     /**

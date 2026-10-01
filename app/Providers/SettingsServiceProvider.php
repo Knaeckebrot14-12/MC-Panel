@@ -80,6 +80,7 @@ class SettingsServiceProvider extends ServiceProvider
         'mcpanel:subdomains:domains',
         'mcpanel:push:public_key',
         'mcpanel:push:private_key',
+        'mcpanel:roles:permissions',
     ];
 
     /**

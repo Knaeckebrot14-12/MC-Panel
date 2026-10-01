@@ -73,6 +73,12 @@ return [
         'private_key' => env('MC_PANEL_VAPID_PRIVATE'),
     ],
 
+    // Admin -> Settings -> Roles: JSON {"supporter": [...], "moderator": [...], "admin": [...]}.
+    // Empty means the defaults from Pterodactyl\Services\Users\RolePermissions.
+    'roles' => [
+        'permissions' => env('MC_PANEL_ROLE_PERMISSIONS', ''),
+    ],
+
     // Admin -> Maintenance. "banner" shows the message to everybody, "lock" also keeps
     // everybody except the team out of the panel (game servers keep running).
     'maintenance' => [

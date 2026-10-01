@@ -53,5 +53,6 @@ return [
         'settings.monitoring' => 'Changed the monitoring settings',
         'settings.design' => 'Changed the design',
         'settings.subdomains' => 'Changed the subdomain settings',
+        'settings.roles' => 'Changed the role permissions',
     ],
 ];

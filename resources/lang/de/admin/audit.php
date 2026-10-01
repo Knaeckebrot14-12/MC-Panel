@@ -53,5 +53,6 @@ return [
         'settings.monitoring' => 'Monitoring-Einstellungen geändert',
         'settings.design' => 'Design geändert',
         'settings.subdomains' => 'Subdomain-Einstellungen geändert',
+        'settings.roles' => 'Rollenrechte geändert',
     ],
 ];

@@ -10,6 +10,7 @@
                     <li @if($activeTab === 'mail')class="active"@endif><a href="{{ route('admin.settings.mail') }}">@lang('admin/settings.nav.mail')</a></li>
                     <li @if($activeTab === 'advanced')class="active"@endif><a href="{{ route('admin.settings.advanced') }}">@lang('admin/settings.nav.advanced')</a></li>
                     <li @if($activeTab === 'login')class="active"@endif><a href="{{ route('admin.settings.login') }}">@lang('admin/settings.nav.login')</a></li>
+                    <li @if($activeTab === 'roles')class="active"@endif><a href="{{ route('admin.settings.roles') }}">@lang('admin/settings.nav.roles')</a></li>
                     <li @if($activeTab === 'design')class="active"@endif><a href="{{ route('admin.settings.design') }}">@lang('admin/settings.nav.design')</a></li>
                     <li @if($activeTab === 'monitoring')class="active"@endif><a href="{{ route('admin.settings.monitoring') }}">@lang('admin/settings.nav.monitoring')</a></li>
                     <li @if($activeTab === 'subdomains')class="active"@endif><a href="{{ route('admin.settings.subdomains') }}">@lang('admin/settings.nav.subdomains')</a></li>

@@ -14,9 +14,15 @@
 @endsection
 
 @section('content')
+@php
+    $me = Auth::user();
+    $canEdit = $me->hasStaffPermission('users.edit');
+    $canPassword = $me->hasStaffPermission('users.password') || $me->is($user);
+@endphp
 <div class="row">
-@if(Auth::user()->root_admin)
+@if($canEdit || $canPassword)
     <form action="{{ route('admin.users.view', $user->id) }}" method="post">
+@if($canEdit)
         <div class="col-md-6">
             <div class="box box-primary">
                 <div class="box-header with-border">
@@ -26,7 +32,11 @@
                     <div class="form-group">
                         <label for="email" class="control-label">@lang('admin/users.email_label')</label>
                         <div>
-                            <input type="email" name="email" value="{{ $user->email }}" class="form-control form-autocomplete-stop">
+                            @if($me->canSeeEmailOf($user))
+                                <input type="email" name="email" value="{{ $user->email }}" class="form-control form-autocomplete-stop">
+                            @else
+                                <input type="text" value="@lang('admin/users.email_hidden')" class="form-control" disabled>
+                            @endif
                         </div>
                     </div>
                     <div class="form-group">
@@ -66,6 +76,8 @@
                 </div>
             </div>
         </div>
+@endif
+@if($canPassword)
         <div class="col-md-6">
             <div class="box">
                 <div class="box-header with-border">
@@ -81,8 +93,17 @@
                         </div>
                     </div>
                 </div>
+                @if(!$canEdit)
+                    <div class="box-footer">
+                        {!! csrf_field() !!}
+                        {!! method_field('PATCH') !!}
+                        <input type="submit" value="@lang('admin/users.view.password_save_button')" class="btn btn-primary btn-sm">
+                    </div>
+                @endif
             </div>
         </div>
+@endif
+@if($canEdit)
         <div class="col-md-6">
             <div class="box">
                 <div class="box-header with-border">
@@ -126,6 +147,7 @@
                 </div>
             </div>
         </div>
+@endif
     </form>
 @endif
     <div class="col-xs-12">
@@ -158,7 +180,7 @@
             <div class="box-body">
                 <p class="no-margin">{!! trans('admin/users.view.coins_balance', ['balance' => '<strong>' . $user->coins . '</strong>']) !!}</p>
             </div>
-@if(Auth::user()->root_admin)
+@if($me->hasStaffPermission('users.coins'))
             <div class="box-footer">
                 <form action="{{ route('admin.users.coins', $user->id) }}" method="POST" class="form-inline">
                     {!! csrf_field() !!}
@@ -193,7 +215,7 @@
                     </dd>
                     <dt>@lang('admin/users.view.discord')</dt>
                     <dd>{{ $user->discord_username ? '@' . $user->discord_username : '—' }}</dd>
-                    @if(Auth::user()->root_admin)
+                    @if($me->canSeeEmailOf($user))
                         <dt>@lang('admin/users.view.registration_ip')</dt>
                         <dd><code>{{ $user->registration_ip ?: '—' }}</code></dd>
                     @endif
@@ -207,7 +229,7 @@
                     @endif
                 </dl>
             </div>
-            @if(!$user->email_verified_at)
+            @if(!$user->email_verified_at && $me->hasStaffPermission('users.moderate'))
                 <div class="box-footer">
                     <form action="{{ route('admin.users.verify-email', $user->id) }}" method="POST">
                         {!! csrf_field() !!}
@@ -216,6 +238,7 @@
                 </div>
             @endif
         </div>
+@if($me->hasStaffPermission('users.moderate'))
         <div class="box {{ $user->isSuspended() ? 'box-success' : 'box-warning' }}">
             <div class="box-header with-border">
                 <h3 class="box-title">{{ $user->isSuspended() ? trans('admin/users.view.unsuspend_heading') : trans('admin/users.view.suspend_heading') }}</h3>
@@ -236,7 +259,8 @@
                 </form>
             </div>
         </div>
-@if(Auth::user()->root_admin)
+@endif
+@if($me->hasStaffPermission('users.delete'))
         <div class="box box-danger">
             <div class="box-header with-border">
                 <h3 class="box-title">@lang('admin/users.view.delete_heading')</h3>

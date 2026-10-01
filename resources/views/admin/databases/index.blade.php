@@ -44,7 +44,7 @@
                                 <td class="text-center">{{ $host->databases_count }}</td>
                                 <td class="text-center">
                                     @if(! is_null($host->node))
-                                        @if(Auth::user()->isOwner())<a href="{{ route('admin.nodes.view', $host->node->id) }}">{{ $host->node->name }}</a>@else{{ $host->node->name }}@endif
+                                        @if(Auth::user()->hasStaffPermission('nodes'))<a href="{{ route('admin.nodes.view', $host->node->id) }}">{{ $host->node->name }}</a>@else{{ $host->node->name }}@endif
                                     @else
                                         <span class="label label-default">@lang('admin/databases.index.table.none')</span>
                                     @endif
