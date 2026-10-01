@@ -52,5 +52,12 @@ return [
         'still_running' => 'Non è stato possibile fermare il server. Fermalo e riprova.',
         'api' => 'Non è stato possibile caricare l\'elenco delle versioni. Riprova più tardi.',
         'busy' => 'Su questo server si sta già installando una versione.',
+        'backup_full' => 'Il limite di backup è raggiunto, quindi non è stato possibile fare un backup prima. Elimina un backup o cambia senza backup.',
+        'backup_throttled' => 'Troppi backup in poco tempo. Attendi un momento e riprova.',
+        'backup_failed' => 'Il backup non è riuscito, quindi non è stato modificato nulla. Riprova o cambia senza backup.',
+        'backup_timeout' => 'Il backup richiede più del previsto e continua; non è stato modificato nulla. Riprova quando è finito.',
     ],
+    'backup_first' => 'Crea prima un backup',
+    'backup_full_note' => 'L\'elenco dei backup è pieno. Elimina prima un backup o cambia senza backup.',
+    'installing_backup' => 'Creazione del backup e poi installazione… il server resta fermo nel frattempo. Può richiedere qualche minuto.',
 ];

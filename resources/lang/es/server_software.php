@@ -52,5 +52,12 @@ return [
         'still_running' => 'No se pudo detener el servidor. Detenlo e inténtalo de nuevo.',
         'api' => 'No se pudo cargar la lista de versiones. Inténtalo más tarde.',
         'busy' => 'Ya se está instalando una versión en este servidor.',
+        'backup_full' => 'Se alcanzó el límite de copias, así que no se pudo hacer una copia antes. Elimina una copia o cambia sin copia.',
+        'backup_throttled' => 'Demasiadas copias en poco tiempo. Espera un momento e inténtalo de nuevo.',
+        'backup_failed' => 'La copia falló, así que no se cambió nada. Inténtalo de nuevo o cambia sin copia.',
+        'backup_timeout' => 'La copia tarda más de lo esperado y sigue en curso; no se cambió nada. Inténtalo de nuevo cuando termine.',
     ],
+    'backup_first' => 'Crear primero una copia de seguridad',
+    'backup_full_note' => 'La lista de copias está llena. Elimina una copia primero o cambia sin copia.',
+    'installing_backup' => 'Creando la copia y luego instalando… el servidor se detiene mientras tanto. Puede tardar unos minutos.',
 ];

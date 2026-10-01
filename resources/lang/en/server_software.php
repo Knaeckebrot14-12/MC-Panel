@@ -52,5 +52,12 @@ return [
         'still_running' => 'The server could not be stopped. Stop it and try again.',
         'api' => 'The version list could not be loaded. Please try again later.',
         'busy' => 'A version is already being installed on this server.',
+        'backup_full' => 'The backup limit is reached, so no backup could be made first. Delete a backup or switch without a backup.',
+        'backup_throttled' => 'Too many backups in a short time. Wait a moment and try again.',
+        'backup_failed' => 'The backup failed, so nothing was changed. Try again or switch without a backup.',
+        'backup_timeout' => 'The backup takes longer than expected and keeps running; nothing was changed. Try again when it is finished.',
     ],
+    'backup_first' => 'Create a backup first',
+    'backup_full_note' => 'The backup list is full. Delete a backup first, or switch without one.',
+    'installing_backup' => 'Creating the backup, then installing… the server is stopped meanwhile. This can take a few minutes.',
 ];

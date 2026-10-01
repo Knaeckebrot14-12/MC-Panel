@@ -45,6 +45,9 @@ return [
     'monitoring' => [
         'discord_webhook' => env('MC_PANEL_MONITORING_WEBHOOK'),
         'notify_offline' => env('MC_PANEL_MONITORING_OFFLINE', true),
+        // The same webhook also gets a message for every new support ticket and new registration.
+        'notify_tickets' => env('MC_PANEL_MONITORING_TICKETS', true),
+        'notify_registrations' => env('MC_PANEL_MONITORING_REGISTRATIONS', true),
         'disk_percent' => (int) env('MC_PANEL_MONITORING_DISK', 90),
         'memory_percent' => (int) env('MC_PANEL_MONITORING_MEMORY', 95),
     ],

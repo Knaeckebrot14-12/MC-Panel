@@ -68,6 +68,8 @@ class SettingsServiceProvider extends ServiceProvider
         'mcpanel:maintenance:message',
         'mcpanel:monitoring:discord_webhook',
         'mcpanel:monitoring:notify_offline',
+        'mcpanel:monitoring:notify_tickets',
+        'mcpanel:monitoring:notify_registrations',
         'mcpanel:monitoring:disk_percent',
         'mcpanel:monitoring:memory_percent',
         'mcpanel:branding:accent',

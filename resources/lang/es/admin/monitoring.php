@@ -24,6 +24,8 @@ return [
         'test_body' => 'Los avisos de monitorización del panel aparecerán en este canal.',
         'test_sent' => 'Mensaje de prueba enviado a Discord.',
         'test_failed' => 'No se pudo enviar el mensaje de prueba. Comprueba la URL del webhook.',
+        'tickets_label' => 'Mensaje por cada nuevo ticket de soporte',
+        'registrations_label' => 'Mensaje por cada nuevo registro',
     ],
     'alerts' => [
         'online_title' => 'El node :node vuelve a estar en línea',
@@ -65,5 +67,12 @@ return [
         'updated_all' => 'Wings se está actualizando en :count node(s).',
         'not_capable' => 'Este node usa un Wings antiguo que no puede actualizarse solo. Ejecuta una vez la opción Wings del instalador en la máquina.',
         'failed' => 'La actualización falló: :error',
+    ],
+    'team' => [
+        'ticket_title' => 'Nuevo ticket n.º :id',
+        'registration_title' => 'Nuevo registro',
+        'field_user' => 'Usuario',
+        'field_category' => 'Categoría',
+        'field_priority' => 'Prioridad',
     ],
 ];

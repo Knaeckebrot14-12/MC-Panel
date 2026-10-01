@@ -40,6 +40,8 @@ class MonitoringController extends Controller
             }],
             'remove_webhook' => 'sometimes|boolean',
             'notify_offline' => 'required|boolean',
+            'notify_tickets' => 'required|boolean',
+            'notify_registrations' => 'required|boolean',
             'disk_percent' => 'required|integer|min:0|max:100',
             'memory_percent' => 'required|integer|min:0|max:100',
         ]);
@@ -52,6 +54,8 @@ class MonitoringController extends Controller
         }
 
         $this->settings->set('settings::mcpanel:monitoring:notify_offline', $request->boolean('notify_offline') ? 'true' : 'false');
+        $this->settings->set('settings::mcpanel:monitoring:notify_tickets', $request->boolean('notify_tickets') ? 'true' : 'false');
+        $this->settings->set('settings::mcpanel:monitoring:notify_registrations', $request->boolean('notify_registrations') ? 'true' : 'false');
         $this->settings->set('settings::mcpanel:monitoring:disk_percent', (string) $data['disk_percent']);
         $this->settings->set('settings::mcpanel:monitoring:memory_percent', (string) $data['memory_percent']);
 

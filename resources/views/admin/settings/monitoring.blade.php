@@ -42,6 +42,20 @@
                                 <label for="notify_offline">@lang('admin/monitoring.settings.offline_label')</label>
                             </div>
                         </div>
+                        <div class="form-group">
+                            <input type="hidden" name="notify_tickets" value="0">
+                            <div class="checkbox checkbox-primary" style="margin-top:0;">
+                                <input id="notify_tickets" type="checkbox" name="notify_tickets" value="1" @if(filter_var(config('mcpanel.monitoring.notify_tickets'), FILTER_VALIDATE_BOOLEAN)) checked @endif>
+                                <label for="notify_tickets">@lang('admin/monitoring.settings.tickets_label')</label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <input type="hidden" name="notify_registrations" value="0">
+                            <div class="checkbox checkbox-primary" style="margin-top:0;">
+                                <input id="notify_registrations" type="checkbox" name="notify_registrations" value="1" @if(filter_var(config('mcpanel.monitoring.notify_registrations'), FILTER_VALIDATE_BOOLEAN)) checked @endif>
+                                <label for="notify_registrations">@lang('admin/monitoring.settings.registrations_label')</label>
+                            </div>
+                        </div>
                         <div class="row">
                             <div class="form-group col-xs-6">
                                 <label class="control-label" for="disk_percent">@lang('admin/monitoring.settings.disk_label')</label>

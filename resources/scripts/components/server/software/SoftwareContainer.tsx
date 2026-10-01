@@ -41,11 +41,14 @@ export default () => {
     const [version, setVersion] = useState('');
     const [installing, setInstalling] = useState(false);
     const [confirm, setConfirm] = useState(false);
+    const [backupFirst, setBackupFirst] = useState(false);
 
     useEffect(() => {
         getSoftware(uuid)
             .then((data) => {
                 setOverview(data);
+                // On by default, unless there is no free backup slot (a backup is never made by deleting another one).
+                setBackupFirst(data.backup.allowed && !data.backup.full);
                 if (data.current) setType(data.current.type);
             })
             .catch((error) => addError({ key: 'software', message: httpErrorToHuman(error) }));
@@ -68,7 +71,7 @@ export default () => {
         clearFlashes('software');
         setConfirm(false);
         setInstalling(true);
-        installSoftware(uuid, type, version)
+        installSoftware(uuid, type, version, backupFirst)
             .then((result) => {
                 setOverview((o) => (o ? { ...o, current: result } : o));
                 addFlash({
@@ -158,7 +161,22 @@ export default () => {
                                     </Button>
                                 </div>
                                 {selected && <p css={tw`text-xs text-neutral-400 mt-2`}>{t('java_hint', { java: selected.java })}</p>}
-                                {installing && <p css={tw`text-sm text-neutral-200 mt-4`}>{t('installing')}</p>}
+                                {overview.backup.allowed && (
+                                    <label css={tw`flex items-center mt-4 text-sm cursor-pointer`}>
+                                        <input
+                                            type={'checkbox'}
+                                            checked={backupFirst}
+                                            disabled={installing}
+                                            onChange={(e) => setBackupFirst(e.currentTarget.checked)}
+                                            css={tw`mr-2`}
+                                        />
+                                        {t('backup_first')}
+                                    </label>
+                                )}
+                                {overview.backup.allowed && overview.backup.full && (
+                                    <p css={tw`text-xs text-yellow-400 mt-1`}>{t('backup_full_note')}</p>
+                                )}
+                                {installing && <p css={tw`text-sm text-neutral-200 mt-4`}>{backupFirst ? t('installing_backup') : t('installing')}</p>}
                                 {confirm && (
                                     <div css={tw`mt-4`}>
                                         <Alert type={downgrade ? 'danger' : 'warning'}>
@@ -179,7 +197,7 @@ export default () => {
                             </>
                         )}
                     </TitledGreyBox>
-                    <p css={tw`text-xs text-neutral-400 mt-4`}>{t('backup_hint')}</p>
+                    {!overview.backup.allowed && <p css={tw`text-xs text-neutral-400 mt-4`}>{t('backup_hint')}</p>}
                 </>
             )}
         </ServerContentBlock>

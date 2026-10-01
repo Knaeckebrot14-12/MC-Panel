@@ -24,6 +24,8 @@ return [
         'test_body' => 'Monitoring-Meldungen vom Panel erscheinen in diesem Kanal.',
         'test_sent' => 'Testnachricht an Discord gesendet.',
         'test_failed' => 'Die Testnachricht konnte nicht gesendet werden. Prüfe die Webhook-URL.',
+        'tickets_label' => 'Nachricht bei jedem neuen Support-Ticket',
+        'registrations_label' => 'Nachricht bei jeder neuen Registrierung',
     ],
     'alerts' => [
         'online_title' => 'Node :node ist wieder online',
@@ -65,5 +67,12 @@ return [
         'updated_all' => 'Wings wird auf :count Node(s) aktualisiert.',
         'not_capable' => 'Auf diesem Node läuft ein älteres Wings, das sich nicht selbst aktualisieren kann. Führe einmal die Wings-Option des Installers auf der Maschine aus.',
         'failed' => 'Das Update ist fehlgeschlagen: :error',
+    ],
+    'team' => [
+        'ticket_title' => 'Neues Ticket #:id',
+        'registration_title' => 'Neue Registrierung',
+        'field_user' => 'Benutzer',
+        'field_category' => 'Kategorie',
+        'field_priority' => 'Priorität',
     ],
 ];

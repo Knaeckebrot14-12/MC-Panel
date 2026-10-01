@@ -52,5 +52,12 @@ return [
         'still_running' => 'Der Server konnte nicht gestoppt werden. Stoppe ihn und versuch es noch einmal.',
         'api' => 'Die Versionsliste konnte nicht geladen werden. Bitte versuch es später noch einmal.',
         'busy' => 'Auf diesem Server wird gerade schon eine Version installiert.',
+        'backup_full' => 'Das Backup-Limit ist erreicht, deshalb konnte vorher kein Backup erstellt werden. Lösche ein Backup oder wechsle ohne Backup.',
+        'backup_throttled' => 'Zu viele Backups in kurzer Zeit. Warte einen Moment und versuch es noch einmal.',
+        'backup_failed' => 'Das Backup ist fehlgeschlagen, deshalb wurde nichts geändert. Versuch es noch einmal oder wechsle ohne Backup.',
+        'backup_timeout' => 'Das Backup dauert länger als erwartet und läuft weiter; es wurde nichts geändert. Versuch es noch einmal, wenn es fertig ist.',
     ],
+    'backup_first' => 'Vorher ein Backup erstellen',
+    'backup_full_note' => 'Die Backup-Liste ist voll. Lösche zuerst ein Backup oder wechsle ohne Backup.',
+    'installing_backup' => 'Backup wird erstellt, danach wird installiert … der Server ist solange gestoppt. Das kann ein paar Minuten dauern.',
 ];

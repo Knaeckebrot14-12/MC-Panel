@@ -37,6 +37,7 @@ class RegisterController extends AbstractLoginController
         $this->guard->afterRegistration($user, $request->ip());
 
         $this->applyReferral($user, $referralCode);
+        \Pterodactyl\Services\Notifications\TeamAlerts::newRegistration($user);
 
         return $this->sendLoginResponse($user, $request);
     }

@@ -103,6 +103,7 @@ class DiscordAuthController extends Controller
                 $this->guard->assertCanRegister($request->ip());
                 $user = $this->register($profile);
                 $this->guard->afterRegistration($user, $request->ip(), true);
+                \Pterodactyl\Services\Notifications\TeamAlerts::newRegistration($user);
             } catch (DisplayException) {
                 return $fail('ip_limit');
             }

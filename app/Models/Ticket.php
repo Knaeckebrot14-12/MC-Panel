@@ -79,6 +79,10 @@ class Ticket extends Model
      */
     public function notifyStaff(bool $isNew): void
     {
+        if ($isNew) {
+            \Pterodactyl\Services\Notifications\TeamAlerts::newTicket($this);
+        }
+
         $assignee = $this->assignee;
 
         $recipients = $assignee && $assignee->hasStaffPermission('tickets')

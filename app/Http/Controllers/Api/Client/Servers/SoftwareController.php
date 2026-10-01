@@ -29,6 +29,11 @@ class SoftwareController extends ClientApiController
             'supported' => $this->software->supports($server),
             'current' => $server->software,
             'types' => SoftwareService::TYPES,
+            // Whether a backup can be made first: needs the right to, and a free backup slot.
+            'backup' => [
+                'allowed' => $request->user()->can(Permission::ACTION_BACKUP_CREATE, $server) && $server->backup_limit > 0,
+                'full' => $server->backup_limit > 0 && $server->backups()->where(fn ($q) => $q->whereNull('completed_at')->orWhere('is_successful', true))->count() >= $server->backup_limit,
+            ],
         ]);
     }
 
@@ -51,7 +56,12 @@ class SoftwareController extends ClientApiController
         $data = $request->validate([
             'type' => ['required', Rule::in(SoftwareService::TYPES)],
             'version' => 'required|string|max:64',
+            'backup' => 'sometimes|boolean',
         ]);
+        $backup = $request->boolean('backup');
+        if ($backup) {
+            $this->requirePermission($request, $server, Permission::ACTION_BACKUP_CREATE);
+        }
 
         // One change at a time per server.
         $lock = Cache::lock('mcpanel:software-install:' . $server->id, 900);
@@ -60,13 +70,13 @@ class SoftwareController extends ClientApiController
         }
 
         try {
-            $result = $this->software->install($server, $data['type'], $data['version']);
+            $result = $this->software->install($server, $data['type'], $data['version'], $backup);
         } finally {
             $lock->release();
         }
 
         Activity::event('server:software.install')
-            ->property(['type' => $data['type'], 'version' => $data['version'], 'build' => $result['build']])
+            ->property(['type' => $data['type'], 'version' => $data['version'], 'build' => $result['build'], 'backup' => $backup])
             ->log();
 
         return new JsonResponse($result);

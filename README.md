@@ -10,7 +10,7 @@ A game server panel for Minecraft hosting, built on the open source [Pterodactyl
 - **Public registration** with e-mail confirmation and an accounts-per-IP limit against alt accounts, log in with Discord, forgot-password flow, announcements
 - **Admin statistics** (users, servers, tickets, coins, node usage), **maintenance mode** (banner or lock-out) and a public **status page** at /status
 - **Translations**: English, German, French, Spanish and more, selectable per user
-- **Version changer**: switch a Minecraft server between Paper, Purpur, Folia, Fabric, Vanilla and Velocity and any of their versions with one click; the matching Java image is chosen automatically
+- **Version changer**: switch a Minecraft server between Paper, Purpur, Folia, Fabric, Vanilla and Velocity and any of their versions with one click; the matching Java image is chosen automatically, and a backup can be made first (on by default, never by deleting another backup)
 - **Subdomains**: users give their servers an address like `name.play.example.com` (A + SRV records through the Cloudflare API, no port needed to join)
 - **Node monitoring**: CPU, memory and disk graphs per node, Discord alerts when a node goes offline or runs full, and one-click Wings updates for all nodes
 - **Design**: logo, icon, accent colour and background under Settings → Design; every user can switch between the dark and a light theme
@@ -103,7 +103,7 @@ Nodes run this repository's Wings build: the official [pterodactyl/wings](https:
 
 Under **Admin → Nodes** each node shows its usage; when a newer Wings release exists, **Update Wings** (per node) or **Update all** installs it. Game servers keep running while Wings restarts. Nodes that still run an older Wings get the patched one once by running the installer's Wings option on them.
 
-Alerts are configured under **Admin → Settings → Monitoring** (Discord webhook, disk and memory thresholds).
+Alerts are configured under **Admin → Settings → Monitoring** (Discord webhook, disk and memory thresholds). The same Discord channel can also get a message for every new support ticket and new registration.
 
 ## Publishing updates (for maintainers)
 

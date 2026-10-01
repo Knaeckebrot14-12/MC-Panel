@@ -52,5 +52,12 @@ return [
         'still_running' => 'De server kon niet worden gestopt. Stop hem en probeer het opnieuw.',
         'api' => 'De versielijst kon niet worden geladen. Probeer het later opnieuw.',
         'busy' => 'Op deze server wordt al een versie geïnstalleerd.',
+        'backup_full' => 'De back-uplimiet is bereikt, dus er kon vooraf geen back-up worden gemaakt. Verwijder een back-up of wissel zonder back-up.',
+        'backup_throttled' => 'Te veel back-ups in korte tijd. Wacht even en probeer het opnieuw.',
+        'backup_failed' => 'De back-up is mislukt, dus er is niets gewijzigd. Probeer het opnieuw of wissel zonder back-up.',
+        'backup_timeout' => 'De back-up duurt langer dan verwacht en loopt door; er is niets gewijzigd. Probeer het opnieuw als hij klaar is.',
     ],
+    'backup_first' => 'Eerst een back-up maken',
+    'backup_full_note' => 'De back-uplijst is vol. Verwijder eerst een back-up of wissel zonder back-up.',
+    'installing_backup' => 'Back-up maken en daarna installeren… de server staat intussen stil. Dit kan een paar minuten duren.',
 ];

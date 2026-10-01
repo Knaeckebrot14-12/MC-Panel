@@ -14,6 +14,7 @@ export interface SoftwareOverview {
     supported: boolean;
     current: InstalledSoftware | null;
     types: SoftwareType[];
+    backup: { allowed: boolean; full: boolean };
 }
 
 export interface SoftwareVersion {
@@ -36,9 +37,10 @@ export const getSoftwareVersions = async (uuid: string, type: SoftwareType): Pro
 export const installSoftware = async (
     uuid: string,
     type: SoftwareType,
-    version: string
+    version: string,
+    backup = false
 ): Promise<InstalledSoftware & { image: string }> => {
-    const { data } = await http.post(`/api/client/servers/${uuid}/software`, { type, version }, { timeout: 900000 });
+    const { data } = await http.post(`/api/client/servers/${uuid}/software`, { type, version, backup }, { timeout: 900000 });
 
     return data;
 };

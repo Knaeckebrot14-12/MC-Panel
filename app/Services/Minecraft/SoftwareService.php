@@ -2,12 +2,16 @@
 
 namespace Pterodactyl\Services\Minecraft;
 
+use Pterodactyl\Models\Backup;
 use Pterodactyl\Models\Server;
 use Pterodactyl\Models\EggVariable;
 use Pterodactyl\Models\ServerVariable;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Cache;
 use Pterodactyl\Exceptions\DisplayException;
+use Pterodactyl\Services\Backups\InitiateBackupService;
+use Pterodactyl\Exceptions\Service\Backup\TooManyBackupsException;
+use Symfony\Component\HttpKernel\Exception\TooManyRequestsHttpException;
 use Pterodactyl\Repositories\Wings\DaemonFileRepository;
 use Pterodactyl\Repositories\Wings\DaemonPowerRepository;
 use Pterodactyl\Repositories\Wings\DaemonServerRepository;
@@ -30,8 +34,12 @@ class SoftwareService
         private DaemonFileRepository $files,
         private DaemonPowerRepository $power,
         private DaemonServerRepository $daemon,
+        private InitiateBackupService $backups,
     ) {
     }
+
+    /** Seconds to wait for the backup before giving up; the web server allows requests of 5 minutes. */
+    private const BACKUP_WAIT_SECONDS = 240;
 
     /**
      * Servers whose startup runs {{SERVER_JARFILE}} (the Minecraft eggs) can switch software.
@@ -73,7 +81,7 @@ class SoftwareService
      *
      * @throws DisplayException
      */
-    public function install(Server $server, string $type, string $version): array
+    public function install(Server $server, string $type, string $version, bool $backup = false): array
     {
         $this->assertType($type);
         if (!$this->supports($server)) {
@@ -89,6 +97,12 @@ class SoftwareService
         [$url, $build, $java] = $this->resolveDownload($type, $version, (int) $known['java']);
 
         $this->stopServer($server);
+
+        // A stopped server makes a consistent backup, and it is the way back if the new version
+        // damages the world (older versions can't read newer worlds).
+        if ($backup) {
+            $this->backupFirst($server, $type, $version);
+        }
 
         try {
             if ($type === 'fabric') {
@@ -119,6 +133,41 @@ class SoftwareService
         $this->setVariable($server, 'BUILD_NUMBER', 'latest');
 
         return $software + ['image' => $image];
+    }
+
+    /**
+     * Creates a backup and waits until Wings has finished it. A full backup list is not cleared
+     * to make room: that would silently delete someone's backup.
+     *
+     * @throws DisplayException
+     */
+    private function backupFirst(Server $server, string $type, string $version): void
+    {
+        try {
+            $backup = $this->backups->setIsLocked(false)->handle($server, sprintf('Before %s %s (%s)', ucfirst($type), $version, now()->format('Y-m-d H:i')));
+        } catch (TooManyBackupsException) {
+            throw new DisplayException(trans('server_software.errors.backup_full'));
+        } catch (TooManyRequestsHttpException) {
+            throw new DisplayException(trans('server_software.errors.backup_throttled'));
+        } catch (\Throwable $exception) {
+            report($exception);
+            throw new DisplayException(trans('server_software.errors.backup_failed'));
+        }
+
+        $deadline = time() + self::BACKUP_WAIT_SECONDS;
+        while (time() < $deadline) {
+            $fresh = Backup::query()->find($backup->id);
+            if ($fresh && $fresh->completed_at) {
+                if (!$fresh->is_successful) {
+                    throw new DisplayException(trans('server_software.errors.backup_failed'));
+                }
+
+                return;
+            }
+            sleep(3);
+        }
+
+        throw new DisplayException(trans('server_software.errors.backup_timeout'));
     }
 
     /**

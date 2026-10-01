@@ -52,5 +52,12 @@ return [
         'still_running' => 'Nie udało się zatrzymać serwera. Zatrzymaj go i spróbuj ponownie.',
         'api' => 'Nie udało się wczytać listy wersji. Spróbuj ponownie później.',
         'busy' => 'Na tym serwerze trwa już instalacja wersji.',
+        'backup_full' => 'Osiągnięto limit kopii zapasowych, więc nie można było najpierw utworzyć kopii. Usuń kopię lub zmień bez kopii.',
+        'backup_throttled' => 'Zbyt wiele kopii w krótkim czasie. Poczekaj chwilę i spróbuj ponownie.',
+        'backup_failed' => 'Kopia zapasowa się nie powiodła, więc nic nie zmieniono. Spróbuj ponownie lub zmień bez kopii.',
+        'backup_timeout' => 'Kopia trwa dłużej niż oczekiwano i nadal się wykonuje; nic nie zmieniono. Spróbuj ponownie, gdy się zakończy.',
     ],
+    'backup_first' => 'Najpierw utwórz kopię zapasową',
+    'backup_full_note' => 'Lista kopii zapasowych jest pełna. Najpierw usuń kopię lub zmień bez kopii.',
+    'installing_backup' => 'Tworzenie kopii zapasowej, potem instalacja… serwer jest w tym czasie zatrzymany. Może to potrwać kilka minut.',
 ];

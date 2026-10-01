@@ -52,5 +52,12 @@ return [
         'still_running' => 'Não foi possível parar o servidor. Pare-o e tente novamente.',
         'api' => 'Não foi possível carregar a lista de versões. Tente novamente mais tarde.',
         'busy' => 'Uma versão já está sendo instalada neste servidor.',
+        'backup_full' => 'O limite de backups foi atingido, então não foi possível fazer um backup antes. Exclua um backup ou troque sem backup.',
+        'backup_throttled' => 'Muitos backups em pouco tempo. Aguarde um momento e tente novamente.',
+        'backup_failed' => 'O backup falhou, então nada foi alterado. Tente novamente ou troque sem backup.',
+        'backup_timeout' => 'O backup está demorando mais que o esperado e continua; nada foi alterado. Tente novamente quando terminar.',
     ],
+    'backup_first' => 'Criar um backup antes',
+    'backup_full_note' => 'A lista de backups está cheia. Exclua um backup primeiro ou troque sem backup.',
+    'installing_backup' => 'Criando o backup e depois instalando… o servidor fica parado nesse meio tempo. Pode levar alguns minutos.',
 ];

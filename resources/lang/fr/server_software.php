@@ -52,5 +52,12 @@ return [
         'still_running' => 'Le serveur n\'a pas pu être arrêté. Arrêtez-le puis réessayez.',
         'api' => 'La liste des versions n\'a pas pu être chargée. Réessayez plus tard.',
         'busy' => 'Une version est déjà en cours d\'installation sur ce serveur.',
+        'backup_full' => 'La limite de sauvegardes est atteinte, aucune sauvegarde n\'a pu être faite. Supprimez une sauvegarde ou changez sans sauvegarde.',
+        'backup_throttled' => 'Trop de sauvegardes en peu de temps. Attendez un instant et réessayez.',
+        'backup_failed' => 'La sauvegarde a échoué, rien n\'a été modifié. Réessayez ou changez sans sauvegarde.',
+        'backup_timeout' => 'La sauvegarde prend plus de temps que prévu et continue ; rien n\'a été modifié. Réessayez quand elle sera terminée.',
     ],
+    'backup_first' => 'Créer d\'abord une sauvegarde',
+    'backup_full_note' => 'La liste des sauvegardes est pleine. Supprimez d\'abord une sauvegarde ou changez sans sauvegarde.',
+    'installing_backup' => 'Création de la sauvegarde, puis installation… le serveur est arrêté entre-temps. Cela peut prendre quelques minutes.',
 ];
