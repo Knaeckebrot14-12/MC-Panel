@@ -493,7 +493,7 @@ EOF
     ok "Configuration written"
 
     run_step "Building the updater" "Updater built" dc build updater || die "Could not build the updater service."
-    run_step "Building the panel (5-15 minutes the first time)" "Panel built" \
+    run_step "Building the panel (this can take a few minutes the first time)" "Panel built" \
         dc build --build-arg "MC_COMMIT=$commit" panel \
         || die "The build failed (a common reason is too little memory: 4 GB or swap is recommended)."
     run_step "Starting the services" "Services started" dc up -d || die "Could not start the services."
@@ -1313,7 +1313,7 @@ EOF
     chmod +x "$INSTALL_DIR/installer/recoded-ptero" "$INSTALL_DIR/installer/updater/updater.sh"
 
     run_step "Building the updater" "Updater built" dc build updater || die "Could not build the updater, your panel was not touched."
-    run_step "Building Recoded Ptero (5-15 minutes, your panel keeps running)" "Recoded Ptero built" \
+    run_step "Building Recoded Ptero (this can take a few minutes, your panel keeps running)" "Recoded Ptero built" \
         dc build --build-arg "MC_COMMIT=$commit" panel || die "The build failed, your panel was not touched."
 
     # ------------------------------------------------------------ downtime starts here

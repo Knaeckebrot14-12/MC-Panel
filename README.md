@@ -40,7 +40,7 @@ What the installer asks:
 5. **Automatic updates**: on or off (can be changed later under Settings → Updates).
 6. **Wings on this server too?** Say yes and panel, node and Wings are set up in one run.
 
-Then it builds and starts everything (5–15 minutes the first time) and prints the URL and login.
+Then it builds and starts everything (this can take a few minutes the first time) and prints the URL and login.
 
 The system's own packages are brought up to date too: `apt update && apt upgrade -y` (dnf/yum on RHEL-like systems) runs before the installation changes anything and once more at the end. Your changed config files are kept. If an update needs a restart (a new kernel), the installer says so; everything starts again on its own after `reboot`. Set `MC_SKIP_SYSTEM_UPGRADE=1` to skip this.
 
