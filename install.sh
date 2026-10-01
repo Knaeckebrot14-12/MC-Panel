@@ -677,9 +677,13 @@ EOF
     fi
     enable_cert_renewal
     # A dry run against Let's Encrypt's staging server proves the automatic renewal will work later.
+    # It is only a test, so it must never hold the installation up: after 4 minutes it is given up on.
     run_step "Testing the automatic renewal of the certificate" "Certificate renews automatically (checked twice a day, renewed 30 days before it expires)" \
-        certbot renew --dry-run --cert-name "$domain" \
-        || warn "The renewal test failed. The certificate works for now, but check port 80 and the DNS record before it expires."
+        timeout 240 certbot renew --dry-run --cert-name "$domain" \
+        || warn "The renewal test failed or took too long. The certificate works for now, but check port 80 and the DNS record before it expires."
+    # The test stops whatever uses port 80 and starts it again afterwards; if it was cut off, make sure that happened.
+    [ -n "${CERT_POST:-}" ] && sh -c "$CERT_POST" >/dev/null 2>&1
+    return 0
 }
 
 # ---------------------------------------------------------------- database server for game servers
