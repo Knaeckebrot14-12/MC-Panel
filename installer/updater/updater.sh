@@ -310,6 +310,24 @@ do_update() {
     return 0
 }
 
+# Small helpers that belong on the server itself (installer/host-extras.sh, e.g. the hourly RAM cache
+# clear) are set up from here, so existing installations get them through the normal update. The
+# updater container can reach the host's namespaces through the Docker socket it already has.
+# Only for the production stack; never fails an update.
+host_extras() {
+    [ -f /.dockerenv ] || return 0
+    [ "$(basename "$COMPOSE_FILE")" = "docker-compose.prod.yml" ] || return 0
+    [ -f "$INSTALL_DIR/installer/host-extras.sh" ] || return 0
+
+    local image
+    image="$(docker inspect --format '{{.Image}}' "$(hostname)" 2>/dev/null)" || image="docker:cli"
+    local out
+    out="$(timeout 90 docker run --rm --privileged --pid=host --network none -e INSTALL_DIR="$INSTALL_DIR" "$image" \
+        nsenter -t 1 -m -u -i -n -p -- sh "$INSTALL_DIR/installer/host-extras.sh" 2>&1)" || log "Host extras: $out"
+    [ -n "$out" ] && log "Host extras: $out"
+    return 0
+}
+
 daemon() {
     mkdir -p "$STATE_DIR"
 
@@ -319,6 +337,9 @@ daemon() {
         write_status failed fetch "The update was interrupted." "$(now)"
     fi
     release_lock
+
+    # Right after an update the daemon starts again with the new script, so this also runs then.
+    host_extras
 
     log "Updater ready (watching $STATE_DIR)."
     while true; do

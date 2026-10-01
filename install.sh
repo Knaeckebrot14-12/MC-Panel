@@ -154,7 +154,11 @@ reboot_notice() {
 # nothing is lost; programs keep their memory, only cached file contents are read from disk again.
 # MC_DROP_CACHES=0 skips it; turn it off later with: systemctl disable --now recoded-ptero-dropcache.timer
 setup_cache_drop() {
-    [ "${MC_DROP_CACHES:-1}" = "1" ] || return 0
+    if [ "${MC_DROP_CACHES:-1}" != "1" ]; then
+        # Remember the "no", so the updater (installer/host-extras.sh) doesn't set it up later.
+        if [ -d "$INSTALL_DIR" ]; then mkdir -p "$INSTALL_DIR/state" && touch "$INSTALL_DIR/state/no-dropcache"; fi
+        return 0
+    fi
     [ -w /proc/sys/vm/drop_caches ] || return 0
     if command -v systemctl >/dev/null 2>&1 && [ -d /etc/systemd/system ]; then
         cat > /etc/systemd/system/recoded-ptero-dropcache.service <<'EOF'
