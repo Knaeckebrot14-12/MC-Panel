@@ -96,10 +96,34 @@ class DatabaseRepository extends EloquentRepository implements DatabaseRepositor
     {
         return $this->run(sprintf(
             'GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, ALTER, REFERENCES, INDEX, LOCK TABLES, CREATE ROUTINE, ALTER ROUTINE, EXECUTE, CREATE TEMPORARY TABLES, CREATE VIEW, SHOW VIEW, EVENT, TRIGGER ON `%s`.* TO `%s`@`%s`',
-            $database,
+            self::escapeGrantName($database),
             $username,
             $remote
         ));
+    }
+
+    /**
+     * In GRANT and REVOKE the database name is a pattern: "_" stands for any single character and
+     * "%" for any number of them, so an unescaped name like s2__foo would also cover other
+     * databases (for example s21_foo). Escaping makes the grant apply to exactly this database.
+     */
+    public static function escapeGrantName(string $database): string
+    {
+        return str_replace(['\\', '_', '%'], ['\\\\', '\_', '\%'], $database);
+    }
+
+    /**
+     * Removes the pattern grant that older versions created for this database (the name written
+     * without escaping). Does nothing when there is none.
+     */
+    public function revokeLegacyGrant(string $database, string $username, string $remote): bool
+    {
+        try {
+            return $this->run(sprintf('REVOKE ALL PRIVILEGES ON `%s`.* FROM `%s`@`%s`', $database, $username, $remote));
+        } catch (\Throwable) {
+            // "There is no such grant": it was already escaped, or the user does not exist.
+            return false;
+        }
     }
 
     /**
