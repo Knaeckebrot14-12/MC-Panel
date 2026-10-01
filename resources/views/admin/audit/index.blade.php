@@ -45,15 +45,15 @@
                         @forelse($logs as $log)
                             <tr>
                                 <td style="white-space: nowrap;">{{ $log->created_at->format('Y-m-d H:i:s') }}</td>
-                                <td>@if($log->user)<a href="{{ route('admin.users.view', $log->user->id) }}"><strong>{{ $log->user->username }}</strong></a> <span class="label label-default">@lang('admin/users.roles.' . $log->user->effectiveRole())</span>@else — @endif</td>
+                                <td>@if($log->user)@if(Auth::user()->hasStaffPermission('users.view'))<a href="{{ route('admin.users.view', $log->user->id) }}"><strong>{{ $log->user->username }}</strong></a>@else<strong>{{ $log->user->username }}</strong>@endif <span class="label label-default">@lang('admin/users.roles.' . $log->user->effectiveRole())</span>@else — @endif</td>
                                 <td>{{ $log->describe() }}</td>
                                 <td>
-                                    @if($log->targetServer)<a href="{{ route('admin.servers.view', $log->targetServer->id) }}">{{ $log->targetServer->name }}</a>
+                                    @if($log->targetServer)@if(Auth::user()->hasStaffPermission('servers.view'))<a href="{{ route('admin.servers.view', $log->targetServer->id) }}">{{ $log->targetServer->name }}</a>@else{{ $log->targetServer->name }}@endif
                                     @elseif($log->target_server){{ $log->target_server }}
                                     @else — @endif
                                 </td>
                                 <td>
-                                    @if($log->targetUser)<a href="{{ route('admin.users.view', $log->targetUser->id) }}">{{ $log->targetUser->username }}</a>
+                                    @if($log->targetUser)@if(Auth::user()->hasStaffPermission('users.view'))<a href="{{ route('admin.users.view', $log->targetUser->id) }}">{{ $log->targetUser->username }}</a>@else{{ $log->targetUser->username }}@endif
                                     @elseif($log->target_user){{ $log->target_user }}
                                     @else — @endif
                                 </td>

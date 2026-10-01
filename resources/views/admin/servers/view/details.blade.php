@@ -37,7 +37,7 @@
                     <div class="form-group">
                         <label for="pUserId" class="control-label">@lang('admin/servers_view.details.owner_label') <span class="field-required"></span></label>
                         <select name="owner_id" class="form-control" id="pUserId">
-                            <option value="{{ $server->owner_id }}" selected>{{ Auth::user()->visibleEmail($server->user) }}</option>
+                            <option value="{{ $server->owner_id }}" selected>{{ Auth::user()->canSeeEmailOf($server->user) ? $server->user->email : $server->user->username }}</option>
                         </select>
                         <p class="text-muted small">@lang('admin/servers_view.details.owner_description')</p>
                     </div>
@@ -93,7 +93,7 @@
                 <span class="username"> \
                     <a href="#">' + escapeHtml(data.name_first) + ' ' + escapeHtml(data.name_last) +'</a> \
                 </span> \
-                <span class="description"><strong>' + escapeHtml(data.email) + '</strong> - ' + escapeHtml(data.username) + '</span> \
+                <span class="description">' + (data.email ? '<strong>' + escapeHtml(data.email) + '</strong> - ' : '') + escapeHtml(data.username) + '</span> \
             </div>';
         },
         templateSelection: function (data) {
@@ -102,7 +102,7 @@
                     md5: '{{ md5(strtolower(Auth::user()->canSeeEmailOf($server->user) ? $server->user->email : $server->user->username)) }}',
                     name_first: '{{ $server->user->name_first }}',
                     name_last: '{{ $server->user->name_last }}',
-                    email: '{{ Auth::user()->visibleEmail($server->user) }}',
+                    email: '{{ Auth::user()->canSeeEmailOf($server->user) ? $server->user->email : '' }}',
                     id: {{ $server->owner_id }}
                 };
             }
@@ -112,7 +112,7 @@
                     <img class="img-rounded img-bordered-xs" src="https://www.gravatar.com/avatar/' + escapeHtml(data.md5) + '?s=120" style="height:28px;margin-top:-4px;" alt="User Image"> \
                 </span> \
                 <span style="padding-left:5px;"> \
-                    ' + escapeHtml(data.name_first) + ' ' + escapeHtml(data.name_last) + ' (<strong>' + escapeHtml(data.email) + '</strong>) \
+                    ' + escapeHtml(data.name_first) + ' ' + escapeHtml(data.name_last) + (data.email ? ' (<strong>' + escapeHtml(data.email) + '</strong>)' : ' (' + escapeHtml(data.username) + ')') + ' \
                 </span> \
             </div>';
         }

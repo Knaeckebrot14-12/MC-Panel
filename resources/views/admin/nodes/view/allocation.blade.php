@@ -72,7 +72,7 @@
                             <td class="col-sm-2 middle" data-identifier="port">{{ $allocation->port }}</td>
                             <td class="col-sm-3 middle">
                                 @if(! is_null($allocation->server))
-                                    <a href="{{ route('admin.servers.view', $allocation->server_id) }}">{{ $allocation->server->name }}</a>
+                                    @if(Auth::user()->hasStaffPermission('servers.view'))<a href="{{ route('admin.servers.view', $allocation->server_id) }}">{{ $allocation->server->name }}</a>@else{{ $allocation->server->name }}@endif
                                 @endif
                             </td>
                             <td class="col-sm-1 middle">

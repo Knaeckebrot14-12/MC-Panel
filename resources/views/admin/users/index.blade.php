@@ -37,7 +37,7 @@
                             <input type="text" name="filter[email]" class="form-control pull-right" value="{{ request()->input('filter.email') }}" placeholder="@lang('admin/users.index.search_placeholder')">
                             <div class="input-group-btn">
                                 <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
-                                <a href="{{ route('admin.users.new') }}"><button type="button" class="btn btn-sm btn-primary" style="border-radius: 0 3px 3px 0;margin-left:-1px;">@lang('admin/users.index.create_new_button')</button></a>
+                                @if(Auth::user()->hasStaffPermission('users.edit'))<a href="{{ route('admin.users.new') }}"><button type="button" class="btn btn-sm btn-primary" style="border-radius: 0 3px 3px 0;margin-left:-1px;">@lang('admin/users.index.create_new_button')</button></a>@endif
                             </div>
                         </div>
                     </form>
@@ -48,7 +48,7 @@
                     <thead>
                         <tr>
                             <th>@lang('admin/users.index.table.id')</th>
-                            <th>@lang('admin/users.index.table.email')</th>
+                            @if($seesEmails)<th>@lang('admin/users.index.table.email')</th>@endif
                             <th>@lang('admin/users.index.table.client_name')</th>
                             <th>@lang('admin/users.index.table.username')</th>
                             <th class="text-center">@lang('admin/users.index.table.2fa')</th>
@@ -61,9 +61,9 @@
                         @foreach ($users as $user)
                             <tr class="align-middle">
                                 <td><code>{{ $user->id }}</code></td>
-                                <td><a href="{{ route('admin.users.view', $user->id) }}">{{ Auth::user()->visibleEmail($user) }}</a> @if($user->isStaff())<span class="label label-{{ $user->isOwner() ? 'danger' : ($user->root_admin ? 'warning' : 'info') }}">@lang('admin/users.roles.' . $user->effectiveRole())</span>@endif</td>
+                                @if($seesEmails)<td><a href="{{ route('admin.users.view', $user->id) }}">{{ $user->email }}</a> @if($user->isStaff())<span class="label label-{{ $user->isOwner() ? 'danger' : ($user->root_admin ? 'warning' : 'info') }}">@lang('admin/users.roles.' . $user->effectiveRole())</span>@endif</td>@endif
                                 <td>{{ $user->name_last }}, {{ $user->name_first }}</td>
-                                <td>{{ $user->username }}</td>
+                                <td>@if($seesEmails){{ $user->username }}@else<a href="{{ route('admin.users.view', $user->id) }}">{{ $user->username }}</a> @if($user->isStaff())<span class="label label-{{ $user->isOwner() ? 'danger' : ($user->root_admin ? 'warning' : 'info') }}">@lang('admin/users.roles.' . $user->effectiveRole())</span>@endif @endif</td>
                                 <td class="text-center">
                                     @if($user->use_totp)
                                         <i class="fa fa-lock text-green"></i>
@@ -75,7 +75,7 @@
                                     <a href="{{ route('admin.servers', ['filter[owner_id]' => $user->id]) }}">{{ $user->servers_count }}</a>
                                 </td>
                                 <td class="text-center">{{ $user->subuser_of_count }}</td>
-                                <td class="text-center"><img src="https://www.gravatar.com/avatar/{{ md5(strtolower(Auth::user()->canSeeEmailOf($user) ? $user->email : $user->username)) }}?s=100" style="height:20px;" class="img-circle" /></td>
+                                <td class="text-center"><img src="https://www.gravatar.com/avatar/{{ md5(strtolower($seesEmails ? $user->email : $user->username)) }}?s=100" style="height:20px;" class="img-circle" /></td>
                             </tr>
                         @endforeach
                     </tbody>

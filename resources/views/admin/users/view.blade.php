@@ -29,16 +29,14 @@
                     <h3 class="box-title">@lang('admin/users.identity_heading')</h3>
                 </div>
                 <div class="box-body">
+                    @if($me->canSeeEmailOf($user))
                     <div class="form-group">
                         <label for="email" class="control-label">@lang('admin/users.email_label')</label>
                         <div>
-                            @if($me->canSeeEmailOf($user))
-                                <input type="email" name="email" value="{{ $user->email }}" class="form-control form-autocomplete-stop">
-                            @else
-                                <input type="text" value="@lang('admin/users.email_hidden')" class="form-control" disabled>
-                            @endif
+                            <input type="email" name="email" value="{{ $user->email }}" class="form-control form-autocomplete-stop">
                         </div>
                     </div>
+                    @endif
                     <div class="form-group">
                         <label for="registered" class="control-label">@lang('admin/users.username_label')</label>
                         <div>

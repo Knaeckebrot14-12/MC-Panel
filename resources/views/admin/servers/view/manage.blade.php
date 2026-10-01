@@ -57,6 +57,7 @@
             </div>
         </div>
 
+        @if(Auth::user()->hasStaffPermission('servers.moderate'))
         @if(! $server->isSuspended())
             <div class="col-sm-4">
                 <div class="box box-warning">
@@ -93,6 +94,7 @@
                     </div>
                 </div>
             </div>
+        @endif
         @endif
 
         @if(is_null($server->transfer))

@@ -214,7 +214,7 @@
                         <h3 class="box-title">@lang('admin/settings_coins.shop_server.heading')</h3>
                     </div>
                     <div class="box-body row">
-                        <div class="col-xs-12"><div class="alert alert-info">{!! trans('admin/settings_coins.shop_server.plans_notice', ['link' => '<a href="' . route('admin.plans') . '">' . trans('admin/layout.nav.plans') . '</a>']) !!}</div></div>
+                        <div class="col-xs-12"><div class="alert alert-info">{!! trans('admin/settings_coins.shop_server.plans_notice', ['link' => Auth::user()->hasStaffPermission('coins.plans') ? '<a href="' . route('admin.plans') . '">' . e(trans('admin/layout.nav.plans')) . '</a>' : e(trans('admin/layout.nav.plans'))]) !!}</div></div>
                         <div class="form-group col-md-4">
                             <label class="control-label">@lang('admin/settings_coins.shop_server.monthly_price_label')</label>
                             <div class="input-group">

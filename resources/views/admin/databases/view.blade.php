@@ -106,7 +106,7 @@
                     </tr>
                     @foreach($databases as $database)
                         <tr>
-                            <td class="middle"><a href="{{ route('admin.servers.view', $database->getRelation('server')->id) }}">{{ $database->getRelation('server')->name }}</a></td>
+                            <td class="middle">@if(Auth::user()->hasStaffPermission('servers.view'))<a href="{{ route('admin.servers.view', $database->getRelation('server')->id) }}">{{ $database->getRelation('server')->name }}</a>@else{{ $database->getRelation('server')->name }}@endif</td>
                             <td class="middle">{{ $database->database }}</td>
                             <td class="middle">{{ $database->username }}</td>
                             <td class="middle">{{ $database->remote }}</td>

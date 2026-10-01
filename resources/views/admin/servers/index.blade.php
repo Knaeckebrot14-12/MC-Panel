@@ -24,7 +24,7 @@
                             <input type="text" name="filter[*]" class="form-control pull-right" value="{{ request()->input()['filter']['*'] ?? '' }}" placeholder="@lang('admin/servers.index.search_placeholder')">
                             <div class="input-group-btn">
                                 <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
-                                <a href="{{ route('admin.servers.new') }}"><button type="button" class="btn btn-sm btn-primary" style="border-radius: 0 3px 3px 0;margin-left:-1px;">@lang('admin/servers.index.create_new_button')</button></a>
+                                @if(Auth::user()->hasStaffPermission('servers.create'))<a href="{{ route('admin.servers.new') }}"><button type="button" class="btn btn-sm btn-primary" style="border-radius: 0 3px 3px 0;margin-left:-1px;">@lang('admin/servers.index.create_new_button')</button></a>@endif
                             </div>
                         </div>
                     </form>
@@ -46,7 +46,7 @@
                             <tr data-server="{{ $server->uuidShort }}">
                                 <td><a href="{{ route('admin.servers.view', $server->id) }}">{{ $server->name }}</a></td>
                                 <td><code title="{{ $server->uuid }}">{{ $server->uuid }}</code></td>
-                                <td><a href="{{ route('admin.users.view', $server->user->id) }}">{{ $server->user->username }}</a></td>
+                                <td>@if(Auth::user()->hasStaffPermission('users.view'))<a href="{{ route('admin.users.view', $server->user->id) }}">{{ $server->user->username }}</a>@else{{ $server->user->username }}@endif</td>
                                 <td>@if(Auth::user()->hasStaffPermission('nodes'))<a href="{{ route('admin.nodes.view', $server->node->id) }}">{{ $server->node->name }}</a>@else{{ $server->node->name }}@endif</td>
                                 <td>
                                     <code>{{ $server->allocation->alias }}:{{ $server->allocation->port }}</code>

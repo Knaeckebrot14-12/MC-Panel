@@ -79,7 +79,7 @@ class UserController extends Controller
             ->paginate(50)
             ->appends($request->query());
 
-        return view('admin.users.index', ['users' => $users, 'roleFilter' => $role]);
+        return view('admin.users.index', ['users' => $users, 'roleFilter' => $role, 'seesEmails' => $seesEmails]);
     }
 
     /**
@@ -329,7 +329,8 @@ class UserController extends Controller
             $visible = $actor->canSeeEmailOf($user);
             // @phpstan-ignore-next-line property.notFound
             $user->md5 = md5(strtolower($visible ? $user->email : $user->username));
-            $user->email = $actor->visibleEmail($user);
+            // Empty, so the pickers just show the username instead of a placeholder.
+            $user->email = $visible ? $user->email : '';
 
             return $user;
         };
