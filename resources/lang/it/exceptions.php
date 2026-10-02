@@ -56,4 +56,7 @@ return [
     'api' => [
         'resource_not_found' => 'La risorsa richiesta non esiste su questo server.',
     ],
+    'server' => [
+        'cpu_above_node' => 'Un server può ottenere al massimo :max% di CPU sul nodo :node (:threads thread CPU, 100% ciascuno). :cpu% è più di quanto il nodo abbia.',
+    ],
 ];

@@ -9,7 +9,9 @@ use Pterodactyl\Models\User;
 use Webmozart\Assert\Assert;
 use Pterodactyl\Models\Server;
 use Illuminate\Support\Collection;
+use Pterodactyl\Models\Node;
 use Pterodactyl\Models\Allocation;
+use Pterodactyl\Services\Nodes\NodeCpuLimit;
 use Illuminate\Database\ConnectionInterface;
 use Pterodactyl\Models\Objects\DeploymentObject;
 use Pterodactyl\Repositories\Eloquent\ServerRepository;
@@ -25,6 +27,7 @@ class ServerCreationService
      * ServerCreationService constructor.
      */
     public function __construct(
+        private NodeCpuLimit $cpuLimit,
         private AllocationSelectionService $allocationSelectionService,
         private ConnectionInterface $connection,
         private DaemonServerRepository $daemonServerRepository,
@@ -66,6 +69,9 @@ class ServerCreationService
 
             $data['node_id'] = Allocation::query()->findOrFail($data['allocation_id'])->node_id;
         }
+
+        // No server may get more CPU than the node has (100 % per thread).
+        $this->cpuLimit->assertFits(Node::query()->findOrFail($data['node_id']), (int) Arr::get($data, 'cpu', 0));
 
         if (empty($data['nest_id'])) {
             Assert::false(empty($data['egg_id']), 'Expected a non-empty egg_id in server creation data.');

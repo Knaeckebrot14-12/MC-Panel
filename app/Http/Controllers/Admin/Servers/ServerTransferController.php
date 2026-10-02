@@ -56,6 +56,15 @@ class ServerTransferController extends Controller
             return redirect()->route('admin.servers.view.manage', $server->id);
         }
 
+        // The new node must have enough CPU threads for the server's CPU limit.
+        try {
+            app(\Pterodactyl\Services\Nodes\NodeCpuLimit::class)->assertFits($node, (int) $server->cpu);
+        } catch (\Pterodactyl\Exceptions\DisplayException $exception) {
+            $this->alert->danger($exception->getMessage())->flash();
+
+            return redirect()->route('admin.servers.view.manage', $server->id);
+        }
+
         $server->validateTransferState();
 
         $this->connection->transaction(function () use ($server, $node_id, $allocation_id, $additional_allocations) {

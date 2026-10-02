@@ -71,6 +71,7 @@ class NodeMonitorService
             }
             $state['last'] = [
                 'cpu' => (float) ($usage['cpu_percent'] ?? 0),
+                'threads' => (int) ($usage['cpu_threads'] ?? 0),
                 'memory_used' => (int) ($usage['memory_used'] ?? 0),
                 'memory_total' => (int) ($usage['memory_total'] ?? 0),
                 'disk_used' => (int) ($usage['disk_used'] ?? 0),
