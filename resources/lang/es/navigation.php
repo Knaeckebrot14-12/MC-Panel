@@ -26,6 +26,7 @@ return [
         'users' => 'Usuarios',
         'backups' => 'Copias de seguridad',
         'network' => 'Red',
+        'subdomain' => 'Subdominio',
         'startup' => 'Inicio',
         'settings' => 'Ajustes',
         'players' => 'Jugadores',

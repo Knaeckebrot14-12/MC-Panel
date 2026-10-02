@@ -11,6 +11,7 @@ return [
     'saved' => ':fqdn verwijst nu naar deze server.',
     'errors' => [
         'disabled' => 'Subdomeinen zijn niet beschikbaar.',
+        'not_minecraft' => 'Subdomeinen zijn alleen beschikbaar voor Minecraft-servers.',
         'invalid_name' => 'Deze naam is niet toegestaan. Gebruik 3–32 kleine letters, cijfers of streepjes.',
         'invalid_domain' => 'Dit domein is niet beschikbaar.',
         'taken' => 'Dit subdomein is al in gebruik.',

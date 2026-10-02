@@ -56,6 +56,12 @@
                     <h3 class="box-title">@lang('admin/subdomains.status_heading')</h3>
                 </div>
                 <div class="box-body">
+                    @if(!is_null($tokenValid))
+                        <p>
+                            <i class="fa fa-fw {{ $tokenValid ? 'fa-check-circle text-green' : 'fa-times-circle text-red' }}"></i>
+                            @lang('admin/subdomains.token_status_label') — {{ $tokenValid ? trans('admin/subdomains.token_ok') : trans('admin/subdomains.token_invalid') }}
+                        </p>
+                    @endif
                     @forelse($check as $domain => $ok)
                         <p>
                             <i class="fa fa-fw {{ $ok ? 'fa-check-circle text-green' : 'fa-times-circle text-red' }}"></i>

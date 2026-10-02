@@ -60,6 +60,9 @@ class SubdomainService
         if (!$this->enabled()) {
             throw new DisplayException(trans('server_subdomain.errors.disabled'));
         }
+        if (!$this->isMinecraft($server)) {
+            throw new DisplayException(trans('server_subdomain.errors.not_minecraft'));
+        }
 
         $name = strtolower(trim($name));
         $domain = strtolower(trim($domain));
@@ -172,9 +175,14 @@ class SubdomainService
         return null;
     }
 
-    private function isMinecraft(Server $server): bool
+    /**
+     * Subdomains are only offered for Minecraft servers (they get the SRV record with the port).
+     */
+    public function isMinecraft(Server $server): bool
     {
-        return str_contains((string) $server->startup, '{{SERVER_JARFILE}}') || str_contains(strtolower((string) $server->egg?->name), 'minecraft')
+        // Same check as the client area's Minecraft-only tabs, plus the stock eggs' markers.
+        return $server->variables->contains(fn ($variable) => $variable->env_variable === 'MINECRAFT_VERSION')
+            || str_contains((string) $server->startup, '{{SERVER_JARFILE}}') || str_contains(strtolower((string) $server->egg?->name), 'minecraft')
             || str_contains(strtolower((string) $server->nest?->name), 'minecraft');
     }
 
@@ -201,6 +209,30 @@ class SubdomainService
     private function cf(): PendingRequest
     {
         return Http::timeout(15)->withToken((string) config('mcpanel.subdomains.cloudflare_token'))->acceptJson();
+    }
+
+    /**
+     * Asks Cloudflare whether the token is valid and active (Settings page; also before saving a new one).
+     * Account-owned tokens can't use the user endpoint, so a token that can list zones counts as working too.
+     */
+    public function verifyToken(?string $token = null): bool
+    {
+        $token ??= (string) config('mcpanel.subdomains.cloudflare_token');
+        if ($token === '') {
+            return false;
+        }
+        $client = fn () => Http::timeout(15)->withToken($token)->acceptJson();
+
+        try {
+            $response = $client()->get(self::API . '/user/tokens/verify');
+            if ($response->successful() && $response->json('result.status') === 'active') {
+                return true;
+            }
+
+            return $client()->get(self::API . '/zones', ['per_page' => 1])->successful();
+        } catch (\Throwable) {
+            return false;
+        }
     }
 
     /**

@@ -26,6 +26,7 @@ return [
         'users' => 'Пользователи',
         'backups' => 'Резервные копии',
         'network' => 'Сеть',
+        'subdomain' => 'Поддомен',
         'startup' => 'Запуск',
         'settings' => 'Настройки',
         'software' => 'Версия',

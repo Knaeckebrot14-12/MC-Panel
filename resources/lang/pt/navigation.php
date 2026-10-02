@@ -26,6 +26,7 @@ return [
         'users' => 'Usuários',
         'backups' => 'Backups',
         'network' => 'Rede',
+        'subdomain' => 'Subdomínio',
         'startup' => 'Inicialização',
         'settings' => 'Configurações',
         'software' => 'Versão',

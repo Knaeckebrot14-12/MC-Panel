@@ -26,6 +26,7 @@ return [
         'users' => 'Utilisateurs',
         'backups' => 'Sauvegardes',
         'network' => 'Réseau',
+        'subdomain' => 'Sous-domaine',
         'startup' => 'Démarrage',
         'settings' => 'Paramètres',
         'players' => 'Joueurs',

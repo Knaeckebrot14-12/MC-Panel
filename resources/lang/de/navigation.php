@@ -26,6 +26,7 @@ return [
         'users' => 'Benutzer',
         'backups' => 'Backups',
         'network' => 'Netzwerk',
+        'subdomain' => 'Subdomain',
         'startup' => 'Start',
         'settings' => 'Einstellungen',
         'players' => 'Spieler',

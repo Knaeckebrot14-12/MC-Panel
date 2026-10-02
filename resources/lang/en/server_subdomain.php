@@ -11,6 +11,7 @@ return [
     'saved' => ':fqdn now points to this server.',
     'errors' => [
         'disabled' => 'Subdomains are not available.',
+        'not_minecraft' => 'Subdomains are only available for Minecraft servers.',
         'invalid_name' => 'This name is not allowed. Use 3–32 lowercase letters, digits or dashes.',
         'invalid_domain' => 'This domain is not available.',
         'taken' => 'This subdomain is already taken.',

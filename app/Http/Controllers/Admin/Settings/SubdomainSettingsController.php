@@ -27,9 +27,12 @@ class SubdomainSettingsController extends Controller
 
     public function index(): View
     {
+        $hasToken = !empty(config('mcpanel.subdomains.cloudflare_token'));
+
         return view('admin.settings.subdomains', [
-            'hasToken' => !empty(config('mcpanel.subdomains.cloudflare_token')),
-            'check' => !empty(config('mcpanel.subdomains.cloudflare_token')) ? $this->subdomains->verify() : [],
+            'hasToken' => $hasToken,
+            'tokenValid' => $hasToken ? $this->subdomains->verifyToken() : null,
+            'check' => $hasToken ? $this->subdomains->verify() : [],
             'count' => DB::table('server_subdomains')->count(),
         ]);
     }
@@ -47,6 +50,12 @@ class SubdomainSettingsController extends Controller
         if ($invalid->isNotEmpty()) {
             return redirect()->route('admin.settings.subdomains')->withInput()
                 ->withErrors(['domains' => trans('admin/subdomains.invalid_domains', ['domains' => $invalid->implode(', ')])]);
+        }
+
+        // A new token is tested with Cloudflare first; a wrong or inactive one is not saved.
+        if (!empty($data['cloudflare_token']) && !$this->subdomains->verifyToken($data['cloudflare_token'])) {
+            return redirect()->route('admin.settings.subdomains')->withInput($request->except('cloudflare_token'))
+                ->withErrors(['cloudflare_token' => trans('admin/subdomains.token_rejected')]);
         }
 
         $this->settings->set('settings::mcpanel:subdomains:enabled', $request->boolean('enabled') ? 'true' : 'false');

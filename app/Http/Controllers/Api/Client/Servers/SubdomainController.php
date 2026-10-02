@@ -24,7 +24,7 @@ class SubdomainController extends ClientApiController
         $current = $this->subdomains->current($server);
 
         return new JsonResponse([
-            'enabled' => $this->subdomains->enabled(),
+            'enabled' => $this->subdomains->enabled() && $this->subdomains->isMinecraft($server),
             'domains' => $this->subdomains->domains(),
             'current' => $current ? ['name' => $current->name, 'domain' => $current->domain, 'fqdn' => $current->name . '.' . $current->domain] : null,
         ]);

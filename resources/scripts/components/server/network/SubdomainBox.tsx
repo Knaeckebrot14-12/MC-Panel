@@ -38,26 +38,26 @@ export default () => {
     if (!data || !data.enabled) return null;
 
     const save = () => {
-        clearFlashes('server:network');
+        clearFlashes('server:subdomain');
         setBusy(true);
         setSubdomain(uuid, name, domain)
             .then((current) => {
                 setData({ ...data, current });
-                addFlash({ key: 'server:network', type: 'success', message: t('saved', { fqdn: current.fqdn }) });
+                addFlash({ key: 'server:subdomain', type: 'success', message: t('saved', { fqdn: current.fqdn }) });
             })
-            .catch((error) => addError({ key: 'server:network', message: httpErrorToHuman(error) }))
+            .catch((error) => addError({ key: 'server:subdomain', message: httpErrorToHuman(error) }))
             .then(() => setBusy(false));
     };
 
     const remove = () => {
-        clearFlashes('server:network');
+        clearFlashes('server:subdomain');
         setBusy(true);
         deleteSubdomain(uuid)
             .then(() => {
                 setData({ ...data, current: null });
                 setName('');
             })
-            .catch((error) => addError({ key: 'server:network', message: httpErrorToHuman(error) }))
+            .catch((error) => addError({ key: 'server:subdomain', message: httpErrorToHuman(error) }))
             .then(() => setBusy(false));
     };
 

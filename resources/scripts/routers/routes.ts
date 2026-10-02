@@ -5,6 +5,7 @@ import ScheduleContainer from '@/components/server/schedules/ScheduleContainer';
 import UsersContainer from '@/components/server/users/UsersContainer';
 import BackupContainer from '@/components/server/backups/BackupContainer';
 import NetworkContainer from '@/components/server/network/NetworkContainer';
+import SubdomainContainer from '@/components/server/network/SubdomainContainer';
 import StartupContainer from '@/components/server/startup/StartupContainer';
 import FileManagerContainer from '@/components/server/files/FileManagerContainer';
 import PluginsContainer from '@/components/server/plugins/PluginsContainer';
@@ -57,6 +58,10 @@ interface ServerRouteDefinition extends RouteDefinition {
 // resource itself.
 export const isMinecraftServer = (server: Server): boolean =>
     server.variables.some((variable) => variable.envVariable === 'MINECRAFT_VERSION');
+
+// Admin -> Settings -> Subdomains is set up (token, at least one domain, switched on).
+const subdomainsEnabled = (): boolean =>
+    !!(window as { SiteConfiguration?: { subdomains?: boolean } }).SiteConfiguration?.subdomains;
 
 interface Routes {
     // All of the routes available under "/account"
@@ -225,6 +230,13 @@ export default {
             permission: 'allocation.*',
             name: 'tabs.network',
             component: NetworkContainer,
+        },
+        {
+            path: '/subdomain',
+            permission: 'allocation.*',
+            name: 'tabs.subdomain',
+            component: SubdomainContainer,
+            condition: (server: Server) => subdomainsEnabled() && isMinecraftServer(server),
         },
         {
             path: '/startup',

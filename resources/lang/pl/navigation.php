@@ -26,6 +26,7 @@ return [
         'users' => 'Użytkownicy',
         'backups' => 'Kopie zapasowe',
         'network' => 'Sieć',
+        'subdomain' => 'Subdomena',
         'startup' => 'Uruchamianie',
         'settings' => 'Ustawienia',
         'software' => 'Wersja',
