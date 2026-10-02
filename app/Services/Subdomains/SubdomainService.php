@@ -158,10 +158,13 @@ class SubdomainService
 
     /**
      * The address players connect to: the allocation's alias or IP when public, else the node's address.
+     * A node that only has a private address (0.0.0.0, 192.168.x.x, ...) sits in the same network as the
+     * panel, e.g. at home behind a router; players reach it through this network's public IP.
      */
     private function publicIp(Server $server): ?string
     {
         $allocation = $server->allocation;
+        $private = null;
         foreach ([$allocation?->ip_alias, $allocation?->ip, $server->node?->fqdn] as $candidate) {
             if (!$candidate) {
                 continue;
@@ -170,9 +173,37 @@ class SubdomainService
             if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 | FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)) {
                 return $ip;
             }
+            if (!$private && filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4) && $ip !== '0.0.0.0' && !str_starts_with($ip, '127.')) {
+                $private = $ip;
+            }
         }
 
-        return null;
+        // Only players in the same network could use a private address, but that's better than nothing.
+        return $this->networkPublicIp() ?? $private;
+    }
+
+    /**
+     * Public IPv4 address this network is seen with from the internet (asked at Cloudflare, cached).
+     */
+    private function networkPublicIp(): ?string
+    {
+        $ip = Cache::remember('mcpanel:public-ipv4', now()->addMinutes(30), function () {
+            foreach (['https://1.1.1.1/cdn-cgi/trace', 'https://api.ipify.org'] as $url) {
+                try {
+                    $body = (string) Http::timeout(5)->get($url)->body();
+                } catch (\Throwable) {
+                    continue;
+                }
+                $ip = preg_match('/^ip=(.+)$/m', $body, $match) ? trim($match[1]) : trim($body);
+                if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 | FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)) {
+                    return $ip;
+                }
+            }
+
+            return '';
+        });
+
+        return $ip !== '' ? $ip : null;
     }
 
     /**
