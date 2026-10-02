@@ -90,10 +90,16 @@ class GeyserService
             }
         }
 
+        // Installed some other way (e.g. the plugin search) on a Minecraft version Geyser can't run on:
+        // the current console shows the failed start.
+        $failed = $installed && $this->geyserStarted($this->consoleLines($server)) === false;
+
         return [
             'supported' => true,
             'installed' => $installed,
             'configured' => $configured,
+            'failed' => $failed,
+            'minecraft' => $failed ? $this->minecraftVersion($server) : null,
             'port' => $port,
             'address' => $address ?: null,
         ];
@@ -101,11 +107,10 @@ class GeyserService
 
     /**
      * Installs (or updates) Geyser and Floodgate, sets the Bedrock port to the server's port and
-     * restarts the server when it was running.
+     * restarts the server when it was running. On a running server it then watches the start: if
+     * Geyser can't run on this Minecraft version (new versions take GeyserMC a while), Geyser and
+     * Floodgate are removed again and the server is restarted without them.
      *
-     * @throws DisplayException
-     */
-    /**
      * @return string|null the Minecraft version ViaVersion was added for (Geyser only speaks the newest one)
      *
      * @throws DisplayException
@@ -152,9 +157,103 @@ class GeyserService
             throw new DisplayException(trans('server_plugins.geyser.errors.write'));
         }
 
-        $this->restartIfRunning($server);
+        if ($this->restartIfRunning($server) && $this->watchStart($server) === false) {
+            $this->removeJars($server);
+            $this->restartIfRunning($server);
+            throw new DisplayException(trans('server_plugins.geyser.errors.incompatible', ['version' => $this->minecraftVersion($server) ?: '?']));
+        }
 
         return $via ? $viaFor : null;
+    }
+
+    /**
+     * Follows the console after a restart: true when Geyser started, false when it failed, null
+     * when that couldn't be seen in time.
+     */
+    private function watchStart(Server $server): ?bool
+    {
+        $deadline = time() + 150;
+        $wentDown = false;
+        $since = time();
+        while (time() < $deadline) {
+            sleep(3);
+            try {
+                $state = $this->daemon->setServer($server)->getDetails()['state'] ?? 'offline';
+            } catch (\Throwable) {
+                continue;
+            }
+            // Wings starts every run in a fresh container, so once the old run is gone the console
+            // only shows the new start.
+            if (!$wentDown) {
+                $wentDown = $state !== 'running' || time() - $since > 30;
+                continue;
+            }
+            $result = $this->geyserStarted($this->consoleLines($server));
+            if ($result !== null) {
+                return $result;
+            }
+            if ($state === 'offline') {
+                return null;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * true = "Started Geyser", false = Geyser failed to enable/load, null = neither shown.
+     */
+    private function geyserStarted(array $lines): ?bool
+    {
+        $result = null;
+        foreach ($lines as $line) {
+            if (preg_match('/Error occurred while (enabling|loading) Geyser|Could not load .*Geyser|Geyser-\w+.*(ExceptionInInitializerError|NoClassDefFoundError)/i', $line)) {
+                $result = false;
+            } elseif (preg_match('/Started Geyser on/i', $line)) {
+                $result = true;
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * The last console lines of the running server (empty when it isn't running).
+     */
+    private function consoleLines(Server $server): array
+    {
+        try {
+            $response = $this->daemon->setServer($server)->getHttpClient()->get(
+                sprintf('/api/servers/%s/logs', $server->uuid),
+                ['query' => ['size' => 100], 'timeout' => 10]
+            );
+            $lines = json_decode((string) $response->getBody(), true)['data'] ?? [];
+        } catch (\Throwable) {
+            return [];
+        }
+
+        // Colour codes from the console would get in the way of the patterns.
+        return array_map(fn ($line) => preg_replace('/\e\[[0-9;]*m/', '', (string) $line), is_array($lines) ? $lines : []);
+    }
+
+    private function minecraftVersion(Server $server): ?string
+    {
+        $software = json_decode((string) $server->software, true);
+        $version = is_array($software) ? (string) ($software['version'] ?? '') : '';
+        if ($version === '') {
+            $variable = $server->variables->firstWhere('env_variable', 'MINECRAFT_VERSION');
+            $version = (string) ($variable?->server_value ?? $variable?->default_value ?? '');
+        }
+
+        return $version !== '' && strtolower($version) !== 'latest' ? $version : null;
+    }
+
+    private function removeJars(Server $server): void
+    {
+        $jars = array_values(array_filter($this->pluginNames($server, true), fn ($name) => preg_match('/^(geyser|floodgate).*\.jar$/i', $name)));
+        if ($jars) {
+            $this->files->setServer($server)->deleteFiles('/plugins', $jars);
+        }
     }
 
     /**
@@ -163,13 +262,8 @@ class GeyserService
      */
     private function olderThanLatest(Server $server): ?string
     {
-        $software = json_decode((string) $server->software, true);
-        $version = is_array($software) ? (string) ($software['version'] ?? '') : '';
-        if ($version === '') {
-            $variable = $server->variables->firstWhere('env_variable', 'MINECRAFT_VERSION');
-            $version = (string) ($variable?->server_value ?? $variable?->default_value ?? '');
-        }
-        if ($version === '' || strtolower($version) === 'latest') {
+        $version = $this->minecraftVersion($server);
+        if ($version === null) {
             return null;
         }
 
@@ -302,14 +396,21 @@ class GeyserService
             ->values()->all();
     }
 
-    private function restartIfRunning(Server $server): void
+    /**
+     * @return bool whether the server was running and has been restarted
+     */
+    private function restartIfRunning(Server $server): bool
     {
         try {
             if (($this->daemon->setServer($server)->getDetails()['state'] ?? 'offline') !== 'offline') {
                 $this->power->setServer($server)->send('restart');
+
+                return true;
             }
         } catch (\Throwable $exception) {
             report($exception);
         }
+
+        return false;
     }
 }

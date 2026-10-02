@@ -67,7 +67,9 @@ export default ({ onChange }: { onChange?: () => void }) => {
                 <>
                     {status.installed && (
                         <div css={tw`mt-3 text-sm space-y-1`}>
-                            {status.configured ? (
+                            {status.failed ? (
+                                <p css={tw`text-red-400`}>{t('geyser.failed', { version: status.minecraft || '?' })}</p>
+                            ) : status.configured ? (
                                 status.port && (
                                     <p css={tw`text-neutral-100`}>
                                         {t('geyser.join_hint', {

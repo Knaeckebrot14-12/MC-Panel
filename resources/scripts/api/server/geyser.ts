@@ -4,6 +4,9 @@ export interface GeyserStatus {
     supported: boolean;
     installed: boolean;
     configured: boolean;
+    // Installed, but the current console shows that Geyser failed to start (Minecraft too new).
+    failed: boolean;
+    minecraft: string | null;
     port: number | null;
     address: string | null;
 }

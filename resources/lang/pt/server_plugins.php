@@ -46,6 +46,7 @@ return [
         'unsupported' => 'O Geyser funciona em servidores Paper, Purpur, Spigot e Velocity. Mude o software em Versão para o usar.',
         'remove_title' => 'Remover o Geyser?',
         'remove_body' => 'Os jogadores Bedrock deixam de poder entrar. A pasta de definições do Geyser é mantida.',
+        'failed' => 'O Geyser não conseguiu arrancar: ainda não suporta o Minecraft :version. Remova-o para o servidor funcionar bem, ou mude para uma versão mais antiga em Versão.',
         'via_note' => 'O ViaVersion também foi instalado, porque o Geyser precisa dele para o Minecraft :version.',
         'errors' => [
             'unsupported' => 'O Geyser só funciona em servidores Paper, Purpur, Spigot e Velocity.',
@@ -53,6 +54,7 @@ return [
             'write' => 'Não foi possível escrever os ficheiros no servidor.',
             'busy' => 'O Geyser já está a ser instalado neste servidor.',
             'java' => 'O Geyser precisa do Java 17 ou mais recente. Escolha primeiro uma imagem Java mais recente em Arranque.',
+            'incompatible' => 'O Geyser ainda não funciona com o Minecraft :version (o GeyserMC costuma precisar de alguns dias a semanas após uma versão nova). Foi removido e o servidor reiniciado sem ele. Use uma versão mais antiga em Versão ou tente novamente após uma atualização do Geyser.',
         ],
     ],
 ];
