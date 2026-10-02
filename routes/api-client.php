@@ -34,6 +34,10 @@ Route::post('/coins/afk',[Client\AfkController::class, 'tick'])->middleware('ver
 Route::post('/coins/shop/resource', [Client\ShopController::class, 'purchaseResource'])->middleware('verified.email')->name('api:client.coins.shop.resource');
 Route::post('/coins/shop/server', [Client\ShopController::class, 'purchaseServer'])->middleware('verified.email')->name('api:client.coins.shop.server');
 
+Route::get('/ownership-requests', [Client\OwnershipRequestController::class, 'index']);
+Route::post('/ownership-requests/{id}/accept', [Client\OwnershipRequestController::class, 'accept'])->whereNumber('id')->middleware('throttle:10,1,ownership');
+Route::post('/ownership-requests/{id}/decline', [Client\OwnershipRequestController::class, 'decline'])->whereNumber('id')->middleware('throttle:10,1,ownership');
+
 Route::get('/tickets', [Client\TicketController::class, 'index'])->name('api:client.tickets');
 Route::post('/tickets', [Client\TicketController::class, 'store'])->name('api:client.tickets.store');
 Route::get('/tickets/servers', [Client\TicketController::class, 'servers'])->name('api:client.tickets.servers');
@@ -179,6 +183,10 @@ Route::group([
     Route::get('/software', [Client\Servers\SoftwareController::class, 'index']);
     Route::get('/software/{type}', [Client\Servers\SoftwareController::class, 'versions'])->where('type', '[a-z]+')->middleware('throttle:30,1,software');
     Route::post('/software', [Client\Servers\SoftwareController::class, 'install'])->middleware('throttle:5,1,software-install');
+
+    Route::get('/ownership', [Client\Servers\OwnershipController::class, 'index']);
+    Route::post('/ownership', [Client\Servers\OwnershipController::class, 'store'])->middleware('throttle:10,1,ownership-offer');
+    Route::delete('/ownership', [Client\Servers\OwnershipController::class, 'delete']);
 
     Route::get('/geyser', [Client\Servers\GeyserController::class, 'index']);
     Route::post('/geyser', [Client\Servers\GeyserController::class, 'install'])->middleware('throttle:5,1,geyser');

@@ -129,6 +129,12 @@ return [
         'software' => [
             'install' => 'Установлено :type :version',
         ],
+        'ownership' => [
+            'offer' => 'Сервер предложен :to',
+            'cancel' => 'Предложение передать сервер отозвано',
+            'accept' => 'Сервер передан от :from к :to',
+            'decline' => ':to отклонил сервер',
+        ],
         'geyser' => [
             'install' => 'Установлены Geyser и Floodgate (игроки Bedrock)',
             'uninstall' => 'Удалены Geyser и Floodgate',

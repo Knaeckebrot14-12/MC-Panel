@@ -154,6 +154,12 @@ return [
         'software' => [
             'install' => 'Installed :type :version',
         ],
+        'ownership' => [
+            'offer' => 'Offered the server to :to',
+            'cancel' => 'Withdrew the offer to give the server away',
+            'accept' => 'The server was handed over from :from to :to',
+            'decline' => ':to declined the server',
+        ],
         'geyser' => [
             'install' => 'Installed Geyser and Floodgate (Bedrock players)',
             'uninstall' => 'Removed Geyser and Floodgate',

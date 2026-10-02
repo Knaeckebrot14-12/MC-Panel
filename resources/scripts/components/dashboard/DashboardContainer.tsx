@@ -4,6 +4,7 @@ import { Server } from '@/api/server/getServer';
 import getServers from '@/api/getServers';
 import ServerRow from '@/components/dashboard/ServerRow';
 import AnnouncementsBanner from '@/components/dashboard/AnnouncementsBanner';
+import OwnershipOffersBanner from '@/components/dashboard/OwnershipOffersBanner';
 import Spinner from '@/components/elements/Spinner';
 import PageContentBlock from '@/components/elements/PageContentBlock';
 import useFlash from '@/plugins/useFlash';
@@ -96,6 +97,7 @@ export default () => {
     return (
         <PageContentBlock title={'Dashboard'} showFlashKey={'dashboard'}>
             <AnnouncementsBanner />
+            <OwnershipOffersBanner />
             <div css={tw`mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between`}>
                 <Link to={'/create-server'} css={tw`block w-full sm:inline-block sm:w-auto`}>
                     <Button size={'large'} css={tw`w-full sm:w-auto`}>
