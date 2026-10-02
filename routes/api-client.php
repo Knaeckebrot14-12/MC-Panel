@@ -180,6 +180,10 @@ Route::group([
     Route::get('/software/{type}', [Client\Servers\SoftwareController::class, 'versions'])->where('type', '[a-z]+')->middleware('throttle:30,1,software');
     Route::post('/software', [Client\Servers\SoftwareController::class, 'install'])->middleware('throttle:5,1,software-install');
 
+    Route::get('/geyser', [Client\Servers\GeyserController::class, 'index']);
+    Route::post('/geyser', [Client\Servers\GeyserController::class, 'install'])->middleware('throttle:5,1,geyser');
+    Route::delete('/geyser', [Client\Servers\GeyserController::class, 'uninstall'])->middleware('throttle:5,1,geyser');
+
     Route::get('/subdomain', [Client\Servers\SubdomainController::class, 'index']);
     Route::put('/subdomain', [Client\Servers\SubdomainController::class, 'store'])->middleware('throttle:10,1,subdomain');
     Route::delete('/subdomain', [Client\Servers\SubdomainController::class, 'delete'])->middleware('throttle:10,1,subdomain');

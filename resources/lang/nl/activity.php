@@ -129,6 +129,10 @@ return [
         'software' => [
             'install' => ':type :version geïnstalleerd',
         ],
+        'geyser' => [
+            'install' => 'Geyser en Floodgate geïnstalleerd (Bedrock-spelers)',
+            'uninstall' => 'Geyser en Floodgate verwijderd',
+        ],
         'subdomain' => [
             'set' => 'Subdomein :subdomain ingesteld',
             'delete' => 'Subdomein verwijderd',

@@ -25,6 +25,7 @@ import {
     searchModrinthPlugins,
 } from '@/api/server/plugins/modrinth';
 import pullFile from '@/api/server/plugins/pullFile';
+import GeyserBox from '@/components/server/plugins/GeyserBox';
 
 type InstallState = 'idle' | 'installing' | 'installed' | 'error';
 type View = 'search' | 'citybuild' | 'pvp' | 'installed';
@@ -297,6 +298,7 @@ export default () => {
     return (
         <ServerContentBlock title={t('title')}>
             <FlashMessageRender byKey={'plugins'} css={tw`mb-4`} />
+            <GeyserBox onChange={refreshInstalled} />
             <Dialog.Confirm
                 open={pendingDelete !== null}
                 onClose={() => setPendingDelete(null)}
