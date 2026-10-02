@@ -6,6 +6,7 @@ import { ServerContext } from '@/state/server';
 import TitledGreyBox from '@/components/elements/TitledGreyBox';
 import Button from '@/components/elements/Button';
 import Input from '@/components/elements/Input';
+import Can from '@/components/elements/Can';
 import useFlash from '@/plugins/useFlash';
 import { httpErrorToHuman } from '@/api/http';
 import getFileUploadUrl from '@/api/server/files/getFileUploadUrl';
@@ -43,8 +44,10 @@ export const decodeProperty = (raw: string): string =>
         return ({ n: '\n', t: '\t', r: '\r', f: '\f' } as Record<string, string>)[escape] ?? escape;
     });
 
+// Goes by UTF-16 code units (like Java): an emoji becomes its surrogate pair 😀.
 export const encodeProperty = (text: string): string =>
-    Array.from(text)
+    text
+        .split('')
         .map((char, index) => {
             const code = char.charCodeAt(0);
             if (char === '\\') return '\\\\';
@@ -96,16 +99,21 @@ const toIcon = (file: File): Promise<Blob> =>
         const image = new Image();
         image.onload = () => {
             const size = Math.min(image.width, image.height);
+            URL.revokeObjectURL(image.src);
+            // e.g. an SVG without a size: nothing to draw, it would become an empty icon.
+            if (!size) return reject(new Error('image'));
             const canvas = document.createElement('canvas');
             canvas.width = 64;
             canvas.height = 64;
             const context = canvas.getContext('2d')!;
             context.imageSmoothingQuality = 'high';
             context.drawImage(image, (image.width - size) / 2, (image.height - size) / 2, size, size, 0, 0, 64, 64);
-            URL.revokeObjectURL(image.src);
             canvas.toBlob((blob) => (blob ? resolve(blob) : reject(new Error('canvas'))), 'image/png');
         };
-        image.onerror = () => reject(new Error('image'));
+        image.onerror = () => {
+            URL.revokeObjectURL(image.src);
+            reject(new Error('image'));
+        };
         image.src = URL.createObjectURL(file);
     });
 
@@ -288,26 +296,30 @@ export default ({ motd, maxPlayers, changed, onChange }: Props) => {
                         }}
                     />
                     <div css={tw`flex flex-wrap gap-2`}>
-                        <Button
-                            type={'button'}
-                            size={'xsmall'}
-                            isLoading={busy}
-                            disabled={busy}
-                            onClick={() => fileInput.current?.click()}
-                        >
-                            {t('server_list.icon_upload')}
-                        </Button>
-                        {icon && (
+                        <Can action={'file.create'}>
                             <Button
                                 type={'button'}
                                 size={'xsmall'}
-                                color={'red'}
-                                isSecondary
+                                isLoading={busy}
                                 disabled={busy}
-                                onClick={removeIcon}
+                                onClick={() => fileInput.current?.click()}
                             >
-                                {t('server_list.icon_remove')}
+                                {t('server_list.icon_upload')}
                             </Button>
+                        </Can>
+                        {icon && (
+                            <Can action={'file.delete'}>
+                                <Button
+                                    type={'button'}
+                                    size={'xsmall'}
+                                    color={'red'}
+                                    isSecondary
+                                    disabled={busy}
+                                    onClick={removeIcon}
+                                >
+                                    {t('server_list.icon_remove')}
+                                </Button>
+                            </Can>
                         )}
                     </div>
                     <p css={tw`text-xs text-neutral-400`}>{t('server_list.icon_hint')}</p>
