@@ -132,6 +132,13 @@ class SoftwareService
         $this->setVariable($server, 'MINECRAFT_VERSION', $version);
         $this->setVariable($server, 'BUILD_NUMBER', 'latest');
 
+        // Hand Wings the new image right away instead of waiting for it to fetch the configuration.
+        try {
+            $this->daemon->setServer($server->refresh())->sync();
+        } catch (\Throwable $exception) {
+            report($exception);
+        }
+
         return $software + ['image' => $image];
     }
 

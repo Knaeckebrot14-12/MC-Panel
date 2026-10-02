@@ -33,6 +33,7 @@ const COLORS: Record<SoftwareType, string> = {
 export default () => {
     const { t } = useTranslation('server_software');
     const uuid = ServerContext.useStoreState((state) => state.server.data!.uuid);
+    const setServerFromState = ServerContext.useStoreActions((actions) => actions.server.setServerFromState);
     const { addError, clearFlashes, addFlash } = useFlash();
 
     const [overview, setOverview] = useState<SoftwareOverview | null>(null);
@@ -74,6 +75,8 @@ export default () => {
         installSoftware(uuid, type, version, backupFirst)
             .then((result) => {
                 setOverview((o) => (o ? { ...o, current: result } : o));
+                // The Startup tab shows the image from this state; keep it in step with the new Java image.
+                setServerFromState((s) => ({ ...s, dockerImage: result.image }));
                 addFlash({
                     key: 'software',
                     type: 'success',
