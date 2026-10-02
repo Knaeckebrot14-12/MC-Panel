@@ -18,6 +18,7 @@ return [
         'servers' => 'Servidores',
         'infrastructure' => 'Infraestructura',
         'coins' => 'Monedas y tienda',
+        'security' => 'Seguridad',
         'owner_only' => 'Solo propietario',
     ],
     'permissions' => [
@@ -77,6 +78,10 @@ return [
             'name' => 'Iniciar sesión como usuario (vista de soporte)',
             'description' => 'Ver el panel exactamente como lo ve un usuario normal, para ayudar con problemas. También muestra su correo. Mientras tanto no se pueden cambiar los ajustes de la cuenta, los coins ni los tickets.',
         ],
+        'security_ipblock' => [
+            'name' => 'IP bloqueadas',
+            'description' => 'Ver las direcciones IP bloqueadas por demasiados inicios de sesión fallidos, desbloquearlas o bloquear una IP manualmente. Los ajustes del bloqueo son solo del propietario.',
+        ],
         'servers_view' => [
             'name' => 'Ver servidores',
             'description' => 'Lista y páginas de servidores.',
@@ -96,6 +101,10 @@ return [
         'servers_delete' => [
             'name' => 'Eliminar servidores',
             'description' => 'Eliminar servidores.',
+        ],
+        'servers_bulk' => [
+            'name' => 'Acciones masivas en servidores',
+            'description' => 'Iniciar, detener, reiniciar o forzar el cierre de todos los servidores de un nodo a la vez y enviar un mensaje a la consola de todos los servidores de Minecraft en ejecución.',
         ],
         'nodes' => [
             'name' => 'Nodes',

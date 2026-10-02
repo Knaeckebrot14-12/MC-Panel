@@ -10,8 +10,10 @@ return [
         'login' => 'Connexion et inscription',
         'design' => 'Design',
         'monitoring' => 'Surveillance',
+        'abuse' => 'Détection d\'abus',
         'subdomains' => 'Sous-domaines',
         'roles' => 'Rôles',
+        'iplockout' => 'Blocage d\'IP',
     ],
     'notice' => [
         'env_only' => 'Votre panel est actuellement configuré pour lire les paramètres uniquement depuis l\'environnement. Vous devrez définir :env_var dans votre fichier d\'environnement pour charger les paramètres dynamiquement.',

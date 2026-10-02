@@ -13,6 +13,8 @@
                     <li @if($activeTab === 'roles')class="active"@endif><a href="{{ route('admin.settings.roles') }}">@lang('admin/settings.nav.roles')</a></li>
                     <li @if($activeTab === 'design')class="active"@endif><a href="{{ route('admin.settings.design') }}">@lang('admin/settings.nav.design')</a></li>
                     <li @if($activeTab === 'monitoring')class="active"@endif><a href="{{ route('admin.settings.monitoring') }}">@lang('admin/settings.nav.monitoring')</a></li>
+                    <li @if($activeTab === 'abuse')class="active"@endif><a href="{{ route('admin.settings.abuse') }}">@lang('admin/settings.nav.abuse')</a></li>
+                    <li @if($activeTab === 'iplockout')class="active"@endif><a href="{{ route('admin.settings.iplockout') }}">@lang('admin/settings.nav.iplockout')</a></li>
                     <li @if($activeTab === 'subdomains')class="active"@endif><a href="{{ route('admin.settings.subdomains') }}">@lang('admin/settings.nav.subdomains')</a></li>
                     <li @if($activeTab === 'updates')class="active"@endif><a href="{{ route('admin.settings.updates') }}">@lang('admin/settings.nav.updates') @if(app(\Pterodactyl\Services\Update\UpdateService::class)->hasUpdate())<span class="label label-warning">@lang('admin/update.badge')</span>@endif</a></li>
                 </ul>

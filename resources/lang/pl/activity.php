@@ -14,6 +14,11 @@ return [
             'fail' => 'Nieudane logowanie SFTP',
         ],
         'reset-password-requested' => 'Poproszono o link do resetu hasła',
+        'passkey' => [
+            'add' => 'Dodano klucz dostępu :name',
+            'remove' => 'Usunięto klucz dostępu :name',
+            'login' => 'Zalogowano kluczem dostępu :name',
+        ],
     ],
     'user' => [
         'user' => [

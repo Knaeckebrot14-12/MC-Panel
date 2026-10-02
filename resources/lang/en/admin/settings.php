@@ -10,8 +10,10 @@ return [
         'login' => 'Login & Registration',
         'design' => 'Design',
         'monitoring' => 'Monitoring',
+        'abuse' => 'Abuse detection',
         'subdomains' => 'Subdomains',
         'roles' => 'Roles',
+        'iplockout' => 'IP lockout',
     ],
     'notice' => [
         'env_only' => 'Your Panel is currently configured to read settings from the environment only. You will need to set :env_var in your environment file in order to load settings dynamically.',

@@ -48,7 +48,9 @@ class RouteServiceProvider extends ServiceProvider
                     ->prefix('/admin')
                     ->group(base_path('routes/admin.php'));
 
-                Route::middleware('guest')->prefix('/auth')->group(base_path('routes/auth.php'));
+                // "ip.lockout" refuses every POST to these routes (login, 2FA, passkeys, register, password
+                // reset) while the IP is blocked for too many failed logins, see CheckIpLockout.
+                Route::middleware(['guest', 'ip.lockout'])->prefix('/auth')->group(base_path('routes/auth.php'));
             });
 
             Route::middleware(['api', RequireTwoFactorAuthentication::class, EnsurePasswordHasBeenChanged::class])->group(function () {

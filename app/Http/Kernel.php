@@ -110,5 +110,6 @@ class Kernel extends HttpKernel
         'verified.email' => \Pterodactyl\Http\Middleware\EnsureEmailIsVerified::class,
         'owner.only' =>\Pterodactyl\Http\Middleware\OwnerOnly::class,
         'staff' => \Pterodactyl\Http\Middleware\StaffPermission::class,
+        'ip.lockout' => \Pterodactyl\Http\Middleware\CheckIpLockout::class,
     ];
 }

@@ -14,6 +14,11 @@ return [
             'fail' => 'Mislukte SFTP-aanmelding',
         ],
         'reset-password-requested' => 'Link voor wachtwoordherstel aangevraagd',
+        'passkey' => [
+            'add' => 'Passkey :name toegevoegd',
+            'remove' => 'Passkey :name verwijderd',
+            'login' => 'Aangemeld met passkey :name',
+        ],
     ],
     'user' => [
         'user' => [

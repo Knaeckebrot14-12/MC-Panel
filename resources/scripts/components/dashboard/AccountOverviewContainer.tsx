@@ -14,6 +14,7 @@ import { useLocation } from 'react-router-dom';
 import { useStoreState } from 'easy-peasy';
 import DiscordLinkForm from '@/components/dashboard/forms/DiscordLinkForm';
 import AppSettingsForm from '@/components/dashboard/forms/AppSettingsForm';
+import PasskeysForm from '@/components/dashboard/forms/PasskeysForm';
 
 const Container = styled.div`
     ${tw`flex flex-wrap`};
@@ -65,6 +66,7 @@ export default () => {
                 <ContentBox css={tw`mt-8 sm:ml-8`} title={t('app_title')} showFlashes={'account:app'}>
                     <AppSettingsForm />
                 </ContentBox>
+                <PasskeysForm css={tw`mt-8 lg:col-span-3`} />
             </Container>
         </PageContentBlock>
     );

@@ -23,6 +23,11 @@ return [
             'login' => 'Connecté avec Discord',
         ],
         'reset-password-requested' => 'A demandé un lien de réinitialisation du mot de passe',
+        'passkey' => [
+            'add' => 'Clé d\'accès :name ajoutée',
+            'remove' => 'Clé d\'accès :name supprimée',
+            'login' => 'Connecté avec la clé d\'accès :name',
+        ],
     ],
     'user' => [
         'user' => [

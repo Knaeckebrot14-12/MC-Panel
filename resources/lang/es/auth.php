@@ -71,6 +71,7 @@ return [
         'have_device' => 'Tengo mi dispositivo',
     ],
     'throttle' => 'Demasiados intentos de inicio de sesión. Inténtalo de nuevo en :seconds segundos.',
+    'ip_blocked' => 'Demasiados intentos fallidos de inicio de sesión desde tu red. El inicio de sesión está en pausa durante unos :minutes minuto(s). Inténtalo de nuevo más tarde.',
     'password_requirements' => 'La contraseña debe tener al menos 8 caracteres y ser única para este sitio.',
     '2fa_must_be_enabled' => 'El administrador exige que la autenticación de dos factores esté activada en tu cuenta para usar el panel.',
     'discord' => [

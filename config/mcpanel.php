@@ -52,6 +52,25 @@ return [
         'memory_percent' => (int) env('MC_PANEL_MONITORING_MEMORY', 95),
     ],
 
+    // Admin -> Settings -> Abuse detection. p:abuse:scan runs every 5 minutes and only flags servers
+    // for the team (Admin -> Abuse flags); it never suspends anything on its own.
+    'abuse' => [
+        'enabled' => env('MC_PANEL_ABUSE_ENABLED', true),
+        // CPU stays at/above this share of the server's CPU limit for the whole window.
+        'cpu_percent' => (int) env('MC_PANEL_ABUSE_CPU_PERCENT', 90),
+        'cpu_minutes' => (int) env('MC_PANEL_ABUSE_CPU_MINUTES', 30),
+        // Look for miner keywords in the console and the root folder of busy servers.
+        'miner_enabled' => env('MC_PANEL_ABUSE_MINER', true),
+        // One keyword per line (or comma separated), matched as whole words.
+        'miner_keywords' => env('MC_PANEL_ABUSE_KEYWORDS', "xmrig\nminerd\ncpuminer\nstratum+tcp\nstratum+ssl\n--donate-level\nrandomx\ncryptonight\nnicehash\nnbminer\nlolminer\nethminer\nccminer\nxmr-stak"),
+        // Outbound traffic far above normal: average MiB per minute over the window.
+        'network_enabled' => env('MC_PANEL_ABUSE_NETWORK', true),
+        'network_mib_per_min' => (int) env('MC_PANEL_ABUSE_NETWORK_MIB', 50),
+        'network_minutes' => (int) env('MC_PANEL_ABUSE_NETWORK_MINUTES', 10),
+        'notify_discord' => env('MC_PANEL_ABUSE_NOTIFY_DISCORD', true),
+        'notify_push' => env('MC_PANEL_ABUSE_NOTIFY_PUSH', true),
+    ],
+
     // Admin -> Settings -> Design. Logo/favicon files live in /app/var/branding (kept across updates).
     'branding' => [
         'accent' => env('MC_PANEL_ACCENT', ''),
@@ -59,6 +78,20 @@ return [
         'logo' => env('MC_PANEL_LOGO', ''),
         'favicon' => env('MC_PANEL_FAVICON', ''),
         'default_theme' => env('MC_PANEL_DEFAULT_THEME', 'dark'),
+    ],
+
+    // Admin -> Settings -> IP lockout. IPs with too many failed logins are blocked from the sign-in
+    // endpoints for a while (App\Services\Security\IpLockoutService). Private and loopback addresses and
+    // the allowlist (one IP or CIDR range per line) are never blocked.
+    'ip_lockout' => [
+        'enabled' => env('MC_PANEL_IP_LOCKOUT', true),
+        'max_attempts' => (int) env('MC_PANEL_IP_LOCKOUT_ATTEMPTS', 10),
+        'window_minutes' => (int) env('MC_PANEL_IP_LOCKOUT_WINDOW', 15),
+        // First block, second block and third and later blocks within 7 days.
+        'block_minutes' => (int) env('MC_PANEL_IP_LOCKOUT_BLOCK', 30),
+        'block_minutes_2' => (int) env('MC_PANEL_IP_LOCKOUT_BLOCK_2', 120),
+        'block_minutes_3' => (int) env('MC_PANEL_IP_LOCKOUT_BLOCK_3', 1440),
+        'allowlist' => env('MC_PANEL_IP_LOCKOUT_ALLOWLIST', ''),
     ],
 
     // Admin -> Settings -> Subdomains. Users pick name.<domain> for a server; the panel creates the

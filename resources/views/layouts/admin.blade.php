@@ -117,6 +117,13 @@
                             </a>
                         </li>
 @endif
+@if($me->hasStaffPermission('security.ipblock'))
+                        <li class="{{ ! starts_with(Route::currentRouteName(), 'admin.security.ipblocks') ?: 'active' }}">
+                            <a href="{{ route('admin.security.ipblocks') }}">
+                                <i class="fa fa-ban"></i> <span>@lang('admin/layout.nav.ip_blocks')</span>
+                            </a>
+                        </li>
+@endif
 @if($me->hasStaffPermission('maintenance'))
                         <li class="{{ ! starts_with(Route::currentRouteName(), 'admin.maintenance') ?: 'active' }}">
                             <a href="{{ route('admin.maintenance') }}">
@@ -143,7 +150,7 @@
                             </a>
                         </li>
 @endif
-@if(collect(['databases', 'locations', 'nodes', 'servers.view', 'users.view'])->contains(fn ($p) => $me->hasStaffPermission($p)))
+@if(collect(['databases', 'locations', 'nodes', 'servers.view', 'servers.bulk', 'users.view'])->contains(fn ($p) => $me->hasStaffPermission($p)))
                         <li class="header">@lang('admin/layout.nav.management')</li>
 @endif
 @if($me->hasStaffPermission('databases'))
@@ -168,9 +175,25 @@
                         </li>
 @endif
 @if($me->hasStaffPermission('servers.view'))
-                        <li class="{{ ! starts_with(Route::currentRouteName(), 'admin.servers') ?: 'active' }}">
+                        <li class="{{ ! starts_with(Route::currentRouteName(), 'admin.servers') || starts_with(Route::currentRouteName(), 'admin.servers.bulk') ?: 'active' }}">
                             <a href="{{ route('admin.servers') }}">
                                 <i class="fa fa-server"></i> <span>@lang('admin/layout.nav.servers')</span>
+                            </a>
+                        </li>
+@endif
+@if($me->hasStaffPermission('servers.bulk'))
+                        <li class="{{ ! starts_with(Route::currentRouteName(), 'admin.servers.bulk') ?: 'active' }}">
+                            <a href="{{ route('admin.servers.bulk') }}">
+                                <i class="fa fa-bolt"></i> <span>@lang('admin/layout.nav.bulk_actions')</span>
+                            </a>
+                        </li>
+@endif
+@if($me->hasStaffPermission('servers.moderate'))
+                        <li class="{{ ! starts_with(Route::currentRouteName(), 'admin.abuse') ?: 'active' }}">
+                            <a href="{{ route('admin.abuse') }}">
+                                <i class="fa fa-shield"></i> <span>@lang('admin/layout.nav.abuse')</span>
+                                @php $openAbuse = \Pterodactyl\Models\AbuseFlag::openCount(); @endphp
+                                @if($openAbuse > 0)<span class="pull-right-container"><small class="label pull-right bg-red">{{ $openAbuse }}</small></span>@endif
                             </a>
                         </li>
 @endif

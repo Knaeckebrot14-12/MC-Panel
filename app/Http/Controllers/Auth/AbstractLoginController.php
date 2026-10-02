@@ -56,6 +56,12 @@ abstract class AbstractLoginController extends Controller
     protected function sendFailedLoginResponse(Request $request, ?Authenticatable $user = null, ?string $message = null)
     {
         $this->incrementLoginAttempts($request);
+        // Counts towards the automatic IP lockout (Admin -> Blocked IPs).
+        app(\Pterodactyl\Services\Security\IpLockoutService::class)->recordFailure(
+            $request->ip(),
+            $user?->username ?? (is_string($request->input('user')) ? $request->input('user') : null),
+            $request->route()->named('auth.login-checkpoint') ? 'checkpoint' : 'login'
+        );
         $this->fireFailedLoginEvent($user, [
             $this->getField($request->input('user')) => $request->input('user'),
         ]);
@@ -76,6 +82,7 @@ abstract class AbstractLoginController extends Controller
         $request->session()->regenerate();
 
         $this->clearLoginAttempts($request);
+        app(\Pterodactyl\Services\Security\IpLockoutService::class)->recordSuccess($request->ip(), [$user->username, $user->email]);
 
         $this->auth->guard()->login($user, true);
 

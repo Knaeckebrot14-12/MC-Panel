@@ -71,6 +71,7 @@ return [
         'have_device' => 'Ho il mio dispositivo',
     ],
     'throttle' => 'Troppi tentativi di accesso. Riprova tra :seconds secondi.',
+    'ip_blocked' => 'Troppi tentativi di accesso falliti dalla tua rete. L\'accesso è sospeso per circa :minutes minuto/i. Riprova più tardi.',
     'password_requirements' => 'La password deve contenere almeno 8 caratteri e dovrebbe essere unica per questo sito.',
     '2fa_must_be_enabled' => 'L\'amministratore ha reso obbligatoria l\'autenticazione a due fattori per il tuo account per usare il pannello.',
     'new_login' => [

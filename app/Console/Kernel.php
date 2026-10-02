@@ -14,9 +14,11 @@ use Pterodactyl\Console\Commands\Update\CheckForUpdatesCommand;
 use Pterodactyl\Console\Commands\Server\AutoBackupCommand;
 use Pterodactyl\Console\Commands\Maintenance\RenewCertificateCommand;
 use Pterodactyl\Console\Commands\Server\CollectServerStatsCommand;
+use Pterodactyl\Console\Commands\Server\AbuseScanCommand;
 use Pterodactyl\Console\Commands\Node\MonitorNodesCommand;
 use Pterodactyl\Console\Commands\Coins\ChargeCoinFundedServersCommand;
 use Pterodactyl\Console\Commands\Coins\RemindCoinFundedServersCommand;
+use Pterodactyl\Console\Commands\Security\CleanupLoginFailuresCommand;
 use Pterodactyl\Console\Commands\Maintenance\PruneOrphanedBackupsCommand;
 use Pterodactyl\Console\Commands\Maintenance\CleanServiceBackupFilesCommand;
 
@@ -43,8 +45,12 @@ class Kernel extends ConsoleKernel
         $schedule->command(CleanServiceBackupFilesCommand::class)->daily();
         $schedule->command(ChargeCoinFundedServersCommand::class)->daily()->withoutOverlapping();
         $schedule->command(RemindCoinFundedServersCommand::class)->daily();
+        // Old failed logins and finished IP blocks (see Admin -> Blocked IPs).
+        $schedule->command(CleanupLoginFailuresCommand::class)->daily();
         $schedule->command(CheckForUpdatesCommand::class)->everyFiveMinutes()->withoutOverlapping();
         $schedule->command(CollectServerStatsCommand::class)->everyFiveMinutes()->withoutOverlapping();
+        // Flags (never suspends) servers that look abused; the stats it reads come from the collector above.
+        $schedule->command(AbuseScanCommand::class)->everyFiveMinutes()->withoutOverlapping();
         // Idempotent; also repairs database hosts that were offline when the update ran.
         $schedule->command('p:databases:fix-grants')->dailyAt('04:10')->withoutOverlapping();
         $schedule->command(MonitorNodesCommand::class)->everyMinute()->withoutOverlapping()->runInBackground();

@@ -71,6 +71,7 @@ return [
         'have_device' => 'Ich habe mein Gerät',
     ],
     'throttle' => 'Zu viele Anmeldeversuche. Bitte versuche es in :seconds Sekunden erneut.',
+    'ip_blocked' => 'Zu viele fehlgeschlagene Anmeldeversuche aus deinem Netzwerk. Die Anmeldung ist für etwa :minutes Minute(n) pausiert. Bitte versuche es später erneut.',
     'password_requirements' => 'Das Passwort muss mindestens 8 Zeichen lang und für diese Seite einzigartig sein.',
     '2fa_must_be_enabled' => 'Der Administrator verlangt, dass für dein Konto die Zwei-Faktor-Authentifizierung aktiviert ist, um das Panel nutzen zu können.',
     'discord' => [

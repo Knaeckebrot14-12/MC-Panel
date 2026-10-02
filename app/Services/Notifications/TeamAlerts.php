@@ -4,6 +4,8 @@ namespace Pterodactyl\Services\Notifications;
 
 use Pterodactyl\Models\User;
 use Pterodactyl\Models\Ticket;
+use Pterodactyl\Models\IpBlock;
+use Pterodactyl\Services\Security\IpLockoutService;
 
 /**
  * Messages to the team's Discord channel (the webhook from Admin -> Settings -> Monitoring) about
@@ -53,6 +55,38 @@ class TeamAlerts
             trans('admin/monitoring.team.registration_title'),
             $username . "\n" . $url,
             DiscordWebhook::COLOR_GREEN
+        ));
+    }
+
+    /**
+     * An IP address was blocked for too many failed logins. The caller (IpLockoutService) already
+     * made sure this is the first block of that IP in 24 hours and that no more than 5 messages
+     * per hour go out, so a botnet can't flood the channel.
+     */
+    public static function ipBlocked(IpBlock $block): void
+    {
+        if (!DiscordWebhook::isValidUrl(config('mcpanel.monitoring.discord_webhook'))) {
+            return;
+        }
+
+        $ip = $block->ip;
+        $failures = $block->failures;
+        $minutes = max(1, (int) round($block->created_at->diffInMinutes($block->blocked_until, true)));
+        $until = $block->blocked_until->copy()->setTimezone(config('app.timezone'))->format('d.m.Y H:i T');
+        $usernames = implode(', ', array_slice($block->usernameList(), 0, 10));
+
+        $fields = [trans('admin/ipblock.discord.field_until') => $until];
+        if ($usernames !== '') {
+            $fields[trans('admin/ipblock.discord.field_usernames')] = $usernames;
+        }
+
+        self::later(fn () => DiscordWebhook::send(
+            config('mcpanel.monitoring.discord_webhook'),
+            trans('admin/ipblock.discord.title'),
+            trans('admin/ipblock.discord.body', ['ip' => $ip, 'failures' => $failures, 'duration' => IpLockoutService::durationLabel($minutes)])
+                . "\n" . route('admin.security.ipblocks'),
+            DiscordWebhook::COLOR_ORANGE,
+            $fields
         ));
     }
 

@@ -71,6 +71,7 @@ return [
         'have_device' => 'Mam swoje urządzenie',
     ],
     'throttle' => 'Zbyt wiele prób logowania. Spróbuj ponownie za :seconds s.',
+    'ip_blocked' => 'Zbyt wiele nieudanych prób logowania z Twojej sieci. Logowanie jest wstrzymane na około :minutes min. Spróbuj ponownie później.',
     'password_requirements' => 'Hasło musi mieć co najmniej 8 znaków i być unikalne dla tej witryny.',
     '2fa_must_be_enabled' => 'Administrator wymaga włączenia uwierzytelniania dwuskładnikowego na Twoim koncie, aby korzystać z panelu.',
     'new_login' => [

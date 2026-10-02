@@ -19,6 +19,9 @@ Route::get('/register', [Auth\LoginController::class, 'index'])->name('auth.regi
 Route::get('/password', [Auth\LoginController::class, 'index'])->name('auth.forgot-password');
 Route::get('/password/reset/{token}', [Auth\LoginController::class, 'index'])->name('auth.reset');
 
+// Every POST in this file also passes the "ip.lockout" middleware (added to the whole /auth group in
+// RouteServiceProvider), which refuses IPs that were blocked for too many failed logins.
+//
 // Apply a throttle to authentication action endpoints, in addition to the
 // recaptcha endpoints to slow down manual attack spammers even more. 🤷‍
 //
@@ -36,6 +39,14 @@ Route::middleware(['throttle:authentication'])->group(function () {
     Route::post('/password', [Auth\ForgotPasswordController::class, 'sendResetLinkEmail'])
         ->name('auth.post.forgot-password')
         ->middleware('recaptcha');
+});
+
+// Sign in with a passkey (WebAuthn). No recaptcha: the sign-in is gated by a cryptographic challenge.
+// The pair of requests (options + login) shares one named throttle; failures also count towards
+// the normal failed-login lockout.
+Route::middleware(['throttle:20,1,passkey-login'])->group(function () {
+    Route::post('/passkey/options', [Auth\PasskeyLoginController::class, 'options'])->name('auth.passkey.options');
+    Route::post('/passkey/login', [Auth\PasskeyLoginController::class, 'login'])->name('auth.passkey.login');
 });
 
 // Password reset routes. This endpoint is hit after going through

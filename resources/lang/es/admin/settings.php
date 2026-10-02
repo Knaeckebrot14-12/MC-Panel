@@ -10,8 +10,10 @@ return [
         'login' => 'Inicio de sesión y registro',
         'design' => 'Diseño',
         'monitoring' => 'Monitorización',
+        'abuse' => 'Detección de abuso',
         'subdomains' => 'Subdominios',
         'roles' => 'Roles',
+        'iplockout' => 'Bloqueo de IP',
     ],
     'notice' => [
         'env_only' => 'Tu panel está configurado actualmente para leer los ajustes únicamente del entorno. Tendrás que definir :env_var en tu archivo de entorno para cargar los ajustes dinámicamente.',

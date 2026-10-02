@@ -89,6 +89,15 @@ Route::prefix('/account')->middleware(AccountSubject::class)->group(function () 
         Route::post('/', [Client\SSHKeyController::class, 'store']);
         Route::post('/remove', [Client\SSHKeyController::class, 'delete']);
     });
+
+    // Passkeys (WebAuthn). Adding and removing ask for the current password, which is checked on
+    // every call, so they share a tight named throttle against password guessing.
+    Route::prefix('/passkeys')->group(function () {
+        Route::get('/', [Client\PasskeyController::class, 'index']);
+        Route::post('/options', [Client\PasskeyController::class, 'options'])->middleware('throttle:10,1,passkey-manage');
+        Route::post('/', [Client\PasskeyController::class, 'store'])->middleware('throttle:10,1,passkey-manage');
+        Route::delete('/{id}', [Client\PasskeyController::class, 'delete'])->whereNumber('id')->middleware('throttle:10,1,passkey-manage');
+    });
 });
 
 /*

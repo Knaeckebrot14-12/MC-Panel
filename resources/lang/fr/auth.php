@@ -71,6 +71,7 @@ return [
         'have_device' => 'J\'ai mon appareil',
     ],
     'throttle' => 'Trop de tentatives de connexion. Veuillez réessayer dans :seconds secondes.',
+    'ip_blocked' => 'Trop de tentatives de connexion échouées depuis votre réseau. La connexion est suspendue pendant environ :minutes minute(s). Veuillez réessayer plus tard.',
     'password_requirements' => 'Le mot de passe doit contenir au moins 8 caractères et doit être unique à ce site.',
     '2fa_must_be_enabled' => 'L\'administrateur exige que l\'authentification à deux facteurs soit activée sur votre compte pour utiliser le panel.',
     'discord' => [

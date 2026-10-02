@@ -71,6 +71,7 @@ return [
         'have_device' => 'Estou com meu dispositivo',
     ],
     'throttle' => 'Muitas tentativas de login. Tente novamente em :seconds segundos.',
+    'ip_blocked' => 'Muitas tentativas de login falhadas a partir da sua rede. O login está em pausa por cerca de :minutes minuto(s). Tente novamente mais tarde.',
     'password_requirements' => 'A senha deve ter pelo menos 8 caracteres e ser única para este site.',
     '2fa_must_be_enabled' => 'O administrador exigiu que a autenticação em duas etapas esteja ativada na sua conta para usar o painel.',
     'new_login' => [

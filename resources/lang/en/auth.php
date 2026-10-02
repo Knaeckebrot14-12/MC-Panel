@@ -71,6 +71,7 @@ return [
         'have_device' => 'I Have My Device',
     ],
     'throttle' => 'Too many login attempts. Please try again in :seconds seconds.',
+    'ip_blocked' => 'Too many failed sign-in attempts from your network. Signing in is paused for about :minutes minute(s). Please try again later.',
     'password_requirements' => 'Password must be at least 8 characters in length and should be unique to this site.',
     '2fa_must_be_enabled' => 'The administrator has required that 2-Factor Authentication be enabled for your account in order to use the Panel.',
     'discord' => [

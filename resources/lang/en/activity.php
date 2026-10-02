@@ -23,6 +23,11 @@ return [
             'login' => 'Logged in with Discord',
         ],
         'reset-password-requested' => 'Requested a password reset link',
+        'passkey' => [
+            'add' => 'Added passkey :name',
+            'remove' => 'Removed passkey :name',
+            'login' => 'Logged in with passkey :name',
+        ],
     ],
     'user' => [
         'user' => [

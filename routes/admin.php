@@ -109,6 +109,12 @@ Route::group(['prefix' => 'settings', 'middleware' => ['owner.only']], function 
     Route::patch('/monitoring', [Admin\Settings\MonitoringController::class, 'update']);
     Route::post('/monitoring/test', [Admin\Settings\MonitoringController::class, 'test'])->name('admin.settings.monitoring.test');
 
+    Route::get('/abuse', [Admin\Settings\AbuseSettingsController::class, 'index'])->name('admin.settings.abuse');
+    Route::patch('/abuse', [Admin\Settings\AbuseSettingsController::class, 'update']);
+
+    Route::get('/ip-lockout', [Admin\Settings\IpLockoutSettingsController::class, 'index'])->name('admin.settings.iplockout');
+    Route::patch('/ip-lockout', [Admin\Settings\IpLockoutSettingsController::class, 'update']);
+
     Route::get('/roles', [Admin\Settings\RolesController::class, 'index'])->name('admin.settings.roles');
     Route::patch('/roles', [Admin\Settings\RolesController::class, 'update']);
 
@@ -161,7 +167,11 @@ Route::group(['prefix' => 'users'], function () {
 Route::group(['prefix' => 'servers'], function () {
     Route::get('/', [Admin\Servers\ServerController::class, 'index'])->name('admin.servers')->middleware('staff:servers.view');
     Route::get('/new', [Admin\Servers\CreateServerController::class, 'index'])->name('admin.servers.new')->middleware('staff:servers.create');
-    Route::get('/view/{server:id}', [Admin\Servers\ServerViewController::class, 'index'])->name('admin.servers.view')->middleware('staff:servers.view');
+    Route::get('/bulk', [Admin\Servers\BulkActionController::class, 'index'])->name('admin.servers.bulk')->middleware('staff:servers.bulk');
+    Route::get('/bulk/runs/{run}', [Admin\Servers\BulkActionController::class, 'status'])->name('admin.servers.bulk.status')->where('run', '[0-9a-f-]{36}')->middleware('staff:servers.bulk');
+    Route::post('/bulk/power', [Admin\Servers\BulkActionController::class, 'power'])->name('admin.servers.bulk.power')->middleware(['staff:servers.bulk', 'throttle:5,1,bulk-actions']);
+    Route::post('/bulk/message', [Admin\Servers\BulkActionController::class, 'message'])->name('admin.servers.bulk.message')->middleware(['staff:servers.bulk', 'throttle:5,1,bulk-actions']);
+    Route::get('/view/{server:id}',[Admin\Servers\ServerViewController::class, 'index'])->name('admin.servers.view')->middleware('staff:servers.view');
 
     Route::group(['middleware' => [ServerInstalled::class]], function () {
         Route::get('/view/{server:id}/details', [Admin\Servers\ServerViewController::class, 'details'])->name('admin.servers.view.details')->middleware('staff:servers.manage');
@@ -340,6 +350,19 @@ Route::group(['prefix' => 'settings/coins', 'middleware' => ['staff:coins.settin
 
 /*
 |--------------------------------------------------------------------------
+| Abuse Flag Routes
+|--------------------------------------------------------------------------
+|
+| Endpoint: /admin/abuse
+|
+*/
+Route::group(['prefix' => 'abuse', 'middleware' => ['staff:servers.moderate']], function () {
+    Route::get('/', [Admin\AbuseFlagController::class, 'index'])->name('admin.abuse');
+    Route::post('/{flag:id}/resolve', [Admin\AbuseFlagController::class, 'resolve'])->name('admin.abuse.resolve');
+});
+
+/*
+|--------------------------------------------------------------------------
 | Staff Audit Log Routes
 |--------------------------------------------------------------------------
 |
@@ -347,3 +370,17 @@ Route::group(['prefix' => 'settings/coins', 'middleware' => ['staff:coins.settin
 |
 */
 Route::get('/audit', [Admin\AuditLogController::class, 'index'])->name('admin.audit')->middleware('staff:audit');
+
+/*
+|--------------------------------------------------------------------------
+| Blocked IPs (automatic lockout after failed logins)
+|--------------------------------------------------------------------------
+|
+| Endpoint: /admin/security/ip-blocks
+|
+*/
+Route::group(['prefix' => 'security/ip-blocks', 'middleware' => ['staff:security.ipblock']], function () {
+    Route::get('/', [Admin\IpBlockController::class, 'index'])->name('admin.security.ipblocks');
+    Route::post('/', [Admin\IpBlockController::class, 'store'])->middleware('throttle:30,1,ipblock-manage');
+    Route::delete('/{block:id}', [Admin\IpBlockController::class, 'destroy'])->name('admin.security.ipblocks.delete');
+});

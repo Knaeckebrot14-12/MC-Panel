@@ -23,6 +23,11 @@ return [
             'login' => 'Mit Discord angemeldet',
         ],
         'reset-password-requested' => 'Link zum Zurücksetzen des Passworts angefordert',
+        'passkey' => [
+            'add' => 'Passkey :name hinzugefügt',
+            'remove' => 'Passkey :name entfernt',
+            'login' => 'Mit Passkey :name angemeldet',
+        ],
     ],
     'user' => [
         'user' => [

@@ -18,6 +18,7 @@ return [
         'servers' => 'Servers',
         'infrastructure' => 'Infrastructure',
         'coins' => 'Coins & shop',
+        'security' => 'Security',
         'owner_only' => 'Owner only',
     ],
     'permissions' => [
@@ -77,6 +78,10 @@ return [
             'name' => 'Sign in as users (support view)',
             'description' => 'See the panel exactly as a normal user sees it, to help with problems. This also shows their e-mail address. Account settings, coins and tickets can\'t be changed meanwhile.',
         ],
+        'security_ipblock' => [
+            'name' => 'Blocked IPs',
+            'description' => 'See IP addresses that were blocked for too many failed logins, unblock them or block an IP by hand. The lockout settings stay with the owner.',
+        ],
         'servers_view' => [
             'name' => 'View servers',
             'description' => 'Server list and server pages.',
@@ -96,6 +101,10 @@ return [
         'servers_delete' => [
             'name' => 'Delete servers',
             'description' => 'Delete servers.',
+        ],
+        'servers_bulk' => [
+            'name' => 'Bulk actions on servers',
+            'description' => 'Start, stop, restart or kill all servers of a node at once and send a message to the console of all running Minecraft servers.',
         ],
         'nodes' => [
             'name' => 'Nodes',

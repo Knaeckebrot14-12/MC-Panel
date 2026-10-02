@@ -23,6 +23,11 @@ return [
             'login' => 'Inició sesión con Discord',
         ],
         'reset-password-requested' => 'Solicitó un enlace para restablecer la contraseña',
+        'passkey' => [
+            'add' => 'Añadió la passkey :name',
+            'remove' => 'Eliminó la passkey :name',
+            'login' => 'Inició sesión con la passkey :name',
+        ],
     ],
     'user' => [
         'user' => [

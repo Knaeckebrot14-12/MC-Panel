@@ -71,6 +71,7 @@ return [
         'have_device' => 'Ik heb mijn apparaat',
     ],
     'throttle' => 'Te veel aanmeldpogingen. Probeer het over :seconds seconden opnieuw.',
+    'ip_blocked' => 'Te veel mislukte aanmeldpogingen vanaf je netwerk. Aanmelden is voor ongeveer :minutes minuut/minuten gepauzeerd. Probeer het later opnieuw.',
     'password_requirements' => 'Het wachtwoord moet minstens 8 tekens lang zijn en uniek zijn voor deze site.',
     '2fa_must_be_enabled' => 'De beheerder heeft vereist dat tweestapsverificatie is ingeschakeld voor je account om het paneel te gebruiken.',
     'new_login' => [

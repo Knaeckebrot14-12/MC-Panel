@@ -12,6 +12,7 @@ import Button from '@/components/elements/Button';
 import Reaptcha from 'reaptcha';
 import useFlash from '@/plugins/useFlash';
 import DiscordIcon from '@/components/elements/DiscordIcon';
+import PasskeyLoginButton from '@/components/auth/PasskeyLoginButton';
 
 interface Values {
     username: string;
@@ -123,6 +124,7 @@ const LoginContainer = ({ history }: RouteComponentProps) => {
                             </Button>
                         </Link>
                     </div>
+                    <PasskeyLoginButton disabled={isSubmitting} />
                     {discordEnabled && (
                         <div css={tw`mt-2`}>
                             <a

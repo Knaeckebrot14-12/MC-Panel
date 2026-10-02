@@ -14,6 +14,11 @@ return [
             'fail' => 'Accesso SFTP non riuscito',
         ],
         'reset-password-requested' => 'Ha richiesto un link per reimpostare la password',
+        'passkey' => [
+            'add' => 'Aggiunta la passkey :name',
+            'remove' => 'Rimossa la passkey :name',
+            'login' => 'Accesso effettuato con la passkey :name',
+        ],
     ],
     'user' => [
         'user' => [

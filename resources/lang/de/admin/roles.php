@@ -18,6 +18,7 @@ return [
         'servers' => 'Server',
         'infrastructure' => 'Infrastruktur',
         'coins' => 'Coins & Shop',
+        'security' => 'Sicherheit',
         'owner_only' => 'Nur Owner',
     ],
     'permissions' => [
@@ -77,6 +78,10 @@ return [
             'name' => 'Als Nutzer anmelden (Support-Ansicht)',
             'description' => 'Das Panel genau so sehen wie ein normaler Nutzer, um bei Problemen zu helfen. Dabei ist auch seine E-Mail-Adresse sichtbar. Kontoeinstellungen, Coins und Tickets lassen sich währenddessen nicht ändern.',
         ],
+        'security_ipblock' => [
+            'name' => 'Gesperrte IPs',
+            'description' => 'IP-Adressen sehen, die wegen zu vieler fehlgeschlagener Logins gesperrt wurden, sie entsperren oder eine IP von Hand sperren. Die Einstellungen der Sperre bleiben beim Owner.',
+        ],
         'servers_view' => [
             'name' => 'Server ansehen',
             'description' => 'Serverliste und Serverseiten.',
@@ -96,6 +101,10 @@ return [
         'servers_delete' => [
             'name' => 'Server löschen',
             'description' => 'Server löschen.',
+        ],
+        'servers_bulk' => [
+            'name' => 'Sammelaktionen für Server',
+            'description' => 'Alle Server einer Node auf einmal starten, stoppen, neu starten oder beenden und eine Nachricht an die Konsole aller laufenden Minecraft-Server senden.',
         ],
         'nodes' => [
             'name' => 'Nodes',

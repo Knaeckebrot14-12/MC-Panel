@@ -14,6 +14,11 @@ return [
             'fail' => 'Falha no login SFTP',
         ],
         'reset-password-requested' => 'Solicitou um link de redefinição de senha',
+        'passkey' => [
+            'add' => 'Adicionou a passkey :name',
+            'remove' => 'Removeu a passkey :name',
+            'login' => 'Login realizado com a passkey :name',
+        ],
     ],
     'user' => [
         'user' => [

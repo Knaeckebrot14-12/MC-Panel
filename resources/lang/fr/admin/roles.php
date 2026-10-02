@@ -18,6 +18,7 @@ return [
         'servers' => 'Serveurs',
         'infrastructure' => 'Infrastructure',
         'coins' => 'Coins & boutique',
+        'security' => 'Sécurité',
         'owner_only' => 'Propriétaire uniquement',
     ],
     'permissions' => [
@@ -77,6 +78,10 @@ return [
             'name' => 'Se connecter en tant qu’utilisateur (vue support)',
             'description' => 'Voir le panel exactement comme un utilisateur normal, pour l’aider en cas de problème. Son adresse e-mail est alors visible. Les paramètres du compte, les coins et les tickets ne peuvent pas être modifiés pendant ce temps.',
         ],
+        'security_ipblock' => [
+            'name' => 'IP bloquées',
+            'description' => 'Voir les adresses IP bloquées après trop de connexions échouées, les débloquer ou bloquer une IP manuellement. Les réglages du blocage restent réservés au propriétaire.',
+        ],
         'servers_view' => [
             'name' => 'Voir les serveurs',
             'description' => 'Liste et pages des serveurs.',
@@ -96,6 +101,10 @@ return [
         'servers_delete' => [
             'name' => 'Supprimer des serveurs',
             'description' => 'Supprimer des serveurs.',
+        ],
+        'servers_bulk' => [
+            'name' => 'Actions groupées sur les serveurs',
+            'description' => 'Démarrer, arrêter, redémarrer ou tuer tous les serveurs d\'un nœud en une fois et envoyer un message à la console de tous les serveurs Minecraft en cours d\'exécution.',
         ],
         'nodes' => [
             'name' => 'Nodes',
