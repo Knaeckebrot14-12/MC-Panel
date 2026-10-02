@@ -258,6 +258,24 @@
             </div>
         </div>
 @endif
+@if($me->hasStaffPermission('users.impersonate') && !$user->isStaff() && $user->id !== $me->id)
+        <div class="box box-info">
+            <div class="box-header with-border">
+                <h3 class="box-title">@lang('admin/users.view.impersonate_heading')</h3>
+            </div>
+            <div class="box-body">
+                <p class="no-margin">@lang('admin/users.view.impersonate_notice')</p>
+            </div>
+            <div class="box-footer">
+                <form action="{{ route('admin.users.impersonate', $user->id) }}" method="POST">
+                    {!! csrf_field() !!}
+                    <button type="submit" class="btn btn-sm btn-info pull-right" @if($user->isSuspended()) disabled @endif>
+                        @lang('admin/users.view.impersonate_button')
+                    </button>
+                </form>
+            </div>
+        </div>
+@endif
 @if($me->hasStaffPermission('users.delete'))
         <div class="box box-danger">
             <div class="box-header with-border">

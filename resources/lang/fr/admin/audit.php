@@ -32,6 +32,8 @@ return [
         'user.role' => 'Rôle de :subject défini sur :role',
         'user.updated' => 'Utilisateur :subject modifié',
         'user.deleted' => 'Utilisateur :subject supprimé',
+        'user.impersonated' => 'S’est connecté en tant que :subject (vue support)',
+        'user.impersonation_ended' => 'A quitté la vue support de :subject',
         'server.suspended' => 'Serveur :subject suspendu',
         'server.unsuspended' => 'Suspension du serveur :subject levée',
         'ticket.replied' => 'Réponse au ticket :subject',

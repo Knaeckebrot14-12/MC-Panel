@@ -73,6 +73,10 @@ return [
             'name' => 'Delete users',
             'description' => 'Delete accounts without servers.',
         ],
+        'users_impersonate' => [
+            'name' => 'Sign in as users (support view)',
+            'description' => 'See the panel exactly as a normal user sees it, to help with problems. This also shows their e-mail address. Account settings, coins and tickets can\'t be changed meanwhile.',
+        ],
         'servers_view' => [
             'name' => 'View servers',
             'description' => 'Server list and server pages.',

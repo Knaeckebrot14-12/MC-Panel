@@ -73,6 +73,10 @@ return [
             'name' => 'Eliminar usuarios',
             'description' => 'Eliminar cuentas sin servidores.',
         ],
+        'users_impersonate' => [
+            'name' => 'Iniciar sesión como usuario (vista de soporte)',
+            'description' => 'Ver el panel exactamente como lo ve un usuario normal, para ayudar con problemas. También muestra su correo. Mientras tanto no se pueden cambiar los ajustes de la cuenta, los coins ni los tickets.',
+        ],
         'servers_view' => [
             'name' => 'Ver servidores',
             'description' => 'Lista y páginas de servidores.',

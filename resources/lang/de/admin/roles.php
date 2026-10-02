@@ -73,6 +73,10 @@ return [
             'name' => 'Benutzer löschen',
             'description' => 'Konten ohne Server löschen.',
         ],
+        'users_impersonate' => [
+            'name' => 'Als Nutzer anmelden (Support-Ansicht)',
+            'description' => 'Das Panel genau so sehen wie ein normaler Nutzer, um bei Problemen zu helfen. Dabei ist auch seine E-Mail-Adresse sichtbar. Kontoeinstellungen, Coins und Tickets lassen sich währenddessen nicht ändern.',
+        ],
         'servers_view' => [
             'name' => 'Server ansehen',
             'description' => 'Serverliste und Serverseiten.',

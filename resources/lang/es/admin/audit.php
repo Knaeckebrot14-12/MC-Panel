@@ -32,6 +32,8 @@ return [
         'user.role' => 'Estableció el rol de :subject en :role',
         'user.updated' => 'Editó al usuario :subject',
         'user.deleted' => 'Eliminó al usuario :subject',
+        'user.impersonated' => 'Inició sesión como :subject (vista de soporte)',
+        'user.impersonation_ended' => 'Salió de la vista de soporte de :subject',
         'server.suspended' => 'Suspendió el servidor :subject',
         'server.unsuspended' => 'Reactivó el servidor :subject',
         'ticket.replied' => 'Respondió al ticket :subject',

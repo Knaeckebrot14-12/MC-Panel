@@ -44,6 +44,12 @@
                 <script>
                     window.PterodactylUser = {!! json_encode(Auth::user()->toVueObject()) !!};
                 </script>
+                @if(is_array($impersonator = session(\Pterodactyl\Services\Users\ImpersonationService::SESSION_KEY)))
+                    <script>
+                        {{-- Support view: the staff member signed in as this user (shown as a banner). --}}
+                        window.PterodactylImpersonator = {!! json_encode(['username' => $impersonator['username'] ?? ''], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) !!};
+                    </script>
+                @endif
             @endif
             @if(!empty($siteConfiguration))
                 <script>

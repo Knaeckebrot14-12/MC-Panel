@@ -16,5 +16,10 @@ Route::get('/locales/locale.json', Base\LocaleController::class)
 Route::get('/coins/linkvertise/claim/{token}', Base\LinkvertiseClaimController::class)
     ->name('coins.linkvertise.claim');
 
+// Support view: back from the user's account to the staff member's own.
+Route::post('/impersonate/leave', [Base\ImpersonationController::class, 'leave'])
+    ->withoutMiddleware(RequireTwoFactorAuthentication::class)
+    ->name('impersonate.leave');
+
 Route::get('/{react}', [Base\IndexController::class, 'index'])
     ->where('react', '^(?!(\/)?(api|auth|admin|daemon)).+');

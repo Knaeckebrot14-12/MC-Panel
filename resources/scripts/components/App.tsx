@@ -16,6 +16,7 @@ import '@/assets/tailwind.css';
 import Spinner from '@/components/elements/Spinner';
 import ForcedPasswordChangeContainer from '@/components/auth/ForcedPasswordChangeContainer';
 import { MaintenanceBanner, MaintenanceScreen } from '@/components/MaintenanceNotice';
+import ImpersonationBanner from '@/components/ImpersonationBanner';
 
 const DashboardRouter = lazy(() => import(/* webpackChunkName: "dashboard" */ '@/routers/DashboardRouter'));
 const ServerRouter = lazy(() => import(/* webpackChunkName: "server" */ '@/routers/ServerRouter'));
@@ -23,6 +24,8 @@ const AuthenticationRouter = lazy(() => import(/* webpackChunkName: "auth" */ '@
 
 interface ExtendedWindow extends Window {
     SiteConfiguration?: SiteSettings;
+    // Set while a staff member is signed in as this user (support view).
+    PterodactylImpersonator?: { username: string };
     PterodactylUser?: {
         uuid: string;
         username: string;
@@ -45,7 +48,7 @@ interface ExtendedWindow extends Window {
 setupInterceptors(history);
 
 const App = () => {
-    const { PterodactylUser, SiteConfiguration } = window as ExtendedWindow;
+    const { PterodactylUser, SiteConfiguration, PterodactylImpersonator } = window as ExtendedWindow;
     if (PterodactylUser && !store.getState().user.data) {
         store.getActions().user.setUserData({
             uuid: PterodactylUser.uuid,
@@ -86,6 +89,12 @@ const App = () => {
             <GlobalStylesheet />
             <StoreProvider store={store}>
                 <ProgressBar />
+                {PterodactylImpersonator && PterodactylUser && (
+                    // Its translations load on demand, which suspends rendering for a moment.
+                    <React.Suspense fallback={null}>
+                        <ImpersonationBanner staff={PterodactylImpersonator.username} user={PterodactylUser.username} />
+                    </React.Suspense>
+                )}
                 {showBanner && !lockedOut && (
                     <React.Suspense fallback={null}>
                         <MaintenanceBanner maintenance={maintenance!} staffView={maintenance!.mode === 'lock'} />

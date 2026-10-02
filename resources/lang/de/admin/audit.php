@@ -32,6 +32,8 @@ return [
         'user.role' => 'Rolle von :subject auf :role gesetzt',
         'user.updated' => 'Benutzer :subject bearbeitet',
         'user.deleted' => 'Benutzer :subject gelöscht',
+        'user.impersonated' => 'Als :subject angemeldet (Support-Ansicht)',
+        'user.impersonation_ended' => 'Support-Ansicht von :subject verlassen',
         'server.suspended' => 'Server :subject gesperrt',
         'server.unsuspended' => 'Server :subject entsperrt',
         'ticket.replied' => 'Auf Ticket :subject geantwortet',

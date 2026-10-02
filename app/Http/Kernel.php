@@ -84,6 +84,7 @@ class Kernel extends HttpKernel
             RequireClientApiKey::class,
             LanguageMiddleware::class,
             \Pterodactyl\Http\Middleware\PanelMaintenance::class,
+            \Pterodactyl\Http\Middleware\BlockWhileImpersonating::class,
         ],
         'daemon' => [
             SubstituteBindings::class,

@@ -73,6 +73,10 @@ return [
             'name' => 'Supprimer des utilisateurs',
             'description' => 'Supprimer des comptes sans serveurs.',
         ],
+        'users_impersonate' => [
+            'name' => 'Se connecter en tant qu’utilisateur (vue support)',
+            'description' => 'Voir le panel exactement comme un utilisateur normal, pour l’aider en cas de problème. Son adresse e-mail est alors visible. Les paramètres du compte, les coins et les tickets ne peuvent pas être modifiés pendant ce temps.',
+        ],
         'servers_view' => [
             'name' => 'Voir les serveurs',
             'description' => 'Liste et pages des serveurs.',

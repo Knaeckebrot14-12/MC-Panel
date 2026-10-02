@@ -142,6 +142,7 @@ Route::group(['prefix' => 'users'], function () {
     Route::patch('/view/{user:id}', [Admin\UserController::class, 'update'])->middleware('staff:users.edit,users.password');
     Route::delete('/view/{user:id}', [Admin\UserController::class, 'delete'])->name('admin.users.delete')->middleware('staff:users.delete');
     Route::post('/view/{user:id}/role', [Admin\UserController::class, 'updateRole'])->name('admin.users.role')->middleware('staff:users.roles');
+    Route::post('/view/{user:id}/impersonate', [Admin\UserImpersonationController::class, 'start'])->name('admin.users.impersonate')->middleware('staff:users.impersonate');
 
     Route::post('/view/{user:id}/verify-email', [Admin\UserController::class, 'verifyEmail'])->name('admin.users.verify-email')->middleware('staff:users.moderate');
     Route::post('/view/{user:id}/suspend',[Admin\UserController::class, 'suspend'])->name('admin.users.suspend')->middleware('staff:users.moderate');

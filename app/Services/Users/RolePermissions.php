@@ -18,7 +18,7 @@ class RolePermissions
     /** Every permission, grouped for the settings page. */
     public const GROUPS = [
         'general' => ['overview', 'audit', 'maintenance', 'announcements', 'tickets'],
-        'users' => ['users.view', 'users.email', 'users.edit', 'users.password', 'users.moderate', 'users.coins', 'users.roles', 'users.delete'],
+        'users' => ['users.view', 'users.email', 'users.edit', 'users.password', 'users.moderate', 'users.coins', 'users.roles', 'users.delete', 'users.impersonate'],
         'servers' => ['servers.view', 'servers.moderate', 'servers.manage', 'servers.create', 'servers.delete'],
         'infrastructure' => ['nodes', 'locations', 'databases', 'mounts', 'nests'],
         'coins' => ['coins.vouchers', 'coins.plans', 'coins.settings'],
