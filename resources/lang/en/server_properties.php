@@ -29,6 +29,27 @@ return [
         'large_biomes' => 'Large biomes',
         'amplified' => 'Amplified',
     ],
+    'server_list' => [
+        'title' => 'Server list',
+        'line1' => 'First line',
+        'line2' => 'Second line (optional)',
+        'codes_hint' => 'Colour and format codes start with & (e.g. &a green, &l bold, &r reset). Click a colour to insert it at the cursor. The preview shows how players see the server.',
+        'icon_title' => 'Server icon',
+        'icon_upload' => 'Upload icon',
+        'icon_remove' => 'Remove icon',
+        'icon_hint' => 'PNG, JPG, GIF or WebP. It is cut to a square and scaled to 64×64 automatically. Takes effect after a restart.',
+        'icon_saved' => 'Server icon saved. It shows up after the next restart.',
+        'icon_invalid' => 'This file is not an image that can be read.',
+        'no_icon' => 'No icon',
+        'format' => [
+            'l' => 'Bold',
+            'o' => 'Italic',
+            'n' => 'Underline',
+            'm' => 'Strike',
+            'k' => 'Magic',
+            'r' => 'Reset',
+        ],
+    ],
     'fields' => [
         'motd' => [
             'label' => 'Server description (MOTD)',

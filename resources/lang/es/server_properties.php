@@ -29,6 +29,27 @@ return [
         'large_biomes' => 'Biomas grandes',
         'amplified' => 'Amplificado',
     ],
+    'server_list' => [
+        'title' => 'Lista de servidores',
+        'line1' => 'Primera línea',
+        'line2' => 'Segunda línea (opcional)',
+        'codes_hint' => 'Los códigos de color y formato empiezan por & (p. ej. &a verde, &l negrita, &r restablecer). Haz clic en un color para insertarlo en el cursor. La vista previa muestra lo que ven los jugadores.',
+        'icon_title' => 'Icono del servidor',
+        'icon_upload' => 'Subir icono',
+        'icon_remove' => 'Quitar icono',
+        'icon_hint' => 'PNG, JPG, GIF o WebP. Se recorta en cuadrado y se reduce a 64×64 automáticamente. Se aplica tras reiniciar.',
+        'icon_saved' => 'Icono guardado. Aparece tras el próximo reinicio.',
+        'icon_invalid' => 'Este archivo no es una imagen legible.',
+        'no_icon' => 'Sin icono',
+        'format' => [
+            'l' => 'Negrita',
+            'o' => 'Cursiva',
+            'n' => 'Subrayado',
+            'm' => 'Tachado',
+            'k' => 'Mágico',
+            'r' => 'Restablecer',
+        ],
+    ],
     'fields' => [
         'motd' => [
             'label' => 'Descripción del servidor (MOTD)',

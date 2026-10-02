@@ -14,6 +14,7 @@ import useFlash from '@/plugins/useFlash';
 import { httpErrorToHuman } from '@/api/http';
 import getFileContents from '@/api/server/files/getFileContents';
 import saveFileContents from '@/api/server/files/saveFileContents';
+import ServerListEditor from '@/components/server/properties/ServerListEditor';
 
 const FILE = 'server.properties';
 
@@ -27,7 +28,6 @@ const GROUPS: { id: string; fields: Field[] }[] = [
     {
         id: 'general',
         fields: [
-            { key: 'motd', type: 'text', def: 'A Minecraft Server' },
             { key: 'max-players', type: 'int', def: '20', min: 1, max: 10000 },
             {
                 key: 'gamemode',
@@ -92,7 +92,8 @@ const GROUPS: { id: string; fields: Field[] }[] = [
 // Managed by the panel through the server's allocation; changing them here would break the connection.
 const LOCKED = ['server-port', 'server-ip', 'query.port', 'rcon.port', 'rcon.password', 'enable-rcon'];
 
-const KNOWN = GROUPS.flatMap((group) => group.fields.map((field) => field.key));
+// The MOTD has its own editor with a server list preview (ServerListEditor).
+const KNOWN = ['motd', ...GROUPS.flatMap((group) => group.fields.map((field) => field.key))];
 
 const parse = (content: string): Record<string, string> => {
     const values: Record<string, string> = {};
@@ -207,6 +208,13 @@ export default () => {
                     {t('missing')}
                 </Alert>
             )}
+
+            <ServerListEditor
+                motd={values['motd'] ?? 'A Minecraft Server'}
+                maxPlayers={values['max-players'] ?? '20'}
+                changed={'motd' in changes}
+                onChange={(raw) => set('motd', raw)}
+            />
 
             <div css={tw`grid grid-cols-1 lg:grid-cols-2 gap-4`}>
                 {GROUPS.map((group) => (
