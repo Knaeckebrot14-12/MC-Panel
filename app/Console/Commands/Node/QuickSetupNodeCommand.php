@@ -45,6 +45,13 @@ class QuickSetupNodeCommand extends Command
             // Running the installer again (e.g. after switching the panel to HTTPS) repairs the node.
             $node->forceFill(['scheme' => $scheme])->save();
         }
+        if ($node) {
+            // A re-run raises the limits to what the machine has now (more RAM, bigger disk); it never lowers them.
+            $node->forceFill([
+                'memory' => max($node->memory, (int) $this->option('memory')),
+                'disk' => max($node->disk, (int) $this->option('disk')),
+            ])->save();
+        }
         if (!$node) {
             $location = Location::query()->first() ?? Location::query()->create([
                 'short' => 'main',

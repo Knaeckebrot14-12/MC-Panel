@@ -60,6 +60,8 @@ return [
         'memory_notice' => 'Gib die Gesamtmenge an Arbeitsspeicher ein, die auf dieser Node für die Zuweisung zu Servern verfügbar ist. Du kannst auch einen Prozentsatz angeben, der eine Zuweisung über den definierten Arbeitsspeicher hinaus erlaubt.',
         'disk_space_label' => 'Speicherplatz',
         'disk_notice' => 'Gib die Gesamtmenge an Speicherplatz ein, die auf dieser Node für die Serverzuweisung verfügbar ist. Du kannst auch einen Prozentsatz angeben, der die Menge an Speicherplatz über dem festgelegten Limit bestimmt, die erlaubt sein soll.',
+        'machine_max_button' => 'Maximum der Maschine übernehmen',
+        'machine_max_hint' => 'Diese Maschine hat :memory GB Arbeitsspeicher und :disk GB Speicherplatz. Der Button trägt beides als Limit ein; danach auf „:save“ klicken.',
         'general_configuration_heading' => 'Allgemeine Konfiguration',
         'max_upload_label' => 'Maximale Web-Upload-Dateigröße',
         'max_upload_description' => 'Gib die maximale Größe von Dateien ein, die über den webbasierten Dateimanager hochgeladen werden können.',

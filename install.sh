@@ -960,10 +960,11 @@ setup_local_node() {
         until dc exec -T panel php -v >/dev/null 2>&1 || [ "$waited" -ge 90 ]; do sleep 3; waited=$((waited + 3)); done
     fi
 
-    mem_mb=$(( $(awk '/MemTotal/ {print $2}' /proc/meminfo) / 1024 - 1536 ))
+    # The node gets everything the machine has: all memory and the full size of the disk game servers live on.
+    mem_mb=$(( $(awk '/MemTotal/ {print $2}' /proc/meminfo) / 1024 ))
     [ "$mem_mb" -lt 1024 ] && mem_mb=1024
-    disk_mb=$(( $(df -Pm / | awk 'NR==2 {print $4}') - 10240 ))
-    [ "$disk_mb" -lt 5120 ] && disk_mb=5120
+    disk_mb=$( (df -Pm /var/lib/pterodactyl 2>/dev/null || df -Pm /) | awk 'NR==2 {print $2}')
+    [ "${disk_mb:-0}" -lt 5120 ] && disk_mb=5120
 
     info "Creating the node in the panel..."
     until node_id="$(dc exec -T panel php artisan p:node:quick-setup --fqdn="$NODE_FQDN" --scheme="$scheme" \

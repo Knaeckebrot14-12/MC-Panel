@@ -166,6 +166,16 @@
                         </div>
                         <p class="text-muted small">@lang('admin/node_view.settings.disk_notice')</p>
                     </div>
+                    @if($machine['memory'] > 0 && $machine['disk'] > 0)
+                        <div class="col-xs-12">
+                            <button type="button" id="useMachineMax" class="btn btn-sm btn-default" data-memory="{{ $machine['memory'] }}" data-disk="{{ $machine['disk'] }}">
+                                @lang('admin/node_view.settings.machine_max_button')
+                            </button>
+                            <p class="text-muted small no-margin-bottom" style="margin-top: 6px;">
+                                @lang('admin/node_view.settings.machine_max_hint', ['memory' => round($machine['memory'] / 1024, 2), 'disk' => round($machine['disk'] / 1024, 2), 'save' => trans('admin/node_view.settings.save_button')])
+                            </p>
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>
@@ -265,6 +275,18 @@
 
         bindGbField('memory_mib', 'memory_gb');
         bindGbField('disk_mib', 'disk_gb');
+
+        // Fill both limits with what the machine has; saving still needs "Save Changes".
+        var machineButton = document.getElementById('useMachineMax');
+        if (machineButton) {
+            machineButton.addEventListener('click', function () {
+                [['memory', 'memory_mib', 'memory_gb'], ['disk', 'disk_mib', 'disk_gb']].forEach(function (field) {
+                    var mib = parseInt(machineButton.getAttribute('data-' + field[0]), 10) || 0;
+                    document.getElementById(field[1]).value = mib;
+                    document.getElementById(field[2]).value = String(Math.round(mib / 1024 * 100) / 100);
+                });
+            });
+        }
     })();
     </script>
 @endsection

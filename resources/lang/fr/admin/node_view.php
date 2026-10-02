@@ -60,6 +60,8 @@ return [
         'memory_notice' => "Saisissez la quantité totale de mémoire disponible sur ce node pour l'allocation aux serveurs. Vous pouvez aussi indiquer un pourcentage permettant d'allouer plus que la mémoire définie.",
         'disk_space_label' => 'Espace disque',
         'disk_notice' => "Saisissez la quantité totale d'espace disque disponible sur ce node pour l'allocation aux serveurs. Vous pouvez aussi indiquer un pourcentage qui déterminera la quantité d'espace disque autorisée au-delà de la limite définie.",
+        'machine_max_button' => 'Utiliser le maximum de la machine',
+        'machine_max_hint' => 'Cette machine dispose de :memory Go de mémoire et de :disk Go d’espace disque. Le bouton reprend ces valeurs comme limites ; cliquez ensuite sur « :save ».',
         'general_configuration_heading' => 'Configuration générale',
         'max_upload_label' => "Taille maximale d'envoi web",
         'max_upload_description' => "Saisissez la taille maximale des fichiers pouvant être envoyés via le gestionnaire de fichiers web.",

@@ -48,9 +48,16 @@ class NodeViewController extends Controller
      */
     public function settings(Request $request, Node $node): View
     {
+        // What the machine really has (from the monitoring data), in MiB, so the limits can be set to it.
+        $last = $node->monitor_state['last'] ?? [];
+
         return view('admin.nodes.view.settings', [
             'node' => $node,
             'locations' => $this->locationRepository->all(),
+            'machine' => [
+                'memory' => intdiv((int) ($last['memory_total'] ?? 0), 1048576),
+                'disk' => intdiv((int) ($last['disk_total'] ?? 0), 1048576),
+            ],
         ]);
     }
 

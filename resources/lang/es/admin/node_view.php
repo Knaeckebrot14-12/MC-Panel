@@ -60,6 +60,8 @@ return [
         'memory_notice' => 'Introduce la cantidad total de memoria disponible en este nodo para asignar a servidores. También puedes indicar un porcentaje que permita asignar más que la memoria definida.',
         'disk_space_label' => 'Espacio de disco',
         'disk_notice' => 'Introduce la cantidad total de espacio de disco disponible en este nodo para asignar a servidores. También puedes indicar un porcentaje que determinará cuánto espacio de disco por encima del límite establecido se permite.',
+        'machine_max_button' => 'Usar el máximo de la máquina',
+        'machine_max_hint' => 'Esta máquina tiene :memory GB de memoria y :disk GB de disco. El botón pone ambos valores como límite; después pulsa «:save».',
         'general_configuration_heading' => 'Configuración general',
         'max_upload_label' => 'Tamaño máximo de subida web',
         'max_upload_description' => 'Introduce el tamaño máximo de los archivos que se pueden subir mediante el gestor de archivos web.',

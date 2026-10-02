@@ -60,6 +60,8 @@ return [
         'memory_notice' => 'Enter the total amount of memory available on this node for allocation to servers. You may also provide a percentage that can allow allocation of more than the defined memory.',
         'disk_space_label' => 'Disk Space',
         'disk_notice' => 'Enter the total amount of disk space available on this node for server allocation. You may also provide a percentage that will determine the amount of disk space over the set limit to allow.',
+        'machine_max_button' => 'Use machine maximum',
+        'machine_max_hint' => 'This machine has :memory GB of memory and :disk GB of disk space. The button fills both limits with it; click ":save" afterwards.',
         'general_configuration_heading' => 'General Configuration',
         'max_upload_label' => 'Maximum Web Upload Filesize',
         'max_upload_description' => 'Enter the maximum size of files that can be uploaded through the web-based file manager.',
