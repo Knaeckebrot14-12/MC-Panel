@@ -59,6 +59,14 @@ COPY .github/docker/security.conf /etc/nginx/recoded-ptero/security.conf
 COPY .github/docker/www.conf /usr/local/etc/php-fpm.conf
 COPY .github/docker/supervisord.conf /etc/supervisord.conf
 
+# Database hosts on the machine itself after an upgrade from Pterodactyl (see hostdb-relay.sh).
+# PHP's default MySQL socket ("localhost") points at the forwarded socket; unused otherwise.
+RUN apk add --no-cache socat \
+    && printf 'pdo_mysql.default_socket=/run/hostdb/mysqld.sock\nmysqli.default_socket=/run/hostdb/mysqld.sock\n' \
+        > /usr/local/etc/php/conf.d/zz-hostdb.ini
+COPY .github/docker/hostdb-relay.sh /usr/local/bin/hostdb-relay
+RUN chmod 755 /usr/local/bin/hostdb-relay
+
 COPY . ./
 COPY --from=0 /app/public/assets ./public/assets
 # phpMyAdmin stays owned by root (read-only for php-fpm), so it is left out of the chown below.

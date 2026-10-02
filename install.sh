@@ -925,6 +925,15 @@ set_env_value() {
     fi
 }
 
+# The node gets everything the machine has: all memory and the full size of the disk game servers
+# live on. Sets mem_mb and disk_mb (MiB).
+machine_limits() {
+    mem_mb=$(( $(awk '/MemTotal/ {print $2}' /proc/meminfo) / 1024 ))
+    [ "$mem_mb" -lt 1024 ] && mem_mb=1024
+    disk_mb=$( (df -Pm /var/lib/pterodactyl 2>/dev/null || df -Pm /) | awk 'NR==2 {print $2}')
+    [ "${disk_mb:-0}" -lt 5120 ] && disk_mb=5120
+}
+
 # The panel runs on this machine: create the node through the panel and connect Wings, no copying needed.
 # Running it again repairs an existing setup (same node, fresh config).
 setup_local_node() {
@@ -960,11 +969,7 @@ setup_local_node() {
         until dc exec -T panel php -v >/dev/null 2>&1 || [ "$waited" -ge 90 ]; do sleep 3; waited=$((waited + 3)); done
     fi
 
-    # The node gets everything the machine has: all memory and the full size of the disk game servers live on.
-    mem_mb=$(( $(awk '/MemTotal/ {print $2}' /proc/meminfo) / 1024 ))
-    [ "$mem_mb" -lt 1024 ] && mem_mb=1024
-    disk_mb=$( (df -Pm /var/lib/pterodactyl 2>/dev/null || df -Pm /) | awk 'NR==2 {print $2}')
-    [ "${disk_mb:-0}" -lt 5120 ] && disk_mb=5120
+    machine_limits
 
     info "Creating the node in the panel..."
     until node_id="$(dc exec -T panel php artisan p:node:quick-setup --fqdn="$NODE_FQDN" --scheme="$scheme" \
@@ -1047,8 +1052,14 @@ install_wings() {
     install_wings_binary
     open_firewall_ports 8080/tcp 2022/tcp
 
+    local remote_url=""
+    [ -f /etc/pterodactyl/config.yml ] && remote_url="$(awk '/^remote:/ {print $2; exit}' /etc/pterodactyl/config.yml | tr -d "\"'")"
     if [ "$panel_here" = "1" ]; then
         setup_local_node
+    elif [ -n "$remote_url" ] && confirm "Wings is already connected to $remote_url. Keep that connection and only update Wings?" y; then
+        # A node of a panel that was upgraded from Pterodactyl (or an earlier install): new Wings, same node.
+        configure_wings_network
+        start_wings
     else
         setup_remote_node
     fi
@@ -1198,6 +1209,135 @@ write_proxy_site() {
     } > "$NGINX_SITE"
 }
 
+# SQL against Recoded Ptero's database (the statement comes on stdin, tab separated rows come back).
+new_sql() {
+    printf '%s\n' "$1" | dc exec -T database sh -c 'mariadb -uroot -p"$MYSQL_ROOT_PASSWORD" -N -B panel' 2>>"$INSTALL_LOG" | tr -d '\r'
+}
+
+# Database hosts entered as 127.0.0.1 or localhost are MySQL on this machine. The old panel reached
+# them directly; from inside Docker they are forwarded (hostdb service), so creating databases and
+# phpMyAdmin keep working without changing MySQL, its users or the addresses shown to users.
+# Returns 0 when it changed the configuration (the containers have to be recreated).
+prepare_hostdb_relay() {
+    local host port targets="" need_socket=0 socket="" candidate
+    while IFS=$'\t' read -r host port; do
+        host="$(echo "$host" | tr 'A-Z' 'a-z')"
+        case "$host" in
+            localhost) need_socket=1 ;;
+            127.*)
+                [[ "$host" =~ ^127\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$ && "$port" =~ ^[0-9]{1,5}$ ]] \
+                    && targets="$targets${targets:+,}$host:$port" ;;
+        esac
+    done < <(new_sql "SELECT host, port FROM database_hosts")
+    targets="$(tr ',' '\n' <<<"$targets" | sed '/^$/d' | sort -u | paste -sd, -)"
+
+    if [ "$need_socket" = "1" ]; then
+        for candidate in /run/mysqld/mysqld.sock /var/run/mysqld/mysqld.sock /var/lib/mysql/mysql.sock /tmp/mysql.sock; do
+            if [ -S "$candidate" ]; then socket="$(readlink -f "$candidate")"; break; fi
+        done
+        [ -n "$socket" ] || warn "A database host uses 'localhost', but no MySQL socket was found on this machine."
+    fi
+    [ -n "$targets" ] || [ -n "$socket" ] || return 1
+
+    set_env_value HOSTDB_TARGETS "$targets"
+    if [ -n "$socket" ]; then
+        set_env_value HOSTDB_SOCKET_DIR "$(dirname "$socket")"
+        set_env_value HOSTDB_SOCKET_NAME "$(basename "$socket")"
+    fi
+    set_env_value COMPOSE_PROFILES hostdb
+    ok "Database hosts on this machine (${targets:+$targets}${targets:+${socket:+, }}${socket:+socket $socket}) are forwarded to the panel"
+    return 0
+}
+
+# Logs in to every database host the way the panel does and says which ones don't work.
+check_database_hosts() {
+    local out status id addr name err failed=0
+    out="$(dc exec -T panel php artisan p:database-hosts:check 2>/dev/null | tr -d '\r')"
+    [ -n "$out" ] || return 0
+    while IFS='|' read -r status id addr name err; do
+        case "$status" in
+            ok) ok "Database host '$name' ($addr): the panel can create databases" ;;
+            fail) warn "Database host '$name' ($addr): the panel cannot log in: $err"; failed=1 ;;
+        esac
+    done <<<"$out"
+    if [ "$failed" = "1" ]; then
+        echo "     The panel now runs in Docker and connects from the address range 172.16.0.0/12."
+        echo "     Allow its database user from there (or '%') in that MySQL server, or enter"
+        echo "     127.0.0.1 as the host under Admin > Databases if MySQL runs on this machine,"
+        echo "     then run: recoded-ptero artisan p:database-hosts:check"
+    fi
+}
+
+# Wings on this machine (the usual single-server setup): which node it is. Sets LOCAL_NODE_ID,
+# LOCAL_NODE_FQDN_VALUE, LOCAL_NODE_SCHEME and LOCAL_NODE_PORT; returns 1 when there is none.
+detect_local_node() {
+    local uuid row
+    [ -x /usr/local/bin/wings ] && [ -f /etc/pterodactyl/config.yml ] || return 1
+    uuid="$(awk '/^uuid:/ {print $2; exit}' /etc/pterodactyl/config.yml | tr -d "\"'")"
+    [[ "$uuid" =~ ^[0-9a-fA-F-]{36}$ ]] || return 1
+    row="$(new_sql "SELECT id, fqdn, scheme, daemonListen FROM nodes WHERE uuid = '$uuid' LIMIT 1")"
+    [ -n "$row" ] || return 1
+    IFS=$'\t' read -r LOCAL_NODE_ID LOCAL_NODE_FQDN_VALUE LOCAL_NODE_SCHEME LOCAL_NODE_PORT <<<"$row"
+    [[ "$LOCAL_NODE_ID" =~ ^[0-9]+$ ]]
+}
+
+# Replaces the stock Wings on this machine with Recoded Ptero's build (graphs, crash reports,
+# one-click updates), keeps its configuration and gives the node all of the machine's resources.
+upgrade_local_wings() {
+    info "Updating Wings on this machine to the Recoded Ptero build (game servers keep running)..."
+    # In a subshell, so a failed download can't end the upgrade that already succeeded.
+    if ( install_wings_binary ); then
+        configure_wings_network
+        start_wings
+        check_node_connection "$LOCAL_NODE_SCHEME://$LOCAL_NODE_FQDN_VALUE:$LOCAL_NODE_PORT" || true
+    else
+        warn "Wings could not be updated now. Later: run this installer again and choose the Wings option."
+    fi
+
+    machine_limits
+    new_sql "UPDATE nodes SET memory = GREATEST(memory, $mem_mb), disk = GREATEST(disk, $disk_mb) WHERE id = $LOCAL_NODE_ID" >/dev/null \
+        && ok "Node limits: all of this machine's memory ($((mem_mb / 1024)) GB) and disk ($((disk_mb / 1024)) GB)"
+}
+
+# Everything a new installation sets up that an upgrade doesn't bring along by itself.
+upgrade_finish() {
+    local port="$1" recreate=0 local_node=0 id name fqdn remote=""
+
+    prepare_hostdb_relay && recreate=1
+    if detect_local_node; then
+        local_node=1
+        # The panel reaches this machine's Wings directly, like on a new installation.
+        if ! is_ip "$LOCAL_NODE_FQDN_VALUE" && [ "$LOCAL_NODE_FQDN_VALUE" != "localhost" ]; then
+            set_env_value LOCAL_NODE_FQDN "$LOCAL_NODE_FQDN_VALUE"
+            recreate=1
+        fi
+    fi
+    if [ "$recreate" = "1" ]; then
+        run_step "Applying the new settings" "Settings applied" dc up -d || warn "Could not restart the services: recoded-ptero restart"
+        run_step "Waiting for the panel" "Panel is running" wait_for_panel "$port" || warn "The panel takes long to start. Check: recoded-ptero logs panel"
+    fi
+
+    [ "${AUTO_UPDATE:-0}" = "1" ] && dc exec -T panel php artisan p:update:auto on >/dev/null 2>&1 && ok "Automatic updates enabled"
+
+    [ "$local_node" = "1" ] && upgrade_local_wings
+    check_database_hosts
+
+    # Like a new installation with Wings: a database server for game servers, if there is none yet.
+    if [ "$local_node" = "1" ] && [ "$(new_sql 'SELECT COUNT(*) FROM database_hosts')" = "0" ]; then
+        echo
+        if confirm "Also set up a MySQL database server so game servers can get databases (plugins like LuckPerms need one)?" y \
+            && setup_game_database; then
+            NODE_FQDN="$LOCAL_NODE_FQDN_VALUE" NODE_ID="$LOCAL_NODE_ID" register_game_database_local
+        fi
+    fi
+
+    # Nodes on other machines need the new Wings too; the panel can't install it on stock Wings.
+    while IFS=$'\t' read -r id name fqdn; do
+        [ -n "$id" ] && remote="$remote     - $name ($fqdn)"$'\n'
+    done < <(new_sql "SELECT id, name, fqdn FROM nodes WHERE id <> ${LOCAL_NODE_ID:-0} ORDER BY id")
+    UPG_REMOTE_NODES="$remote"
+}
+
 upgrade_panel() {
     [ -f "$INSTALL_DIR/.env" ] && die "Recoded Ptero is already installed in $INSTALL_DIR."
     if [ -e "$INSTALL_DIR" ] && [ -n "$(ls -A "$INSTALL_DIR" 2>/dev/null)" ]; then
@@ -1274,6 +1414,9 @@ upgrade_panel() {
     if [ "${MC_UPGRADE_CONFIRM:-}" != "yes" ]; then
         confirm "Start the upgrade?" n || die "Aborted, nothing was changed."
     fi
+    # Same question as a new installation, asked now so the rest runs through in one go.
+    AUTO_UPDATE=0
+    confirm "Update the panel automatically whenever a new version is published?" n && AUTO_UPDATE=1
 
     install_packages
     install_docker
@@ -1421,6 +1564,12 @@ cd "$OLD_DIR" && php artisan up
 EOF
     chmod 700 "$UPG_BACKUP/rollback.sh"
 
+    # The panel is moved; now the rest of what a new installation has (none of it can undo the move).
+    echo
+    info "Setting up everything a new Recoded Ptero installation has..."
+    UPG_REMOTE_NODES=""
+    upgrade_finish "$port"
+
     local owner
     owner="$(dc exec -T database sh -c 'mariadb -uroot -p"$MYSQL_ROOT_PASSWORD" -N -e "SELECT username FROM users WHERE role=\"owner\" LIMIT 1" panel' 2>/dev/null | tr -d '\r')"
 
@@ -1434,6 +1583,14 @@ EOF
     echo " Backups:    $UPG_BACKUP"
     echo " Old panel:  $OLD_DIR and its database are untouched (maintenance mode, queue and cron off)."
     echo "             Back to Pterodactyl if ever needed: bash $UPG_BACKUP/rollback.sh"
+    if [ -n "$UPG_REMOTE_NODES" ]; then
+        echo
+        echo " Nodes on other machines still run the stock Wings (no graphs, crash reports or"
+        echo " one-click updates yet). On each of them, run this installer once, choose the"
+        echo " Wings option and keep the existing connection:"
+        printf '%s' "$UPG_REMOTE_NODES"
+        echo "   bash <(curl -sSL https://raw.githubusercontent.com/$GITHUB_REPO/$GITHUB_BRANCH/install.sh)"
+    fi
     echo
     echo " Handy commands:  recoded-ptero status | update | logs | backup | restart"
     echo

@@ -49,7 +49,10 @@ services:
       - panel_logs:/app/storage/logs
       # Shared with the updater service: update requests go in, progress comes back.
       - ${INSTALL_DIR:-.}/state:/app/updater
+      # Database hosts on this machine (only used after an upgrade from Pterodactyl, see hostdb).
+      - hostdb:/run/hostdb
     environment:
+      HOSTDB_TARGETS: ${HOSTDB_TARGETS:-}
       APP_NAME: ${APP_NAME:-Recoded Ptero}
       APP_URL: ${APP_URL:-http://localhost}
       APP_TIMEZONE: ${APP_TIMEZONE:-UTC}
@@ -89,7 +92,25 @@ services:
       MC_PANEL_BRANCH: ${MC_PANEL_BRANCH:-main}
     command: ["bash", "${INSTALL_DIR:-/opt/recoded-ptero}/installer/updater/updater.sh", "daemon"]
 
+  # Only after an upgrade from Pterodactyl whose database hosts are 127.0.0.1 / localhost (MySQL on
+  # this machine): forwards them into the panel through a socket, without opening MySQL to any
+  # network. The installer turns it on with COMPOSE_PROFILES=hostdb. See .github/docker/hostdb-relay.sh.
+  hostdb:
+    profiles: ["hostdb"]
+    image: ${COMPOSE_PROJECT_NAME:-recodedptero}-panel
+    pull_policy: never
+    restart: unless-stopped
+    network_mode: host
+    entrypoint: ["/usr/local/bin/hostdb-relay", "host"]
+    environment:
+      HOSTDB_TARGETS: ${HOSTDB_TARGETS:-}
+      HOSTDB_SOCKET_NAME: ${HOSTDB_SOCKET_NAME:-}
+    volumes:
+      - hostdb:/run/hostdb
+      - ${HOSTDB_SOCKET_DIR:-./state}:/run/host-mysqld:ro
+
 volumes:
+  hostdb:
   db_data:
   panel_var:
   panel_nginx:

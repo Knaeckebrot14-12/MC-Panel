@@ -74,6 +74,14 @@ How data loss is prevented:
 - After the copy, every table's row count is compared with the original. The `APP_KEY` is carried over, so encrypted data (node tokens, 2FA, database host passwords) stays readable.
 - If any step fails, the old panel is switched back on automatically. Later you can still go back with `rollback.sh` in the backup folder.
 
+Afterwards the upgraded panel is set up like a new installation, so no feature is missing:
+
+- **Wings on the same server** is replaced by Recoded Ptero's build (graphs, crash reports, one-click updates) with its configuration kept; game servers keep running. The panel reaches it directly, and the node gets all of the machine's memory and disk (limits are only raised, never lowered).
+- **Database hosts at `127.0.0.1` or `localhost`** (MySQL on the same server) keep working from the Docker container: a small `hostdb` service forwards them through a socket, so MySQL, its users and the addresses users see stay unchanged and MySQL isn't opened to any network. Every database host is then tested; the installer says which one needs a change.
+- If there is no database host yet, it offers the same database server for game servers as a new installation.
+- Automatic updates, the hourly RAM cache cleanup and automatic security updates are set up as on a new installation.
+- **Nodes on other servers** are listed at the end: run the installer there, choose the Wings option and keep the existing connection. That only swaps in the new Wings.
+
 Requirements: 2 CPU cores and 4 GB RAM are recommended (the first build needs the memory; the installer offers to add swap on smaller servers). Ports 80 and 443 for the panel.
 
 Unattended installs work with environment variables, for example:
