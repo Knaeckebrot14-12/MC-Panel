@@ -58,5 +58,7 @@ return [
     ],
     'server' => [
         'cpu_above_node' => 'Serwer może dostać maksymalnie :max% CPU na nodzie :node (:threads wątków CPU, po 100%). :cpu% to więcej, niż ma node.',
+        'memory_above_node' => 'Serwer może dostać maksymalnie :max MiB pamięci na nodzie :node. :memory MiB to więcej, niż ma node.',
+        'disk_above_node' => 'Serwer może dostać maksymalnie :max MiB miejsca na dysku na nodzie :node. :disk MiB to więcej, niż ma node.',
     ],
 ];

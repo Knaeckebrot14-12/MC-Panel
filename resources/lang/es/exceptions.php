@@ -58,5 +58,7 @@ return [
     ],
     'server' => [
         'cpu_above_node' => 'Un servidor puede recibir como máximo :max% de CPU en el node :node (:threads hilos de CPU, 100% cada uno). :cpu% es más de lo que tiene el node.',
+        'memory_above_node' => 'Un servidor puede recibir como máximo :max MiB de memoria en el node :node. :memory MiB es más de lo que tiene el node.',
+        'disk_above_node' => 'Un servidor puede recibir como máximo :max MiB de disco en el node :node. :disk MiB es más de lo que tiene el node.',
     ],
 ];

@@ -6,7 +6,7 @@ use Illuminate\Support\Arr;
 use Pterodactyl\Models\Server;
 use Pterodactyl\Models\Allocation;
 use Illuminate\Support\Facades\Log;
-use Pterodactyl\Services\Nodes\NodeCpuLimit;
+use Pterodactyl\Services\Nodes\NodeResourceLimit;
 use Illuminate\Database\ConnectionInterface;
 use Pterodactyl\Exceptions\DisplayException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -19,7 +19,7 @@ class BuildModificationService
      * BuildModificationService constructor.
      */
     public function __construct(
-        private NodeCpuLimit $cpuLimit,
+        private NodeResourceLimit $resourceLimit,
         private ConnectionInterface $connection,
         private DaemonServerRepository $daemonServerRepository,
         private ServerConfigurationStructureService $structureService,
@@ -34,10 +34,10 @@ class BuildModificationService
      */
     public function handle(Server $server, array $data): Server
     {
-        // No server may get more CPU than its node has (100 % per thread).
-        if (array_key_exists('cpu', $data) && (int) $data['cpu'] !== (int) $server->cpu) {
-            $this->cpuLimit->assertFits($server->node, (int) $data['cpu']);
-        }
+        // No server may get more CPU, memory or disk than its node has. Only values that change are
+        // checked, so a server that already has more keeps working until someone raises it further.
+        $changed = fn (string $key) => array_key_exists($key, $data) && (int) $data[$key] !== (int) $server->{$key} ? (int) $data[$key] : null;
+        $this->resourceLimit->assertFits($server->node, $changed('cpu'), $changed('memory'), $changed('disk'));
 
         /** @var Server $server */
         $server = $this->connection->transaction(function () use ($server, $data) {
