@@ -15,6 +15,7 @@ return [
         'invalid_name' => 'Questo nome non è consentito. Usa 3–32 lettere minuscole, numeri o trattini.',
         'invalid_domain' => 'Questo dominio non è disponibile.',
         'taken' => 'Questo sottodominio è già in uso.',
+        'busy' => 'Qualcuno sta modificando questo sottodominio. Riprova tra un momento.',
         'no_ip' => 'Non è stato possibile determinare l\'indirizzo pubblico di questo server.',
         'cloudflare' => 'Non è stato possibile creare il record DNS: :error',
         'no_zone' => 'Il dominio :domain non è configurato correttamente. Contatta il supporto.',

@@ -15,6 +15,7 @@ return [
         'invalid_name' => 'This name is not allowed. Use 3–32 lowercase letters, digits or dashes.',
         'invalid_domain' => 'This domain is not available.',
         'taken' => 'This subdomain is already taken.',
+        'busy' => 'Someone is just changing this subdomain. Please try again in a moment.',
         'no_ip' => 'The public address of this server could not be determined.',
         'cloudflare' => 'The DNS record could not be created: :error',
         'no_zone' => 'The domain :domain is not set up correctly. Please contact the support.',

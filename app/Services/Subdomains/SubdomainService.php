@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Cache;
 use Pterodactyl\Exceptions\DisplayException;
 use Illuminate\Http\Client\PendingRequest;
+use Illuminate\Contracts\Cache\LockTimeoutException;
+use Illuminate\Database\UniqueConstraintViolationException;
 
 /**
  * Subdomains like "myserver.play.example.com" for servers. The panel creates an A record for the
@@ -73,6 +75,46 @@ class SubdomainService
             throw new DisplayException(trans('server_subdomain.errors.invalid_domain'));
         }
 
+        // Only one request at a time may work on a name (two people wanting "play" at the same moment)
+        // and on a server (double click). Without this both could pass the checks below and both
+        // create an A record, so players would land on either server.
+        return $this->withLocks(["name:$name.$domain", 'server:' . $server->id], fn () => $this->createSubdomain($server, $name, $domain));
+    }
+
+    /**
+     * Runs $callback while holding all the locks; gives up with "busy" if one stays taken.
+     *
+     * @throws DisplayException
+     */
+    private function withLocks(array $keys, \Closure $callback): mixed
+    {
+        sort($keys); // Always the same order, so two requests can't wait on each other forever.
+        $held = [];
+        try {
+            foreach ($keys as $key) {
+                // Longer than the slowest run (a handful of Cloudflare calls with 15 s timeouts).
+                $lock = Cache::lock('mcpanel:subdomain-lock:' . sha1($key), 180);
+                if (!$lock->block(20)) {
+                    throw new DisplayException(trans('server_subdomain.errors.busy'));
+                }
+                $held[] = $lock;
+            }
+
+            return $callback();
+        } catch (LockTimeoutException) {
+            throw new DisplayException(trans('server_subdomain.errors.busy'));
+        } finally {
+            foreach (array_reverse($held) as $lock) {
+                $lock->release();
+            }
+        }
+    }
+
+    /**
+     * @throws DisplayException
+     */
+    private function createSubdomain(Server $server, string $name, string $domain): object
+    {
         $taken = DB::table('server_subdomains')->where('name', $name)->where('domain', $domain)->where('server_id', '!=', $server->id)->exists();
         if ($taken) {
             throw new DisplayException(trans('server_subdomain.errors.taken'));
@@ -91,7 +133,12 @@ class SubdomainService
         // Records that already exist under this name and weren't made by the panel belong to someone else.
         $ours = $previous && $previous->name === $name && $previous->domain === $domain ? array_values((array) json_decode($previous->records, true)) : [];
         foreach ([$fqdn, "_minecraft._tcp.$fqdn"] as $recordName) {
-            foreach ($this->cf()->get(self::API . "/zones/$zone/dns_records", ['name' => $recordName])->json('result') ?? [] as $existing) {
+            $lookup = $this->cf()->get(self::API . "/zones/$zone/dns_records", ['name' => $recordName]);
+            // When Cloudflare can't say whether the name is free, it is not treated as free.
+            if (!$lookup->successful() || !is_array($lookup->json('result'))) {
+                throw new DisplayException(trans('server_subdomain.errors.cloudflare', ['error' => $lookup->json('errors.0.message') ?? $lookup->status()]));
+            }
+            foreach ($lookup->json('result') as $existing) {
                 if (!in_array($existing['id'], $ours, true)) {
                     throw new DisplayException(trans('server_subdomain.errors.taken'));
                 }
@@ -122,20 +169,36 @@ class SubdomainService
             }
         }
 
-        DB::table('server_subdomains')->updateOrInsert(
-            ['server_id' => $server->id],
-            ['name' => $name, 'domain' => $domain, 'records' => json_encode($records + ['zone' => $zone]), 'updated_at' => now(), 'created_at' => now()]
-        );
+        try {
+            DB::table('server_subdomains')->updateOrInsert(
+                ['server_id' => $server->id],
+                ['name' => $name, 'domain' => $domain, 'records' => json_encode($records + ['zone' => $zone]), 'updated_at' => now(), 'created_at' => now()]
+            );
+        } catch (\Throwable $exception) {
+            // Last line of defence (the name is unique in the database): never leave records behind
+            // that the panel doesn't know about.
+            $this->deleteRecords((object) ['records' => json_encode($records + ['zone' => $zone])]);
+            if ($exception instanceof UniqueConstraintViolationException) {
+                throw new DisplayException(trans('server_subdomain.errors.taken'));
+            }
+
+            throw $exception;
+        }
 
         return $this->current($server);
     }
 
+    /**
+     * @throws DisplayException
+     */
     public function remove(Server $server): void
     {
-        if ($current = $this->current($server)) {
-            $this->deleteRecords($current);
-            DB::table('server_subdomains')->where('id', $current->id)->delete();
-        }
+        $this->withLocks(['server:' . $server->id], function () use ($server) {
+            if ($current = $this->current($server)) {
+                $this->deleteRecords($current);
+                DB::table('server_subdomains')->where('id', $current->id)->delete();
+            }
+        });
     }
 
     private function deleteRecords(object $subdomain): void
