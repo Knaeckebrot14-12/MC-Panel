@@ -37,4 +37,20 @@ return [
         'start_button' => 'Back-up starten',
     ],
     'create_button' => 'Back-up maken',
+    'auto' => [
+        'title' => 'Automatische back-ups',
+        'description' => 'Maakt back-ups volgens een schema. Als alle :limit back-upplaatsen in gebruik zijn, wordt de oudste niet-vergrendelde back-up vervangen. Vergrendel een back-up om hem te bewaren.',
+        'last' => 'Laatste: :time',
+        'next' => 'Volgende: :time',
+        'saved_on' => 'Automatische back-ups staan aan.',
+        'saved_off' => 'Automatische back-ups staan uit.',
+        'intervals' => [
+            0 => 'Uit',
+            6 => 'Elke 6 uur',
+            12 => 'Elke 12 uur',
+            24 => 'Dagelijks',
+            48 => 'Elke 2 dagen',
+            168 => 'Wekelijks',
+        ],
+    ],
 ];

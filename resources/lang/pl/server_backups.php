@@ -37,4 +37,20 @@ return [
         'start_button' => 'Rozpocznij kopię zapasową',
     ],
     'create_button' => 'Utwórz kopię zapasową',
+    'auto' => [
+        'title' => 'Automatyczne kopie zapasowe',
+        'description' => 'Tworzy kopie zapasowe według harmonogramu. Gdy wszystkie :limit miejsc na kopie jest zajętych, najstarsza niezablokowana kopia jest zastępowana. Zablokuj kopię, aby ją zachować.',
+        'last' => 'Ostatnia: :time',
+        'next' => 'Następna: :time',
+        'saved_on' => 'Automatyczne kopie zapasowe są włączone.',
+        'saved_off' => 'Automatyczne kopie zapasowe są wyłączone.',
+        'intervals' => [
+            0 => 'Wyłączone',
+            6 => 'Co 6 godzin',
+            12 => 'Co 12 godzin',
+            24 => 'Codziennie',
+            48 => 'Co 2 dni',
+            168 => 'Co tydzień',
+        ],
+    ],
 ];

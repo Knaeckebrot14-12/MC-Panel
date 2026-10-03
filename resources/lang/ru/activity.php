@@ -13,6 +13,9 @@ return [
         'sftp' => [
             'fail' => 'Неудачная попытка входа по SFTP',
         ],
+        'discord' => [
+            'login' => 'Вход через Discord',
+        ],
         'reset-password-requested' => 'Запрошена ссылка для сброса пароля',
         'passkey' => [
             'add' => 'Добавлен ключ доступа :name',
@@ -27,6 +30,8 @@ return [
         'account' => [
             'email-changed' => 'Изменён адрес почты с :old на :new',
             'password-changed' => 'Изменён пароль',
+            'discord-linked' => 'Аккаунт Discord привязан',
+            'discord-unlinked' => 'Discord отвязан',
         ],
         'api-key' => [
             'create' => 'Создан новый API-ключ :identifier',
@@ -63,6 +68,7 @@ return [
             'fail' => 'Резервная копия :name помечена как неудачная',
             'lock' => 'Заблокирована резервная копия :name',
             'unlock' => 'Разблокирована резервная копия :name',
+            'auto' => 'Автоматические резервные копии: каждые :hours ч (0 = выключены)',
         ],
         'database' => [
             'create' => 'Создана новая база данных :name',
@@ -129,6 +135,19 @@ return [
             'create' => 'Добавлен :email как субпользователь',
             'update' => 'Обновлены права субпользователя :email',
             'delete' => 'Удалён :email из субпользователей',
+        ],
+        'players' => [
+            'whitelist_add' => 'Добавлен в белый список: :target',
+            'whitelist_remove' => 'Удалён из белого списка: :target',
+            'op' => 'Выдан статус оператора: :target',
+            'deop' => 'Снят статус оператора: :target',
+            'ban' => 'Заблокирован: :target',
+            'pardon' => 'Разблокирован: :target',
+            'ban_ip' => 'Заблокирован IP :target',
+            'pardon_ip' => 'Разблокирован IP :target',
+            'kick' => 'Исключён с сервера: :target',
+            'whitelist_on' => 'Белый список включён',
+            'whitelist_off' => 'Белый список выключен',
         ],
         'crashed' => 'Сервер упал',
         'software' => [

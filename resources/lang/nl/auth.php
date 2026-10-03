@@ -74,6 +74,18 @@ return [
     'ip_blocked' => 'Te veel mislukte aanmeldpogingen vanaf je netwerk. Aanmelden is voor ongeveer :minutes minuut/minuten gepauzeerd. Probeer het later opnieuw.',
     'password_requirements' => 'Het wachtwoord moet minstens 8 tekens lang zijn en uniek zijn voor deze site.',
     '2fa_must_be_enabled' => 'De beheerder heeft vereist dat tweestapsverificatie is ingeschakeld voor je account om het paneel te gebruiken.',
+    'discord' => [
+        'login' => 'Inloggen met Discord',
+        'errors' => [
+            'state' => 'De Discord-login is verlopen. Probeer het opnieuw.',
+            'cancelled' => 'De Discord-login is geannuleerd.',
+            'discord' => 'Discord is niet bereikbaar. Probeer het opnieuw.',
+            'no_account' => 'Er is geen account gekoppeld aan dit Discord-account. Log normaal in en koppel Discord op je accountpagina.',
+            'unverified' => 'Je Discord-account heeft geen geverifieerd e-mailadres.',
+            'ip_limit' => 'Er zijn al het maximale aantal accounts geregistreerd vanaf jouw netwerk.',
+            'two_factor' => 'Dit account gebruikt tweestapsverificatie. Log in met je wachtwoord en code.',
+        ],
+    ],
     'new_login' => [
         'subject' => 'Nieuwe aanmelding op je account',
         'intro' => 'Er is zojuist vanaf een nieuw adres ingelogd met je account (:username).',

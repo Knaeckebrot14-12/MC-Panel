@@ -13,6 +13,9 @@ return [
         'sftp' => [
             'fail' => 'Mislukte SFTP-aanmelding',
         ],
+        'discord' => [
+            'login' => 'Ingelogd met Discord',
+        ],
         'reset-password-requested' => 'Link voor wachtwoordherstel aangevraagd',
         'passkey' => [
             'add' => 'Passkey :name toegevoegd',
@@ -27,6 +30,8 @@ return [
         'account' => [
             'email-changed' => 'E-mailadres gewijzigd van :old naar :new',
             'password-changed' => 'Wachtwoord gewijzigd',
+            'discord-linked' => 'Discord-account gekoppeld',
+            'discord-unlinked' => 'Discord losgekoppeld',
         ],
         'api-key' => [
             'create' => 'Nieuwe API-sleutel :identifier aangemaakt',
@@ -63,6 +68,7 @@ return [
             'fail' => 'Back-up :name gemarkeerd als mislukt',
             'lock' => 'Back-up :name vergrendeld',
             'unlock' => 'Back-up :name ontgrendeld',
+            'auto' => 'Automatische back-ups ingesteld op elke :hours uur (0 = uit)',
         ],
         'database' => [
             'create' => 'Nieuwe database :name aangemaakt',
@@ -129,6 +135,19 @@ return [
             'create' => ':email toegevoegd als subgebruiker',
             'update' => 'Rechten van subgebruiker :email bijgewerkt',
             'delete' => ':email verwijderd als subgebruiker',
+        ],
+        'players' => [
+            'whitelist_add' => ':target aan de whitelist toegevoegd',
+            'whitelist_remove' => ':target van de whitelist verwijderd',
+            'op' => ':target operator gemaakt',
+            'deop' => 'Operator :target verwijderd',
+            'ban' => ':target verbannen',
+            'pardon' => 'Verbanning van :target opgeheven',
+            'ban_ip' => 'IP :target verbannen',
+            'pardon_ip' => 'Verbanning van IP :target opgeheven',
+            'kick' => ':target gekickt',
+            'whitelist_on' => 'Whitelist ingeschakeld',
+            'whitelist_off' => 'Whitelist uitgeschakeld',
         ],
         'crashed' => 'De server is gecrasht',
         'software' => [

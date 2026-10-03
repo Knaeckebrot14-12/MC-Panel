@@ -29,6 +29,8 @@ return [
         'subdomain' => 'Sottodominio',
         'startup' => 'Avvio',
         'settings' => 'Impostazioni',
+        'players' => 'Giocatori',
+        'properties' => 'Impostazioni server',
         'software' => 'Versione',
     ],
     'theme_tooltip' => 'Chiaro / scuro',

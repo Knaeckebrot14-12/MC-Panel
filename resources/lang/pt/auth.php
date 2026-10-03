@@ -74,6 +74,18 @@ return [
     'ip_blocked' => 'Muitas tentativas de login falhadas a partir da sua rede. O login está em pausa por cerca de :minutes minuto(s). Tente novamente mais tarde.',
     'password_requirements' => 'A senha deve ter pelo menos 8 caracteres e ser única para este site.',
     '2fa_must_be_enabled' => 'O administrador exigiu que a autenticação em duas etapas esteja ativada na sua conta para usar o painel.',
+    'discord' => [
+        'login' => 'Iniciar sessão com o Discord',
+        'errors' => [
+            'state' => 'O início de sessão com o Discord expirou. Tente novamente.',
+            'cancelled' => 'O início de sessão com o Discord foi cancelado.',
+            'discord' => 'Não foi possível contactar o Discord. Tente novamente.',
+            'no_account' => 'Não há nenhuma conta associada a esta conta Discord. Inicie sessão normalmente e associe o Discord na página da sua conta.',
+            'unverified' => 'A sua conta Discord não tem um endereço de e-mail verificado.',
+            'ip_limit' => 'Já foi registado o número máximo de contas a partir da sua rede.',
+            'two_factor' => 'Esta conta usa autenticação de dois fatores. Inicie sessão com a sua palavra-passe e o código.',
+        ],
+    ],
     'new_login' => [
         'subject' => 'Novo login na sua conta',
         'intro' => 'Sua conta (:username) acabou de ser usada para entrar a partir de um novo endereço.',

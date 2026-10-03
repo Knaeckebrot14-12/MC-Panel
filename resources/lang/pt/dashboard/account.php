@@ -68,5 +68,21 @@ return [
             'done_button' => 'Concluído',
         ],
     ],
+    'discord' => [
+        'title' => 'Discord',
+        'linked_as' => 'Associado a :name',
+        'unlink_hint' => 'Depois de desassociar, inicia sessão com o e-mail e a palavra-passe. Defina primeiro uma palavra-passe se a sua conta foi criada através do Discord.',
+        'unlink' => 'Desassociar Discord',
+        'not_linked' => 'Associe a sua conta Discord para iniciar sessão com um clique.',
+        'link' => 'Associar Discord',
+        'linked_success' => 'A sua conta Discord está agora associada.',
+        'unlinked_success' => 'O Discord foi desassociado.',
+        'errors' => [
+            'taken' => 'Esta conta Discord já está associada a outra conta do painel.',
+            'state' => 'O início de sessão com o Discord expirou. Tente novamente.',
+            'cancelled' => 'A associação foi cancelada.',
+            'discord' => 'Não foi possível contactar o Discord. Tente novamente.',
+        ],
+    ],
     'app_title' => 'App e aparência',
 ];

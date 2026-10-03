@@ -74,6 +74,18 @@ return [
     'ip_blocked' => 'Troppi tentativi di accesso falliti dalla tua rete. L\'accesso è sospeso per circa :minutes minuto/i. Riprova più tardi.',
     'password_requirements' => 'La password deve contenere almeno 8 caratteri e dovrebbe essere unica per questo sito.',
     '2fa_must_be_enabled' => 'L\'amministratore ha reso obbligatoria l\'autenticazione a due fattori per il tuo account per usare il pannello.',
+    'discord' => [
+        'login' => 'Accedi con Discord',
+        'errors' => [
+            'state' => 'L\'accesso con Discord è scaduto. Riprova.',
+            'cancelled' => 'L\'accesso con Discord è stato annullato.',
+            'discord' => 'Impossibile raggiungere Discord. Riprova.',
+            'no_account' => 'Nessun account è collegato a questo account Discord. Accedi normalmente e collega Discord nella pagina del tuo account.',
+            'unverified' => 'Il tuo account Discord non ha un indirizzo e-mail verificato.',
+            'ip_limit' => 'È già stato registrato il numero massimo di account dalla tua rete.',
+            'two_factor' => 'Questo account usa l\'autenticazione a due fattori. Accedi con la tua password e il codice.',
+        ],
+    ],
     'new_login' => [
         'subject' => 'Nuovo accesso al tuo account',
         'intro' => 'Il tuo account (:username) è stato appena usato per accedere da un nuovo indirizzo.',

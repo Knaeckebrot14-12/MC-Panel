@@ -29,6 +29,8 @@ return [
         'subdomain' => 'Subdomein',
         'startup' => 'Opstarten',
         'settings' => 'Instellingen',
+        'players' => 'Spelers',
+        'properties' => 'Serverinstellingen',
         'software' => 'Versie',
     ],
     'theme_tooltip' => 'Licht / donker',

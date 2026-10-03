@@ -51,6 +51,15 @@ return [
         'restoring_title' => 'Restaurando de um backup',
         'restoring_message' => 'Seu servidor está sendo restaurado de um backup, volte em alguns minutos.',
     ],
+    'history' => [
+        'title' => 'Histórico',
+        'range_24h' => '24 horas',
+        'range_7d' => '7 dias',
+        'empty' => 'Ainda sem histórico. Os valores são registados de cinco em cinco minutos enquanto o painel está em execução.',
+        'cpu' => 'CPU',
+        'memory' => 'Memória',
+        'players' => 'Jogadores',
+    ],
     'crash_push' => [
         'title' => ':server travou',
         'out_of_memory' => 'O servidor ficou sem memória e foi reiniciado.',

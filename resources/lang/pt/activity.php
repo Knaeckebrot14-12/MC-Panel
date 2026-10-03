@@ -13,6 +13,9 @@ return [
         'sftp' => [
             'fail' => 'Falha no login SFTP',
         ],
+        'discord' => [
+            'login' => 'Sessão iniciada com o Discord',
+        ],
         'reset-password-requested' => 'Solicitou um link de redefinição de senha',
         'passkey' => [
             'add' => 'Adicionou a passkey :name',
@@ -27,6 +30,8 @@ return [
         'account' => [
             'email-changed' => 'Alterou o e-mail de :old para :new',
             'password-changed' => 'Alterou a senha',
+            'discord-linked' => 'Conta Discord associada',
+            'discord-unlinked' => 'Discord desassociado',
         ],
         'api-key' => [
             'create' => 'Criou a nova chave de API :identifier',
@@ -63,6 +68,7 @@ return [
             'fail' => 'Marcou o backup :name como falho',
             'lock' => 'Bloqueou o backup :name',
             'unlock' => 'Desbloqueou o backup :name',
+            'auto' => 'Cópias de segurança automáticas definidas para cada :hours horas (0 = desativadas)',
         ],
         'database' => [
             'create' => 'Criou o novo banco de dados :name',
@@ -129,6 +135,19 @@ return [
             'create' => 'Adicionou :email como subusuário',
             'update' => 'Atualizou as permissões do subusuário :email',
             'delete' => 'Removeu :email como subusuário',
+        ],
+        'players' => [
+            'whitelist_add' => ':target adicionado à whitelist',
+            'whitelist_remove' => ':target removido da whitelist',
+            'op' => ':target tornou-se operador',
+            'deop' => 'Operador :target removido',
+            'ban' => ':target banido',
+            'pardon' => 'Banimento de :target removido',
+            'ban_ip' => 'IP :target banido',
+            'pardon_ip' => 'Banimento do IP :target removido',
+            'kick' => ':target expulso',
+            'whitelist_on' => 'Whitelist ativada',
+            'whitelist_off' => 'Whitelist desativada',
         ],
         'crashed' => 'O servidor travou',
         'software' => [

@@ -51,6 +51,15 @@ return [
         'restoring_title' => 'Herstellen vanuit back-up',
         'restoring_message' => 'Je server wordt momenteel hersteld vanuit een back-up, kom over enkele minuten terug.',
     ],
+    'history' => [
+        'title' => 'Geschiedenis',
+        'range_24h' => '24 uur',
+        'range_7d' => '7 dagen',
+        'empty' => 'Nog geen geschiedenis. Waarden worden elke vijf minuten vastgelegd zolang het paneel draait.',
+        'cpu' => 'CPU',
+        'memory' => 'Geheugen',
+        'players' => 'Spelers',
+    ],
     'crash_push' => [
         'title' => ':server is gecrasht',
         'out_of_memory' => 'De server had te weinig geheugen en is opnieuw gestart.',

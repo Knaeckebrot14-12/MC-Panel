@@ -29,6 +29,8 @@ return [
         'subdomain' => 'Поддомен',
         'startup' => 'Запуск',
         'settings' => 'Настройки',
+        'players' => 'Игроки',
+        'properties' => 'Настройки сервера',
         'software' => 'Версия',
     ],
     'theme_tooltip' => 'Светлая / тёмная',

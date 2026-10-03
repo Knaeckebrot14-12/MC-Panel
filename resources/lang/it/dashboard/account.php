@@ -68,5 +68,21 @@ return [
             'done_button' => 'Fatto',
         ],
     ],
+    'discord' => [
+        'title' => 'Discord',
+        'linked_as' => 'Collegato a :name',
+        'unlink_hint' => 'Dopo lo scollegamento accedi con e-mail e password. Imposta prima una password se il tuo account è stato creato tramite Discord.',
+        'unlink' => 'Scollega Discord',
+        'not_linked' => 'Collega il tuo account Discord per accedere con un clic.',
+        'link' => 'Collega Discord',
+        'linked_success' => 'Il tuo account Discord è ora collegato.',
+        'unlinked_success' => 'Discord è stato scollegato.',
+        'errors' => [
+            'taken' => 'Questo account Discord è già collegato a un altro account del pannello.',
+            'state' => 'L\'accesso con Discord è scaduto. Riprova.',
+            'cancelled' => 'Il collegamento è stato annullato.',
+            'discord' => 'Impossibile raggiungere Discord. Riprova.',
+        ],
+    ],
     'app_title' => 'App e aspetto',
 ];

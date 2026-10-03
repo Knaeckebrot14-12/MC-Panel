@@ -51,6 +51,15 @@ return [
         'restoring_title' => 'Przywracanie z kopii zapasowej',
         'restoring_message' => 'Twój serwer jest obecnie przywracany z kopii zapasowej, zajrzyj za kilka minut.',
     ],
+    'history' => [
+        'title' => 'Historia',
+        'range_24h' => '24 godziny',
+        'range_7d' => '7 dni',
+        'empty' => 'Brak historii. Wartości są zapisywane co pięć minut, gdy panel działa.',
+        'cpu' => 'CPU',
+        'memory' => 'Pamięć',
+        'players' => 'Gracze',
+    ],
     'crash_push' => [
         'title' => ':server uległ awarii',
         'out_of_memory' => 'Serwerowi zabrakło pamięci i został uruchomiony ponownie.',

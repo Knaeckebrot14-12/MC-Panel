@@ -37,4 +37,20 @@ return [
         'start_button' => 'Avvia backup',
     ],
     'create_button' => 'Crea backup',
+    'auto' => [
+        'title' => 'Backup automatici',
+        'description' => 'Crea backup a intervalli regolari. Quando tutti i :limit slot di backup sono occupati, il backup non bloccato più vecchio viene sostituito. Blocca un backup per conservarlo.',
+        'last' => 'Ultimo: :time',
+        'next' => 'Prossimo: :time',
+        'saved_on' => 'I backup automatici sono attivi.',
+        'saved_off' => 'I backup automatici sono disattivati.',
+        'intervals' => [
+            0 => 'Disattivati',
+            6 => 'Ogni 6 ore',
+            12 => 'Ogni 12 ore',
+            24 => 'Ogni giorno',
+            48 => 'Ogni 2 giorni',
+            168 => 'Ogni settimana',
+        ],
+    ],
 ];

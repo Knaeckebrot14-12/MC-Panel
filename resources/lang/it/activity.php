@@ -13,6 +13,9 @@ return [
         'sftp' => [
             'fail' => 'Accesso SFTP non riuscito',
         ],
+        'discord' => [
+            'login' => 'Accesso effettuato con Discord',
+        ],
         'reset-password-requested' => 'Ha richiesto un link per reimpostare la password',
         'passkey' => [
             'add' => 'Aggiunta la passkey :name',
@@ -27,6 +30,8 @@ return [
         'account' => [
             'email-changed' => 'Email cambiata da :old a :new',
             'password-changed' => 'Password modificata',
+            'discord-linked' => 'Account Discord collegato',
+            'discord-unlinked' => 'Discord scollegato',
         ],
         'api-key' => [
             'create' => 'Creata nuova chiave API :identifier',
@@ -63,6 +68,7 @@ return [
             'fail' => 'Backup :name contrassegnato come non riuscito',
             'lock' => 'Bloccato il backup :name',
             'unlock' => 'Sbloccato il backup :name',
+            'auto' => 'Backup automatici impostati ogni :hours ore (0 = disattivati)',
         ],
         'database' => [
             'create' => 'Creato nuovo database :name',
@@ -129,6 +135,19 @@ return [
             'create' => 'Aggiunto :email come sotto-utente',
             'update' => 'Aggiornati i permessi del sotto-utente :email',
             'delete' => 'Rimosso :email come sotto-utente',
+        ],
+        'players' => [
+            'whitelist_add' => ':target aggiunto alla whitelist',
+            'whitelist_remove' => ':target rimosso dalla whitelist',
+            'op' => ':target reso operatore',
+            'deop' => 'Rimosso l\'operatore :target',
+            'ban' => ':target bannato',
+            'pardon' => ':target sbannato',
+            'ban_ip' => 'IP :target bannato',
+            'pardon_ip' => 'IP :target sbannato',
+            'kick' => ':target espulso',
+            'whitelist_on' => 'Whitelist attivata',
+            'whitelist_off' => 'Whitelist disattivata',
         ],
         'crashed' => 'Il server è andato in crash',
         'software' => [

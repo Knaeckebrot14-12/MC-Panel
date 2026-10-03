@@ -51,6 +51,15 @@ return [
         'restoring_title' => 'Ripristino da backup',
         'restoring_message' => 'Il tuo server è attualmente in fase di ripristino da un backup, riprova tra qualche minuto.',
     ],
+    'history' => [
+        'title' => 'Cronologia',
+        'range_24h' => '24 ore',
+        'range_7d' => '7 giorni',
+        'empty' => 'Ancora nessuna cronologia. I valori vengono registrati ogni cinque minuti mentre il pannello è in funzione.',
+        'cpu' => 'CPU',
+        'memory' => 'Memoria',
+        'players' => 'Giocatori',
+    ],
     'crash_push' => [
         'title' => ':server è andato in crash',
         'out_of_memory' => 'Il server ha esaurito la memoria ed è stato riavviato.',

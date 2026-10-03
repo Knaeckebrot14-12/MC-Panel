@@ -13,6 +13,9 @@ return [
         'sftp' => [
             'fail' => 'Nieudane logowanie SFTP',
         ],
+        'discord' => [
+            'login' => 'Zalogowano przez Discord',
+        ],
         'reset-password-requested' => 'Poproszono o link do resetu hasła',
         'passkey' => [
             'add' => 'Dodano klucz dostępu :name',
@@ -27,6 +30,8 @@ return [
         'account' => [
             'email-changed' => 'Zmieniono e-mail z :old na :new',
             'password-changed' => 'Zmieniono hasło',
+            'discord-linked' => 'Połączono konto Discord',
+            'discord-unlinked' => 'Rozłączono Discord',
         ],
         'api-key' => [
             'create' => 'Utworzono nowy klucz API :identifier',
@@ -63,6 +68,7 @@ return [
             'fail' => 'Oznaczono kopię zapasową :name jako nieudaną',
             'lock' => 'Zablokowano kopię zapasową :name',
             'unlock' => 'Odblokowano kopię zapasową :name',
+            'auto' => 'Ustawiono automatyczne kopie zapasowe co :hours godz. (0 = wyłączone)',
         ],
         'database' => [
             'create' => 'Utworzono nową bazę danych :name',
@@ -129,6 +135,19 @@ return [
             'create' => 'Dodano :email jako podużytkownika',
             'update' => 'Zaktualizowano uprawnienia podużytkownika :email',
             'delete' => 'Usunięto :email z podużytkowników',
+        ],
+        'players' => [
+            'whitelist_add' => 'Dodano :target do whitelisty',
+            'whitelist_remove' => 'Usunięto :target z whitelisty',
+            'op' => 'Nadano :target uprawnienia operatora',
+            'deop' => 'Odebrano operatora :target',
+            'ban' => 'Zbanowano :target',
+            'pardon' => 'Odbanowano :target',
+            'ban_ip' => 'Zbanowano IP :target',
+            'pardon_ip' => 'Odbanowano IP :target',
+            'kick' => 'Wyrzucono :target',
+            'whitelist_on' => 'Włączono whitelistę',
+            'whitelist_off' => 'Wyłączono whitelistę',
         ],
         'crashed' => 'Serwer uległ awarii',
         'software' => [

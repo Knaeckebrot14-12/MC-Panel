@@ -68,5 +68,21 @@ return [
             'done_button' => 'Gotowe',
         ],
     ],
+    'discord' => [
+        'title' => 'Discord',
+        'linked_as' => 'Połączono z :name',
+        'unlink_hint' => 'Po rozłączeniu logujesz się e-mailem i hasłem. Najpierw ustaw hasło, jeśli Twoje konto zostało utworzone przez Discord.',
+        'unlink' => 'Rozłącz Discord',
+        'not_linked' => 'Połącz swoje konto Discord, aby logować się jednym kliknięciem.',
+        'link' => 'Połącz Discord',
+        'linked_success' => 'Twoje konto Discord zostało połączone.',
+        'unlinked_success' => 'Discord został rozłączony.',
+        'errors' => [
+            'taken' => 'To konto Discord jest już połączone z innym kontem w panelu.',
+            'state' => 'Logowanie przez Discord wygasło. Spróbuj ponownie.',
+            'cancelled' => 'Łączenie zostało anulowane.',
+            'discord' => 'Nie udało się połączyć z Discordem. Spróbuj ponownie.',
+        ],
+    ],
     'app_title' => 'Aplikacja i wygląd',
 ];

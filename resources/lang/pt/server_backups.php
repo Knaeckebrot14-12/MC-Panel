@@ -37,4 +37,20 @@ return [
         'start_button' => 'Iniciar backup',
     ],
     'create_button' => 'Criar backup',
+    'auto' => [
+        'title' => 'Cópias de segurança automáticas',
+        'description' => 'Cria cópias de segurança de forma agendada. Quando todas as :limit vagas de cópias estão ocupadas, a cópia não bloqueada mais antiga é substituída. Bloqueie uma cópia para a manter.',
+        'last' => 'Última: :time',
+        'next' => 'Próxima: :time',
+        'saved_on' => 'As cópias de segurança automáticas estão ativas.',
+        'saved_off' => 'As cópias de segurança automáticas estão desativadas.',
+        'intervals' => [
+            0 => 'Desativadas',
+            6 => 'A cada 6 horas',
+            12 => 'A cada 12 horas',
+            24 => 'Diariamente',
+            48 => 'A cada 2 dias',
+            168 => 'Semanalmente',
+        ],
+    ],
 ];

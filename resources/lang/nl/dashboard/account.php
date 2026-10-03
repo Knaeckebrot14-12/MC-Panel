@@ -68,5 +68,21 @@ return [
             'done_button' => 'Klaar',
         ],
     ],
+    'discord' => [
+        'title' => 'Discord',
+        'linked_as' => 'Gekoppeld aan :name',
+        'unlink_hint' => 'Na het loskoppelen log je in met je e-mailadres en wachtwoord. Stel eerst een wachtwoord in als je account via Discord is aangemaakt.',
+        'unlink' => 'Discord loskoppelen',
+        'not_linked' => 'Koppel je Discord-account om met één klik in te loggen.',
+        'link' => 'Discord koppelen',
+        'linked_success' => 'Je Discord-account is nu gekoppeld.',
+        'unlinked_success' => 'Discord is losgekoppeld.',
+        'errors' => [
+            'taken' => 'Dit Discord-account is al aan een ander paneelaccount gekoppeld.',
+            'state' => 'De Discord-login is verlopen. Probeer het opnieuw.',
+            'cancelled' => 'Het koppelen is geannuleerd.',
+            'discord' => 'Discord is niet bereikbaar. Probeer het opnieuw.',
+        ],
+    ],
     'app_title' => 'App en weergave',
 ];
