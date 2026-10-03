@@ -179,11 +179,19 @@ class IpLockoutService
      */
     public function blockFor(?string $ip): ?IpBlock
     {
-        if (!$this->enabled() || $this->isExempt($ip)) {
+        // Fails open: if the lookup breaks (database trouble, a table that isn't there yet), nobody is
+        // locked out and the sign-in keeps working. Counting failures is guarded the same way.
+        try {
+            if (!$this->enabled() || $this->isExempt($ip)) {
+                return null;
+            }
+
+            return $this->activeBlock($ip);
+        } catch (\Throwable $exception) {
+            report($exception);
+
             return null;
         }
-
-        return $this->activeBlock($ip);
     }
 
     /**

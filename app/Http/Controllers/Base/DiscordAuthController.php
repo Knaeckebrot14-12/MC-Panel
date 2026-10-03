@@ -44,6 +44,11 @@ class DiscordAuthController extends Controller
         if (!self::enabled()) {
             return redirect('/auth/login');
         }
+        // In the support view this would attach the staff member's Discord account to the user's account
+        // (and with it a way to sign in as that user later). Account changes are blocked there.
+        if (app(\Pterodactyl\Services\Users\ImpersonationService::class)->impersonator($request)) {
+            return redirect('/account');
+        }
 
         $state = Str::random(40);
         $request->session()->put('discord_oauth', [
@@ -130,6 +135,10 @@ class DiscordAuthController extends Controller
         $user = $request->user();
         if (!$user || $user->id !== $userId) {
             return redirect('/auth/login');
+        }
+        // A link started before the support view began must not finish inside it either.
+        if (app(\Pterodactyl\Services\Users\ImpersonationService::class)->impersonator($request)) {
+            return redirect('/account');
         }
 
         $taken = User::query()->where('discord_id', $profile['id'])->where('id', '!=', $user->id)->exists();

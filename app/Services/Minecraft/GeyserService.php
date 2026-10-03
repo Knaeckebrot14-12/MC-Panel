@@ -172,7 +172,10 @@ class GeyserService
      */
     private function watchStart(Server $server): ?bool
     {
-        $deadline = time() + 150;
+        // Short on purpose: the request has to finish within Cloudflare's 100 s proxy limit (downloads
+        // come first). Geyser fails within a few seconds of enabling; if the verdict doesn't arrive in
+        // time the Geyser box shows a failed start the next time it is opened (status() reads the console).
+        $deadline = time() + 75;
         $wentDown = false;
         $since = time();
         while (time() < $deadline) {
