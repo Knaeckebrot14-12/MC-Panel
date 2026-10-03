@@ -56,14 +56,16 @@ abstract class AbstractLoginController extends Controller
     protected function sendFailedLoginResponse(Request $request, ?Authenticatable $user = null, ?string $message = null)
     {
         $this->incrementLoginAttempts($request);
+        // Only text is used as "what was typed"; arrays and the like are not valid input anyway.
+        $typed = is_string($request->input('user')) || is_int($request->input('user')) ? (string) $request->input('user') : null;
         // Counts towards the automatic IP lockout (Admin -> Blocked IPs).
         app(\Pterodactyl\Services\Security\IpLockoutService::class)->recordFailure(
             $request->ip(),
-            $user?->username ?? (is_string($request->input('user')) ? $request->input('user') : null),
+            $user?->username ?? $typed,
             $request->route()->named('auth.login-checkpoint') ? 'checkpoint' : 'login'
         );
         $this->fireFailedLoginEvent($user, [
-            $this->getField($request->input('user')) => $request->input('user'),
+            $this->getField($typed) => $typed,
         ]);
 
         if ($request->route()->named('auth.login-checkpoint')) {

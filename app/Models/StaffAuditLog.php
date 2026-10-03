@@ -57,7 +57,15 @@ class StaffAuditLog extends Model
             return $this->action;
         }
 
-        $params = array_merge(['subject' => $this->subject ?? '—'], array_map('strval', $this->properties ?? []));
+        $properties = array_map('strval', $this->properties ?? []);
+        // Machine values of bulk actions and abuse flags are shown in the viewer's language.
+        foreach (['server.bulk_power' => ['action', 'admin/bulk.power.actions.'], 'abuse.resolved' => ['type', 'admin/abuse.types.']] as $prefix => [$property, $langKey]) {
+            if (str_starts_with($this->action, $prefix) && isset($properties[$property]) && ($label = trans($langKey . $properties[$property])) !== $langKey . $properties[$property]) {
+                $properties[$property] = mb_strtolower((string) $label);
+            }
+        }
+
+        $params = array_merge(['subject' => $this->subject ?? '—'], $properties);
         foreach ($params as $key => $value) {
             $text = str_replace(':' . $key, $value, $text);
         }

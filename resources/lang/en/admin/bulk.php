@@ -50,5 +50,6 @@ return [
         'failures' => 'Failed servers',
         'error' => 'The action could not be started.',
         'lost' => 'The progress is no longer available.',
+        'busy' => 'Another bulk action is still running. Please wait until it has finished.',
     ],
 ];

@@ -64,7 +64,7 @@
                                     @endif
                                 </td>
                                 <td><span class="label label-{{ $flag->type === 'miner' ? 'danger' : 'warning' }}">@lang('admin/abuse.types.' . $flag->type)</span></td>
-                                <td style="max-width: 460px; word-break: break-word;">{{ $flag->describe() }}</td>
+                                <td style="min-width: 260px; max-width: 460px; word-break: break-word;">{{ $flag->describe() }}</td>
                                 <td style="white-space: nowrap;">
                                     <span title="{{ $flag->first_seen_at->format('Y-m-d H:i:s') }}">{{ trans('admin/abuse.flags.first_seen') }} {{ $flag->first_seen_at->diffForHumans() }}</span><br>
                                     <small class="text-muted" title="{{ $flag->last_seen_at->format('Y-m-d H:i:s') }}">{{ trans('admin/abuse.flags.last_seen') }} {{ $flag->last_seen_at->diffForHumans() }}</small>

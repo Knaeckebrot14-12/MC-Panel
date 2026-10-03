@@ -50,5 +50,6 @@ return [
         'failures' => 'Servidores fallidos',
         'error' => 'No se pudo iniciar la acción.',
         'lost' => 'El progreso ya no está disponible.',
+        'busy' => 'Otra acción masiva sigue en curso. Espera a que termine.',
     ],
 ];

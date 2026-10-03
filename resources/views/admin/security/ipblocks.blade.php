@@ -47,7 +47,7 @@
                         </tr>
                         @forelse($active as $block)
                             <tr>
-                                <td><code>{{ $block->ip }}</code></td>
+                                <td><code>{{ $block->ip }}{{ str_contains($block->ip, ":") ? "/64" : "" }}</code></td>
                                 <td style="white-space:nowrap;">
                                     {{ $block->blocked_until->format('Y-m-d H:i:s') }}
                                     <br><small class="text-muted">@lang('admin/ipblock.remaining', ['time' => $block->blocked_until->diffForHumans(null, true)])</small>
@@ -185,7 +185,7 @@
                             </tr>
                             @foreach($history as $block)
                                 <tr>
-                                    <td><code>{{ $block->ip }}</code></td>
+                                    <td><code>{{ $block->ip }}{{ str_contains($block->ip, ":") ? "/64" : "" }}</code></td>
                                     <td style="white-space:nowrap;">{{ $block->created_at->format('Y-m-d H:i') }}</td>
                                     <td>@lang('admin/ipblock.history_status.' . ($block->unblocked_at ? 'lifted' : 'expired'))</td>
                                 </tr>

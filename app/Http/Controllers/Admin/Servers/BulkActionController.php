@@ -105,6 +105,11 @@ class BulkActionController extends Controller
     private function queueRun(array $serverIds, string $type, string $payload, array $meta): string
     {
         $runId = $this->bulk->createRun($type, $meta, count($serverIds));
+        if (!$this->bulk->claim($runId)) {
+            $this->bulk->discard($runId);
+
+            abort(409, trans('admin/bulk.progress.busy'));
+        }
 
         foreach ($serverIds as $id) {
             BulkServerActionJob::dispatch($runId, (int) $id, $type, $payload);

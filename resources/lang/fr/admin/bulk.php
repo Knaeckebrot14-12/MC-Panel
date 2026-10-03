@@ -50,5 +50,6 @@ return [
         'failures' => 'Serveurs en échec',
         'error' => 'L\'action n\'a pas pu être lancée.',
         'lost' => 'La progression n\'est plus disponible.',
+        'busy' => 'Une autre action groupée est encore en cours. Veuillez attendre qu\'elle soit terminée.',
     ],
 ];

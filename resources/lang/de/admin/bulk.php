@@ -50,5 +50,6 @@ return [
         'failures' => 'Fehlgeschlagene Server',
         'error' => 'Die Aktion konnte nicht gestartet werden.',
         'lost' => 'Der Fortschritt ist nicht mehr verfügbar.',
+        'busy' => 'Eine andere Sammelaktion läuft noch. Bitte warte, bis sie fertig ist.',
     ],
 ];

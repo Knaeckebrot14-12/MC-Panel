@@ -36,8 +36,13 @@ class LoginController extends AbstractLoginController
             $this->sendLockoutResponse($request);
         }
 
+        // Arrays and other non-text input can never be valid credentials; counted like any failed login.
+        if ((!is_string($request->input('user')) && !is_numeric($request->input('user'))) || is_array($request->input('password'))) {
+            $this->sendFailedLoginResponse($request);
+        }
+
         try {
-            $username = $request->input('user');
+            $username = (string) $request->input('user');
 
             /** @var User $user */
             $user = User::query()->where($this->getField($username), $username)->firstOrFail();

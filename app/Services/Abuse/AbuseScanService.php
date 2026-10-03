@@ -2,6 +2,7 @@
 
 namespace Pterodactyl\Services\Abuse;
 
+use Carbon\Carbon;
 use Pterodactyl\Models\Node;
 use Pterodactyl\Models\Server;
 use Pterodactyl\Models\AbuseFlag;
@@ -104,7 +105,12 @@ class AbuseScanService
         }
 
         usort($minerCandidates, fn ($a, $b) => $b['cpu'] <=> $a['cpu']);
+        // Slow Wings must not make a scan overrun the five minute schedule: the rest comes at the next run.
+        $deadline = microtime(true) + 200;
         foreach (array_slice($minerCandidates, 0, self::MAX_MINER_CHECKS) as $candidate) {
+            if (microtime(true) > $deadline) {
+                break;
+            }
             $matches = $this->minerEvidence($candidate['server'], $cfg['keywords']);
             if ($matches) {
                 $this->tally($summary, $this->raise($candidate['server'], AbuseFlag::TYPE_MINER, ['matches' => $matches]));
@@ -136,9 +142,12 @@ class AbuseScanService
 
         $found = [];
         foreach ($consoleLines as $line) {
-            $line = trim(preg_replace('/\e\[[0-9;]*m/', '', $line));
-            // What players type into the chat or as commands says nothing about the server itself.
-            if ($line === '' || preg_match('/\]:\s*(\[[^\]]+\]\s*)?<[^>\s]+>\s/', $line) || stripos($line, 'issued server command') !== false) {
+            $line = trim((string) preg_replace('/\e\[[0-9;]*m/', '', mb_scrub((string) $line)));
+            // What players type into the chat or as commands, and their names (a player may be called
+            // "xmrig"), say nothing about the server itself.
+            if ($line === ''
+                || preg_match('/\]:\s*(\[[^\]]+\]\s*)?<[^>\s]+>\s/', $line)
+                || preg_match('/issued server command|joined the game|left the game|UUID of player|logged in with entity id|lost connection:/i', $line)) {
                 continue;
             }
             if (preg_match($pattern, $line, $m)) {
@@ -146,6 +155,7 @@ class AbuseScanService
             }
         }
         foreach ($fileNames as $name) {
+            $name = mb_scrub((string) $name);
             if (preg_match($pattern, $name, $m)) {
                 $found[] = ['source' => 'file', 'keyword' => strtolower($m[1]), 'text' => mb_substr($name, 0, 200)];
             }
@@ -238,7 +248,7 @@ class AbuseScanService
         // Two minutes of slack: the collector's timestamps drift a little.
         return DB::table('server_stats')
             ->where('created_at', '>=', now()->subMinutes($minutes + 2))
-            ->selectRaw('server_id, COUNT(*) as samples, MIN(cpu) as min_cpu, AVG(cpu) as avg_cpu')
+            ->selectRaw('server_id, COUNT(*) as samples, MIN(created_at) as first_at, MIN(cpu) as min_cpu, AVG(cpu) as avg_cpu')
             ->groupBy('server_id')
             ->get()
             ->keyBy('server_id');
@@ -254,6 +264,13 @@ class AbuseScanService
         $needed = (int) ceil($cfg['cpu_minutes'] / 5);
         $threshold = $cap * $cfg['cpu_percent'] / 100;
         if ((int) $row->samples < $needed || (float) $row->min_cpu < $threshold) {
+            return null;
+        }
+
+        // The samples must really span the window (6 samples five minutes apart only cover 25 minutes).
+        // Three minutes of slack: the oldest sample in the query window is between minutes-3 and minutes+2 old.
+        $first = $row->first_at ? Carbon::parse($row->first_at) : null;
+        if (!$first || $first->diffInMinutes(now(), true) < $cfg['cpu_minutes'] - 3) {
             return null;
         }
 
@@ -283,7 +300,7 @@ class AbuseScanService
         $window = $cfg['network_minutes'] * 60;
 
         $samples = Cache::get($key, []);
-        $samples = is_array($samples) ? $samples : [];
+        $samples = is_array($samples) ? array_values(array_filter($samples, fn ($sample) => is_array($sample) && isset($sample[0], $sample[1]))) : [];
         $last = end($samples);
         if ($last && $txBytes < $last[1]) {
             $samples = [];
@@ -402,21 +419,26 @@ class AbuseScanService
      */
     private function notify(AbuseFlag $flag, Server $server): void
     {
-        $cfg = $this->settings();
-        $title = trans('admin/abuse.alerts.title', ['server' => $server->name]);
-        $body = trans('admin/abuse.types.' . $flag->type) . ': ' . $flag->describe();
-        $url = route('admin.abuse');
+        // A failing notification must not abort the scan: the flag exists already, the next flags still need theirs.
+        try {
+            $cfg = $this->settings();
+            $title = trans('admin/abuse.alerts.title', ['server' => $server->name]);
+            $body = trans('admin/abuse.types.' . $flag->type) . ': ' . $flag->describe();
+            $url = route('admin.abuse');
 
-        if ($cfg['notify_discord']) {
-            DiscordWebhook::send(config('mcpanel.monitoring.discord_webhook'), $title, $body . "\n" . $url, DiscordWebhook::COLOR_ORANGE, [
-                trans('admin/abuse.alerts.field_server') => $server->name,
-                trans('admin/abuse.alerts.field_owner') => $server->user?->username ?? '-',
-                trans('admin/abuse.alerts.field_type') => trans('admin/abuse.types.' . $flag->type),
-            ]);
-        }
+            if ($cfg['notify_discord']) {
+                DiscordWebhook::send(config('mcpanel.monitoring.discord_webhook'), $title, $body . "\n" . $url, DiscordWebhook::COLOR_ORANGE, [
+                    trans('admin/abuse.alerts.field_server') => $server->name,
+                    trans('admin/abuse.alerts.field_owner') => $server->user?->username ?? '-',
+                    trans('admin/abuse.alerts.field_type') => trans('admin/abuse.types.' . $flag->type),
+                ]);
+            }
 
-        if ($cfg['notify_push']) {
-            $this->push->sendToTeam($title, $body, $url);
+            if ($cfg['notify_push']) {
+                $this->push->sendToTeam($title, $body, $url);
+            }
+        } catch (\Throwable $exception) {
+            report($exception);
         }
     }
 }

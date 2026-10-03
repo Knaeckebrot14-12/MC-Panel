@@ -37,7 +37,7 @@ class IpLockoutSettingsController extends Controller
             'block_minutes' => 'required|integer|min:1|max:43200',
             'block_minutes_2' => 'required|integer|min:1|max:43200',
             'block_minutes_3' => 'required|integer|min:1|max:43200',
-            'allowlist' => ['nullable', 'string', 'max:5000', function ($attribute, $value, $fail) {
+            'allowlist' => ['bail', 'nullable', 'string', 'max:5000', function ($attribute, $value, $fail) {
                 foreach (preg_split('/[\s,;]+/', (string) $value, -1, PREG_SPLIT_NO_EMPTY) ?: [] as $entry) {
                     if (!IpLockoutService::isValidEntry($entry)) {
                         $fail(trans('admin/ipblock.settings.allowlist_invalid', ['entry' => mb_substr($entry, 0, 60)]));

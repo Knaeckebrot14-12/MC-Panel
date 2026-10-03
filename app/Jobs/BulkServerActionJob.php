@@ -3,12 +3,15 @@
 namespace Pterodactyl\Jobs;
 
 use Pterodactyl\Models\Server;
+use Illuminate\Support\Facades\Cache;
+use GuzzleHttp\Exception\ConnectException;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Pterodactyl\Services\Servers\BulkActionService;
 use Pterodactyl\Repositories\Wings\DaemonPowerRepository;
 use Pterodactyl\Repositories\Wings\DaemonServerRepository;
 use Pterodactyl\Repositories\Wings\DaemonCommandRepository;
+use Pterodactyl\Exceptions\Http\Connection\DaemonConnectionException;
 
 /**
  * One server of an admin bulk action (Admin -> Servers -> Bulk actions): either a power action or an
@@ -52,6 +55,15 @@ class BulkServerActionJob implements ShouldQueue
             return;
         }
 
+        // A node that could not be reached for one server of this run is not asked again for the others: with
+        // a dead node every job would wait for the connect timeout and hold up the whole queue meanwhile.
+        $downKey = sprintf('mcpanel:bulk:%s:down:%d', $this->runId, $server->node_id);
+        if ($known = Cache::get($downKey)) {
+            $bulk->record($this->runId, 'failed', $server->name, (string) $known);
+
+            return;
+        }
+
         try {
             if ($this->type === self::TYPE_POWER) {
                 if (!in_array($this->payload, BulkActionService::POWER_ACTIONS, true)) {
@@ -77,6 +89,10 @@ class BulkServerActionJob implements ShouldQueue
 
             $bulk->record($this->runId, 'ok');
         } catch (\Throwable $exception) {
+            if ($exception instanceof DaemonConnectionException && $exception->getPrevious() instanceof ConnectException) {
+                Cache::put($downKey, $this->describe($exception), 300);
+            }
+
             $bulk->record($this->runId, 'failed', $server->name, $this->describe($exception));
         }
     }

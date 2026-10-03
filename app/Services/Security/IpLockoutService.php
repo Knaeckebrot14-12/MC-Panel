@@ -4,6 +4,7 @@ namespace Pterodactyl\Services\Security;
 
 use Pterodactyl\Models\User;
 use Pterodactyl\Models\IpBlock;
+use Illuminate\Support\Facades\Cache;
 use Pterodactyl\Models\LoginFailure;
 use Symfony\Component\HttpFoundation\IpUtils;
 use Pterodactyl\Services\Notifications\TeamAlerts;
@@ -14,6 +15,8 @@ use Pterodactyl\Services\Notifications\DiscordWebhook;
  * the login_failures table; when an IP reaches the limit inside the time window it gets a row in
  * ip_blocks, and the "ip.lockout" middleware then refuses every request to the auth endpoints from
  * that IP until the block ends. Repeated blocks get longer.
+ *
+ * IPv4 addresses are counted one by one, IPv6 addresses as their /64 (see bucket()).
  *
  * Safety rules: private, loopback and link-local addresses are never blocked (behind a reverse proxy
  * that is not trusted, every visitor would share one such address and a single typo-prone user
@@ -136,6 +139,22 @@ class IpLockoutService
     }
 
     /**
+     * What failures are counted and blocks are stored for. IPv4 addresses count individually; an IPv6
+     * client normally owns a whole /64, so it would switch to the next address after every block. IPv6
+     * addresses are therefore counted and blocked as their /64 (stored as the network address).
+     */
+    public static function bucket(?string $ip): string
+    {
+        $ip = self::normalize($ip);
+        $packed = @inet_pton($ip);
+        if ($packed === false || strlen($packed) !== 16) {
+            return $ip;
+        }
+
+        return inet_ntop(substr($packed, 0, 8) . str_repeat("\0", 8));
+    }
+
+    /**
      * Private, loopback, link-local, reserved and carrier-grade NAT addresses.
      */
     public static function isPrivate(string $ip): bool
@@ -165,7 +184,7 @@ class IpLockoutService
 
     public function activeBlock(?string $ip): ?IpBlock
     {
-        $ip = self::normalize($ip);
+        $ip = self::bucket($ip);
         if ($ip === '') {
             return null;
         }
@@ -206,7 +225,8 @@ class IpLockoutService
         }
 
         try {
-            $ip = self::normalize($ip);
+            $client = self::normalize($ip);
+            $ip = self::bucket($client);
             if ($ip === '') {
                 return null;
             }
@@ -217,42 +237,64 @@ class IpLockoutService
                 'type' => $type,
             ]);
 
-            if ($this->isExempt($ip) || $this->activeBlock($ip)) {
+            if ($this->isExempt($client) || $this->activeBlock($ip)) {
                 return null;
             }
 
-            $window = LoginFailure::query()->where('ip', $ip)->where('created_at', '>=', now()->subMinutes($this->windowMinutes()));
-            $count = (clone $window)->count();
-            if ($count < $this->maxAttempts()) {
-                return null;
-            }
-
-            $previous = IpBlock::query()
-                ->where('ip', $ip)
-                ->where('reason', IpBlock::REASON_AUTO)
-                ->where('created_at', '>=', now()->subDays(self::ESCALATION_DAYS))
-                ->count();
-
-            $usernames = (clone $window)->whereNotNull('username')->distinct()->limit(25)->pluck('username')->all();
-
-            /** @var IpBlock $block */
-            $block = IpBlock::query()->create([
-                'ip' => $ip,
-                'reason' => IpBlock::REASON_AUTO,
-                'failures' => $count,
-                'usernames' => implode("\n", $usernames),
-                'blocked_until' => now()->addMinutes($this->durationMinutes($previous)),
-            ]);
-
-            $this->notifyTeam($block);
-
-            return $block;
+            // One at a time per IP: parallel failures must not each create their own (escalating) block.
+            return Cache::lock('ip-lockout:' . $ip, 10)->block(5, fn () => $this->blockIfOverLimit($ip));
         } catch (\Throwable $exception) {
             // Counting must never make a login request fail.
             report($exception);
 
             return null;
         }
+    }
+
+    /**
+     * Creates the block if the failures since the IP's latest block (or inside the window) reached the limit.
+     * Runs inside a per-IP lock.
+     */
+    private function blockIfOverLimit(string $ip): ?IpBlock
+    {
+        // Another request may have blocked the IP while this one waited for the lock.
+        if ($this->activeBlock($ip)) {
+            return null;
+        }
+
+        // Only failures after the IP's latest block count: when a block is shorter than the window,
+        // the failures that caused it must not block the IP again with its first typo afterwards.
+        $since = now()->subMinutes($this->windowMinutes());
+        $lastBlock = IpBlock::query()->where('ip', $ip)->orderByDesc('id')->first();
+        $window = LoginFailure::query()->where('ip', $ip)->where('created_at', '>=', $since);
+        if ($lastBlock && $lastBlock->created_at->greaterThanOrEqualTo($since)) {
+            $window = LoginFailure::query()->where('ip', $ip)->where('created_at', '>', $lastBlock->created_at);
+        }
+        $count = (clone $window)->count();
+        if ($count < $this->maxAttempts()) {
+            return null;
+        }
+
+        $previous = IpBlock::query()
+            ->where('ip', $ip)
+            ->where('reason', IpBlock::REASON_AUTO)
+            ->where('created_at', '>=', now()->subDays(self::ESCALATION_DAYS))
+            ->count();
+
+        $usernames = (clone $window)->whereNotNull('username')->distinct()->limit(25)->pluck('username')->all();
+
+        /** @var IpBlock $block */
+        $block = IpBlock::query()->create([
+            'ip' => $ip,
+            'reason' => IpBlock::REASON_AUTO,
+            'failures' => $count,
+            'usernames' => implode("\n", $usernames),
+            'blocked_until' => now()->addMinutes($this->durationMinutes($previous)),
+        ]);
+
+        $this->notifyTeam($block);
+
+        return $block;
     }
 
     /**
@@ -265,7 +307,7 @@ class IpLockoutService
     public function recordSuccess(?string $ip, array $usernames): void
     {
         try {
-            $ip = self::normalize($ip);
+            $ip = self::bucket($ip);
             $usernames = array_values(array_filter(array_map(fn ($name) => mb_strtolower((string) $name), $usernames)));
             if ($ip === '' || $usernames === []) {
                 return;
@@ -291,6 +333,7 @@ class IpLockoutService
         if ($this->isExempt($ip)) {
             throw new \InvalidArgumentException('exempt');
         }
+        $ip = self::bucket($ip);
 
         $until = now()->addMinutes(max(1, $minutes));
         if ($existing = $this->activeBlock($ip)) {
@@ -316,7 +359,7 @@ class IpLockoutService
      */
     public function unblock(string $ip, ?User $actor): int
     {
-        $ip = self::normalize($ip);
+        $ip = self::bucket($ip);
 
         $lifted = IpBlock::query()->active()->where('ip', $ip)->update([
             'unblocked_at' => now(),

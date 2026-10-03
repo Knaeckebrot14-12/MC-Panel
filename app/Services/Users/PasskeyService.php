@@ -118,7 +118,7 @@ class PasskeyService
         } catch (\Throwable $exception) {
             // Not passed on as "previous": failed attempts are normal (cancelled dialogs, probing) and
             // must not fill the error log with stack traces. The reason is only kept at debug level.
-            logger()->debug('Passkey verification failed: ' . $exception->getMessage());
+            $this->debugFailure($exception);
 
             throw new DisplayException(trans('passkeys.errors.verification_failed'));
         }
@@ -127,8 +127,9 @@ class PasskeyService
             throw new DisplayException(trans('passkeys.errors.duplicate'));
         }
 
+        // Only known transport names (the browser sends this list, so it can contain anything).
         $transports = array_values(array_intersect(
-            is_array($response['transports'] ?? null) ? $response['transports'] : [],
+            is_array($response['transports'] ?? null) ? array_filter($response['transports'], 'is_string') : [],
             self::TRANSPORTS,
         ));
 
@@ -220,17 +221,20 @@ class PasskeyService
                 $update['sign_count'] = $newCount;
             }
 
-            // Compare-and-set, so two parallel requests with the same assertion can't both pass.
+            // Compare-and-set, so two parallel requests with the same assertion can't both pass. Authenticators
+            // without a counter (it stays 0, e.g. platform passkeys of some vendors) have nothing to compare;
+            // and since the update then only touches last_used_at, which can hold the same second as before,
+            // the number of changed rows must not be checked for them.
             $changed = UserPasskey::query()->whereKey($passkey->id)
                 ->when($newCount > 0, fn ($query) => $query->where('sign_count', '<', $newCount))
                 ->update($update);
-            if ($changed !== 1) {
+            if ($newCount > 0 && $changed !== 1) {
                 throw new \RuntimeException('counter race');
             }
         } catch (\Throwable $exception) {
             // Not passed on as "previous": failed attempts are normal (cancelled dialogs, probing) and
             // must not fill the error log with stack traces. The reason is only kept at debug level.
-            logger()->debug('Passkey verification failed: ' . $exception->getMessage());
+            $this->debugFailure($exception);
 
             throw new DisplayException(trans('passkeys.errors.verification_failed'));
         }
@@ -262,6 +266,19 @@ class PasskeyService
         // Ceremonies started from a cross-origin iframe are not accepted.
         if (($data['crossOrigin'] ?? false) === true) {
             throw new \InvalidArgumentException('cross origin');
+        }
+    }
+
+    /**
+     * The reason a ceremony failed, for debugging only. A log file that can't be written (for example
+     * one that was created by a command run as root) must never turn a failed passkey into a 500.
+     */
+    private function debugFailure(\Throwable $exception): void
+    {
+        try {
+            logger()->debug('Passkey verification failed: ' . $exception->getMessage());
+        } catch (\Throwable) {
+            // Nothing to do: the caller answers with the normal "could not be verified" error.
         }
     }
 

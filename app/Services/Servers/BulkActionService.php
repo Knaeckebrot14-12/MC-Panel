@@ -24,6 +24,8 @@ class BulkActionService
     /** Progress is kept for a few hours; the audit log is the permanent record. */
     private const TTL = 21600;
 
+    private const ACTIVE_KEY = 'mcpanel:bulk:active';
+
     /** How many failed servers are listed on the page. */
     private const MAX_FAILURES = 25;
 
@@ -122,6 +124,38 @@ class BulkActionService
         }
 
         return $id;
+    }
+
+    /**
+     * Only one run at a time: a second click (or a second admin) while servers are still being worked on
+     * would restart/kill them twice. Returns false when another run is still unfinished (for at most 15 minutes,
+     * so a run whose jobs were lost never blocks the page for good).
+     */
+    public function claim(string $runId): bool
+    {
+        if (Cache::add(self::ACTIVE_KEY, $runId, 900)) {
+            return true;
+        }
+
+        $current = Cache::get(self::ACTIVE_KEY);
+        $state = is_string($current) ? $this->run($current) : null;
+        if ($state === null || $state['finished']) {
+            Cache::put(self::ACTIVE_KEY, $runId, 900);
+
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Drops a run that was created but never queued.
+     */
+    public function discard(string $runId): void
+    {
+        foreach ([null, 'ok', 'failed', 'skipped', 'failures', 'lock'] as $part) {
+            Cache::forget($this->key($runId, $part ?? 'meta'));
+        }
     }
 
     /**

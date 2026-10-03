@@ -52,7 +52,9 @@ class AbuseSettingsController extends Controller
         }
 
         $keywords = AbuseScanService::parseKeywords((string) ($data['miner_keywords'] ?? ''));
-        $this->settings->set('settings::mcpanel:abuse:miner_keywords', $keywords ? implode("\n", $keywords) : '(empty)');
+        // The trailing line break keeps a list that is just "true", "null" or "empty" from being turned into
+        // a boolean/null by SettingsServiceProvider; parseKeywords() ignores it.
+        $this->settings->set('settings::mcpanel:abuse:miner_keywords', $keywords ? implode("\n", $keywords) . "\n" : '(empty)');
 
         StaffAudit::record('settings.abuse');
         $this->alert->success(trans('admin/abuse.settings.saved'))->flash();
